@@ -1,0 +1,12 @@
+{
+    "summary": {
+        "num_samples": 519,
+        "num_categories": "-",
+        "mean_ppl_A_direct": 2.576,
+        "std_ppl_A_direct": 0.287,
+        "mean_ppl_A_condition": 2.465,
+        "std_ppl_A_condition": 0.257,
+        "mean_ifd_ppl": 0.959,
+        "std_ifd_ppl": 0.052
+    }
+}

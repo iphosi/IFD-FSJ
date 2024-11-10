@@ -1,0 +1,12 @@
+{
+    "summary": {
+        "num_samples": 0,
+        "num_categories": "-",
+        "mean_ppl_A_direct": NaN,
+        "std_ppl_A_direct": NaN,
+        "mean_ppl_A_condition": NaN,
+        "std_ppl_A_condition": NaN,
+        "mean_ifd_ppl": NaN,
+        "std_ifd_ppl": NaN
+    }
+}
