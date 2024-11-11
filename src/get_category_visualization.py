@@ -6,13 +6,13 @@ import json
 
 if __name__ == "__main__":
     data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
-    output_path = f"{data_dir}/filtered_llama2_ifd_cat_distr_256.png"
+    output_path = f"{data_dir}/filtered_llama3_ifd_cat_distr_256.png"
     data_path_list = [
-        f"{data_dir}/filtered_llama2_ifd_0.0_0.4_fla_333_256_statistics.json",
-        f"{data_dir}/filtered_llama2_ifd_0.4_0.6_fla_1832_256_statistics.json",
-        f"{data_dir}/filtered_llama2_ifd_0.6_0.8_fla_9169_256_statistics.json",
-        f"{data_dir}/filtered_llama2_ifd_0.8_1.0_fla_8063_256_statistics.json",
-        f"{data_dir}/filtered_llama2_ifd_1.0_inf_fla_1484_256_statistics.json",
+        f"{data_dir}/filtered_llama3_ifd_0.0_0.4_fla_573_256_statistics.json",
+        f"{data_dir}/filtered_llama3_ifd_0.4_0.6_fla_2316_256_statistics.json",
+        f"{data_dir}/filtered_llama3_ifd_0.6_0.8_fla_8992_256_statistics.json",
+        f"{data_dir}/filtered_llama3_ifd_0.8_1.0_fla_8077_256_statistics.json",
+        f"{data_dir}/filtered_llama3_ifd_1.0_inf_fla_780_256_statistics.json",
     ]
     n = len(data_path_list)
     

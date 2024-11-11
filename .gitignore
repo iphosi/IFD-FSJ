@@ -3,5 +3,4 @@ log
 PKU-SafeRLHF
 original.jsonl
 __pycache__
-test.py
-test_.py
+test*.py

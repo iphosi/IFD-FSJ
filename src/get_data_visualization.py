@@ -7,15 +7,15 @@ import numpy as np
 if __name__ == "__main__":
     # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/wo_chat_template"
     data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
+    # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/wo_chat_template"
+    # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
     data_path = f"{data_dir}/unfiltered_llama3_ifd.json"
-    data_output_path = f"{data_dir}/unfiltered_llama3_ifd_fillna.json"
+    data_output_path = f"{data_dir}/unfiltered_llama3_ifd_dropna.json"
     fig_output_path = f"{data_dir}/unfiltered_llama3_ifd.png"
 
     df = pd.read_json(data_path)
-
-    for column in df.select_dtypes(include=[np.number]).columns:
-        max_value = 10000000000
-        df[column] = df[column].fillna(max_value)
+    
+    df.dropna(inplace=True)
         
     df.to_json(
         data_output_path,
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     )
 
     bins = [0, 0.2, 0.4, 0.6, 0.8, 1.0, float("inf")]
-    labels = ["0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1.0", "1.0-inf"]
+    labels = ["0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1.0", "1.0+"]
 
     df["binned"] = pd.cut(df["ifd_ppl"], bins=bins, labels=labels, right=False)
     freq_counts = df["binned"].value_counts().sort_index()

@@ -14,14 +14,14 @@ if __name__ == "__main__":
     
     dataset_name = "filtered"
     
-    ext = "ifd_0.0_0.4_fla_573_256"
+    ext = "ifd_1.0_inf_fla_780_256"
     # ext = "ifd"
     data_path = f"{data_dir}/{dataset_name}_{model_type}_{ext}.json"
     output_path = f"{data_dir}/{dataset_name}_{model_type}_{ext}_statistics.json"
     
     df = pd.read_json(data_path)
     
-    num_nans = sum((df["ifd_ppl"].isnull()) | (df["ifd_ppl"] == 10000000000))
+    num_nans = sum(df["ifd_ppl"].isnull())
     df.dropna(inplace=True)
         
     summary_dict = {

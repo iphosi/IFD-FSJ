@@ -11,8 +11,8 @@ import pandas as pd
 
 
 if __name__ == "__main__":
-    data_path = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0/filtered_llama2_ifd_1.0_inf_fla_1484_256.json"
-    output_path = f"IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0/filtered_llama2_ifd_1.0_inf_fla_1484_256_instruction_embed_arr.npy"
+    data_path = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0/filtered_llama3_ifd_1.0_inf_fla_780_256.json"
+    output_path = f"{os.path.splitext(data_path)[0]}_instruction_embed_arr.npy"
     
     df = pd.read_json(data_path)
     target_text_list = df["instruction"].tolist()
