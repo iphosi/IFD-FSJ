@@ -111,9 +111,10 @@ def llm_based_evaluation(instructions, responses, model, tokenizer, sampling_par
 
 
 # demo_version_list = ["demo_v1", "demo_v2", "demo_v3", "demo_4"]
-demo_version_list = ["demo_v4"]
+demo_version_list = ["demo_v9"]
 num_shots_list = [i for i in range(1, 9)]
 num_responses_per_instruction = 4
+fsj_mode = "random"
 
 eval_model_path = "IFD-FSJ/models/Llama-Guard-3-8B"
 
@@ -152,7 +153,7 @@ else:
     sampling_params = None
 
 for demo_version in demo_version_list:
-    data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors/w_adv_prompt/{demo_version}"
+    data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors/{fsj_mode}/w_adv_prompt/{demo_version}"
     print("=" * 100)
     
     for num_shots in num_shots_list:

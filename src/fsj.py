@@ -12,6 +12,7 @@ from vllm.lora.request import LoRARequest
 
 import json
 import pandas as pd
+from collections import deque
 
 from tqdm import tqdm
 
@@ -21,7 +22,7 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
     
-    parser.add_argument("--mode", type=str, default="random", choices=["random", "ifd_greedy"])
+    parser.add_argument("--fsj_mode", type=str, default="random", choices=["random", "ifd_rejection"])
     parser.add_argument("--do_generation", action="store_true")
     
     parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors")
@@ -55,14 +56,22 @@ def parse_args():
     return args
 
 
-def random_demo_selection(
+def get_ifd_drop(instruction, response):
+    pass
+
+
+def demo_selection(
     num_shots,
     sim_threshold,
     max_num_attempts,
     instruction_embed_arr,
-    demo_instruction_embed_arr
+    demo_instruction_embed_arr,
+    demo_ifd_list,
+    fsj_mode
 ):
     shot_list = []
+    
+    in_context_ifd_arr = [[0] * num_shots for _ in range(num_shots)]
     
     for i in tqdm(range(instruction_embed_arr.shape[0])):
         selected_idx_list = []
@@ -107,9 +116,14 @@ def random_demo_selection(
                         break
                 
                 if all(sim_flag_list):
-                    selected = True
-                    selected_idx_list.append(cand_idx)
-                    break
+                    if fsj_mode == "random" or not selected_idx_list:
+                        selected = True
+                        selected_idx_list.append(cand_idx)
+                        break
+                    elif fsj_mode == "ifd_rejection":
+                        cand_ifd = demo_ifd_list[cand_idx]
+                    else:
+                        raise NotImplementedError
                 else:
                     num_attempts += 1
                     
@@ -118,12 +132,6 @@ def random_demo_selection(
         shot_list.append(selected_idx_list)
         
     return shot_list
-
-
-def ifd_greedy_demo_selection(
-    
-):
-    pass
 
 
 def fsj(
@@ -195,7 +203,7 @@ def main():
     args = parse_args()
     print(args)
     
-    output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.mode}"
+    output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.fsj_mode}"
     
     if args.use_adv_prompt:
         output_dir = f"{output_dir}/w_adv_prompt/{args.demo_version}"
@@ -218,6 +226,7 @@ def main():
     
     demo_instruction_list = demo_df["instruction"].tolist()
     demo_response_list = demo_df["output"].tolist()
+    demo_ifd_list = demo_df["ifd_ppl"].tolist()
     demo_instruction_embed_arr = np.load(args.demo_embed_path)
     
     if os.path.exists(demo_output_path):
@@ -228,12 +237,14 @@ def main():
         print("=" * 100)
         print("Select demonstrations.")
 
-        shot_list = random_demo_selection(
+        shot_list = demo_selection(
             num_shots=args.num_shots,
             sim_threshold=args.sim_threshold,
             max_num_attempts=args.max_num_attempts,
             instruction_embed_arr=instruction_embed_arr,
-            demo_instruction_embed_arr=demo_instruction_embed_arr
+            demo_instruction_embed_arr=demo_instruction_embed_arr,
+            demo_ifd_list=demo_ifd_list,
+            fsj_mode=args.fsj_mode
         )
         
         if args.num_shots != 0:
@@ -250,7 +261,7 @@ def main():
                 indent=4
             )
         
-    if args.do_generation:
+    if args.do_generation and not os.path.exists(generation_output_path):
         print("=" * 100)
         print("Do few-shot jailbreaking.")
         device_list = os.environ["CUDA_VISIBLE_DEVICES"].split(",")

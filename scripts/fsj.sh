@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=6,7,8,9
+export CUDA_VISIBLE_DEVICES=0,1,2,3
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 
 
@@ -7,13 +7,13 @@ export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 MODEL_NAME="Llama-2-7b-chat-hf"
 MODEL_PATH="IFD-FSJ/models/Llama-2-7b-chat-hf"
 
-# DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
-DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
+DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
+# DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
 
 # demo_version_choices=(demo_v1 demo_v2 demo_v3 demo_v4)
 # demo_version_choices=(demo_v6 demo_v7 demo_v8 demo_v9)
 # demo_version_choices=(demo_v0)
-demo_version_choices=(demo_v4)
+demo_version_choices=(demo_v9)
 
 declare -A demo_path_dict
 declare -A demo_embed_path_dict
@@ -66,6 +66,8 @@ do
         echo ${demo_embed_path_dict[${demo_version}]}
         echo ${num_shots}
         python IFD-FSJ/src/fsj.py \
+            --fsj_mode "random" \
+            --do_generation \
             --benchmark_name "AdvBench/harmful_behaviors" \
             --benchmark_path "IFD-FSJ/datasets/benchmarks/AdvBench/harmful_behaviors.json" \
             --benchmark_embed_path "IFD-FSJ/datasets/benchmarks/AdvBench/instruction_embed_arr.npy" \
@@ -84,8 +86,8 @@ do
             --temperature 1.0 \
             --top_p 1.0 \
             --max_tokens 100 \
-            > IFD-FSJ/log/log_4.out 2>&1 &
+            > IFD-FSJ/log/log_0.out 2>&1 &
 
-        sleep 7m
+        sleep 8m
     done
 done

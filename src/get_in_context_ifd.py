@@ -1,9 +1,10 @@
 import os
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "8,9"
+os.environ["CUDA_VISIBLE_DEVICES"] = "8,9"
 
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from utils import get_perplexity_and_embedding_whole_text, get_perplexity_and_embedding_part_text
 
 from statistics import mean
 
@@ -11,7 +12,6 @@ import pandas as pd
 import json
 
 from tqdm import tqdm
-
 
 import argparse
 
@@ -25,53 +25,13 @@ def parse_args():
     parser.add_argument("--demo_version", type=str, default="demo_v0")
     parser.add_argument("--demo_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0/filtered_llama2_ifd_0.0_0.4_fla_577_256.json")
     
-    parser.add_argument("--data_dir", type=str, default="IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors/w_adv_prompt")
-    parser.add_argument("--num_shots", type=int, default=3)
+    parser.add_argument("--data_dir", type=str, default="IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors/random/w_adv_prompt")
+    parser.add_argument("--num_shots", type=int, default=2)
     parser.add_argument("--num_responses_per_instruction", type=int, default=4)
 
     args = parser.parse_args()
     
     return args
-
-
-def get_perplexity_and_embedding_whole_text(tokenizer, model, text, max_length):
-
-    try:
-        input_ids = tokenizer.encode(text, return_tensors="pt", truncation=True, max_length=max_length).to(device)
-
-        with torch.no_grad(): 
-            outputs = model(input_ids, labels=input_ids.contiguous())
-        loss = outputs.loss
-        perplexity = torch.exp(loss)
-
-        return perplexity.to('cpu').item(), loss.to('cpu').item()
-
-    except:
-        return 0, 0
-
-
-def get_perplexity_and_embedding_part_text(tokenizer, model, text, target_span, max_length):
-
-    try:
-        input_ids = tokenizer.encode(text, return_tensors="pt", truncation=True, max_length=max_length).to(device)
-
-        start_index = text.rfind(target_span)
-        start_token = len(tokenizer.encode(text[:start_index]))
-        end_token = input_ids.shape[1]
-
-        labels = input_ids.clone()
-        labels[0, :start_token] = -100
-
-        with torch.no_grad():
-            outputs = model(input_ids, labels=labels)
-
-        loss = outputs.loss
-        perplexity = torch.exp(loss)
-
-        return perplexity.to('cpu').item(), loss.to('cpu').item()
-    
-    except:
-        return 0, 0
 
 
 def get_in_context_ifd(tokenizer, model, max_length, instruction_list, response_list):
@@ -85,12 +45,12 @@ def get_in_context_ifd(tokenizer, model, max_length, instruction_list, response_
             ]
         )
         
-    in_context_ifd_matrix = [[0] * len(instruction_list) for _ in range(len(instruction_list))]
+    in_context_ifd_arr = [[0] * len(instruction_list) for _ in range(len(instruction_list))]
         
     for start in range(len(instruction_list)):
         for end in range(start, len(instruction_list)):
             conversation = [{"role": "system", "content": ""}] + conversation_list[2 * start:2 * (end + 1)]
-            in_context_ifd_matrix[start][end] = conversation
+            in_context_ifd_arr[start][end] = conversation
             whole_text = tokenizer.apply_chat_template(
                 conversation,
                 tokenize=False,
@@ -111,9 +71,9 @@ def get_in_context_ifd(tokenizer, model, max_length, instruction_list, response_
 
             in_context_ifd = ppl_out_condition / ppl_out_alone
             
-            in_context_ifd_matrix[start][end] = in_context_ifd
+            in_context_ifd_arr[start][end] = in_context_ifd
             
-    return in_context_ifd_matrix
+    return in_context_ifd_arr
 
 
 def main():
@@ -123,8 +83,8 @@ def main():
     gen_path = f"{args.data_dir}/{args.demo_version}/generation_s{args.num_shots}_r{args.num_responses_per_instruction}.json"
     output_path = f"{args.data_dir}/{args.demo_version}/in_context_ifd_s{args.num_shots}_r{args.num_responses_per_instruction}.jsonl"
     
-    if os.path.exists(output_path):
-        exit()
+    # if os.path.exists(output_path):
+    #     exit()
     
     demo_df = pd.read_json(args.demo_path)
     gen_df = pd.read_json(gen_path)
@@ -145,7 +105,7 @@ def main():
             {"role": "system", "content": ""},
         ]
 
-        in_context_ifd_matrix = get_in_context_ifd(
+        in_context_ifd_arr = get_in_context_ifd(
             tokenizer,
             model,
             args.max_length,
@@ -156,7 +116,7 @@ def main():
         output_dict = {
             "demo_idx": demo_idx_list,
             "orig_ifd": demo_ifd_list,
-            "in_context_ifd": in_context_ifd_matrix
+            "in_context_ifd": in_context_ifd_arr
         }
         
         with open(output_path, "a") as f:

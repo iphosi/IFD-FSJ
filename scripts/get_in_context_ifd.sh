@@ -5,7 +5,7 @@ export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 MODEL_NAME="Llama-2-7b-chat-hf"
 MODEL_PATH="IFD-FSJ/models/Llama-2-7b-chat-hf"
 
-DATA_DIR="IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors/w_adv_prompt"
+DATA_DIR="IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors/random/w_adv_prompt"
 DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
 
 # demo_version_choices=(demo_v0 demo_v1 demo_v2 demo_v3 demo_v4)
