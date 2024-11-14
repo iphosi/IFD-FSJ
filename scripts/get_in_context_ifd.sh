@@ -1,15 +1,17 @@
-export CUDA_VISIBLE_DEVICES=0,1
+export CUDA_VISIBLE_DEVICES=8,9
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 
 
 MODEL_NAME="Llama-2-7b-chat-hf"
 MODEL_PATH="IFD-FSJ/models/Llama-2-7b-chat-hf"
 
-DATA_DIR="IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors/random/w_adv_prompt"
+DEMO_DATA_DIR="IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors/random/demonstrations"
 DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
 
+ADV_PROMPT_PATH="IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0/harmful_behaviors_llama2_ifd.json"
+
 # demo_version_choices=(demo_v0 demo_v1 demo_v2 demo_v3 demo_v4)
-demo_version_choices=(demo_v2)
+demo_version_choices=(demo_v0)
 
 declare -A demo_path_dict
 demo_path_dict=(
@@ -26,22 +28,23 @@ demo_path_dict=(
 )
 
 # num_shots_choices=(2 3 4 5 6 7 8)
-num_shots_choices=(8)
+num_shots_choices=(4)
 
 declare -A time_cost_dict
 time_cost_dict=(
-    [2]=5
+    [1]=5
+    [2]=10
     [3]=15
-    [4]=25
-    [5]=35
-    [6]=45
-    [7]=55
-    [8]=65
+    [4]=50
+    [5]=60
+    [6]=70
+    [7]=80
+    [8]=90
 )
 
-for demo_version in "${demo_version_choices[@]}";
+for num_shots in "${num_shots_choices[@]}";
 do
-    for num_shots in "${num_shots_choices[@]}";
+    for demo_version in "${demo_version_choices[@]}";
     do
         echo ${demo_version}
         echo ${demo_path_dict[${demo_version}]}
@@ -51,9 +54,11 @@ do
             --max_length 4096 \
             --demo_version ${demo_version} \
             --demo_path ${demo_path_dict[${demo_version}]} \
-            --data_dir ${DATA_DIR} \
+            --demo_data_dir ${DEMO_DATA_DIR} \
             --num_shots ${num_shots} \
             --num_responses_per_instruction 4 \
+            --adv_prompt_path ${ADV_PROMPT_PATH} \
+            --compute_adv_prompt_ifd \
             > IFD-FSJ/log/log_4.out 2>&1 &
 
         sleep ${time_cost_dict[${num_shots}]}m

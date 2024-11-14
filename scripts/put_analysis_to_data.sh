@@ -1,7 +1,7 @@
-MODEL_TYPE="llama3"
-# MODEL_TYPE="llama2"
-DATA_DIR="IFD-FSJ/datasets/demonstrations/I-FSJ/no_sep"
-DATASET_NAME="mistral_demonstration_list_official"
+# MODEL_TYPE="llama3"
+MODEL_TYPE="llama2"
+DATA_DIR="IFD-FSJ/datasets/benchmarks/AdvBench"
+DATASET_NAME="harmful_behaviors"
 # OUTPUT_DIR="${DATA_DIR}/wo_chat_template"
 OUTPUT_DIR="${DATA_DIR}/w_chat_template/sys_msg_v0"
 
