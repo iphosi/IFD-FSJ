@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=0,1,2,3
+export CUDA_VISIBLE_DEVICES=8,9
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 
 
@@ -7,13 +7,13 @@ export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 MODEL_NAME="Llama-2-7b-chat-hf"
 MODEL_PATH="IFD-FSJ/models/Llama-2-7b-chat-hf"
 
-DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
-# DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
+# DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
+DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
 
 # demo_version_choices=(demo_v1 demo_v2 demo_v3 demo_v4)
 # demo_version_choices=(demo_v6 demo_v7 demo_v8 demo_v9)
-# demo_version_choices=(demo_v0)
-demo_version_choices=(demo_v9)
+demo_version_choices=(demo_v3)
+# demo_version_choices=(demo_v9)
 
 declare -A demo_path_dict
 declare -A demo_embed_path_dict
@@ -54,24 +54,23 @@ demo_embed_path_dict=(
     [demo_v9]="${DEMO_DIR}/filtered_llama2_ifd_1.0_inf_fla_1471_256_instruction_embed_arr.npy"
 )
 
-num_shots_choices=(1 2 3 4 5 6 7 8)
-# num_shots_choices=(8)
+# num_shots_choices=(1 2 3 4 5 6 7 8)
+num_shots_choices=(4)
 
 for demo_version in "${demo_version_choices[@]}";
 do
     for num_shots in "${num_shots_choices[@]}";
     do
-        echo ${demo_version}
-        echo ${demo_path_dict[${demo_version}]}
-        echo ${demo_embed_path_dict[${demo_version}]}
-        echo ${num_shots}
+        echo "Demo version: ${demo_version}"
+        echo "Demo path: ${demo_path_dict[${demo_version}]}"
+        echo "Num shots: ${num_shots}"
         python IFD-FSJ/src/fsj.py \
-            --fsj_mode "random" \
-            --do_generation \
-            --benchmark_name "AdvBench/harmful_behaviors" \
-            --benchmark_path "IFD-FSJ/datasets/benchmarks/AdvBench/harmful_behaviors.json" \
-            --benchmark_embed_path "IFD-FSJ/datasets/benchmarks/AdvBench/instruction_embed_arr.npy" \
+            --fsj_mode "ifd_rejection" \
+            --compute_adv_prompt_ifd \
             --use_adv_prompt \
+            --benchmark_name "AdvBench/harmful_behaviors" \
+            --benchmark_path "IFD-FSJ/datasets/benchmarks/AdvBench//w_chat_template/sys_msg_v0/harmful_behaviors_llama2_ifd.json" \
+            --benchmark_embed_path "IFD-FSJ/datasets/benchmarks/AdvBench/instruction_embed_arr.npy" \
             --demo_version ${demo_version} \
             --demo_path ${demo_path_dict[${demo_version}]} \
             --demo_embed_path ${demo_embed_path_dict[${demo_version}]} \
@@ -81,12 +80,12 @@ do
             --max_length 4096 \
             --num_shots ${num_shots} \
             --sim_threshold 0.5 \
-            --max_num_attempts 20 \
+            --max_num_attempts 8 \
             --num_return_sequences 4 \
             --temperature 1.0 \
             --top_p 1.0 \
             --max_tokens 100 \
-            > IFD-FSJ/log/log_0.out 2>&1 &
+            > IFD-FSJ/log/log_6.out 2>&1 &
 
         sleep 8m
     done

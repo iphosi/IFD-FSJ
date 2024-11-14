@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "4,5"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "4,5"
 
 import torch
 import numpy as np
@@ -26,13 +26,13 @@ def parse_args():
     parser = argparse.ArgumentParser()
     
     parser.add_argument("--fsj_mode", type=str, default="ifd_rejection", choices=["random", "ifd_rejection"])
-    parser.add_argument("--compute_adv_prompt_ifd", action="store_false")
+    parser.add_argument("--compute_adv_prompt_ifd", action="store_true")
     parser.add_argument("--do_generation", action="store_true")
+    parser.add_argument("--use_adv_prompt", action="store_true")
     
     parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors")
     parser.add_argument("--benchmark_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench//w_chat_template/sys_msg_v0/harmful_behaviors_llama2_ifd.json")
     parser.add_argument("--benchmark_embed_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/instruction_embed_arr.npy")
-    parser.add_argument("--use_adv_prompt", action="store_true")
     
     parser.add_argument("--demo_version", type=str, default="demo_v3")
     parser.add_argument("--demo_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0/filtered_llama2_ifd_0.8_1.0_fla_8642_256.json")
@@ -44,9 +44,9 @@ def parse_args():
     parser.add_argument("--model_path", type=str, default="IFD-FSJ/models/Llama-2-7b-chat-hf")
     parser.add_argument("--max_length", type=int, default=4096)
     
-    parser.add_argument("--num_shots", type=int, default=2)
+    parser.add_argument("--num_shots", type=int, default=4)
     parser.add_argument("--sim_threshold", type=float, default=0.5)
-    parser.add_argument("--max_num_attempts", type=int, default=20)
+    parser.add_argument("--max_num_attempts", type=int, default=8)
     
     parser.add_argument("--num_return_sequences", type=int, default=4)
     parser.add_argument("--temperature", type=float, default=1.0)
@@ -88,11 +88,14 @@ def ifd_rejection_strategy(
         top_conversation_ifd=cand_ifd
     )
     row = [0] * (len(in_context_ifd_arr) - len(row)) + row
-    in_context_ifd_arr[shot_idx] = row
     
     if shot_idx < len(in_context_ifd_arr) - 1:
-        ifd_drop_arr = np.array(in_context_ifd_arr[shot_idx + 1]) - np.array(in_context_ifd_arr[shot_idx])
+        ifd_drop_arr = np.array(in_context_ifd_arr[shot_idx + 1]) - np.array(row)
         ifd_drop_flag = (ifd_drop_arr[shot_idx + 1:] > 0).all()
+        
+        if ifd_drop_flag:
+            in_context_ifd_arr[shot_idx] = row
+            
         return ifd_drop_flag
     else:
         return True
@@ -172,12 +175,12 @@ def demo_selection(
         for j in range(num_shots):
             num_attempts = 0
             selected = False
+            shot_idx = num_shots - j - 1
 
             while not selected and num_attempts < max_num_attempts:
                 cand_idx = np.random.randint(demo_instruction_embed_arr.shape[0])
                 
                 if cand_idx in selected_idx_list:
-                    num_attempts += 1
                     continue
                 
                 sim_flag = similarity_strategy(
@@ -192,8 +195,6 @@ def demo_selection(
                     if fsj_mode == "random":
                         selected = True
                     elif fsj_mode == "ifd_rejection":
-                        shot_idx = num_shots - j - 1
-                        
                         selected = ifd_rejection_strategy(
                             tokenizer=tokenizer,
                             model=model,
@@ -221,7 +222,16 @@ def demo_selection(
 
                 num_attempts += 1
                     
-        assert len(selected_idx_list) == num_shots
+        if len(selected_idx_list) < num_shots:
+            print("Max number of attempts is reached.")
+            print(f"Actual number of selected demos: {len(selected_idx_list)}")
+            
+            if compute_adv_prompt_ifd:
+                non_zero_idx = len(in_context_ifd_arr) - len(selected_idx_list) - 1
+            else:
+                non_zero_idx = len(in_context_ifd_arr) - len(selected_idx_list)
+                
+            in_context_ifd_arr = np.array(in_context_ifd_arr)[non_zero_idx:, non_zero_idx:].tolist()
         
         shot_list.append(list(selected_idx_list))
         
@@ -340,12 +350,9 @@ def main():
         tokenizer = AutoTokenizer.from_pretrained(args.model_path)
         
         if args.compute_adv_prompt_ifd:
-            in_context_ifd_path = f"{demo_output_dir}/in_context_ifd_adv_s{args.num_shots}_r{args.num_return_sequences}.json"
+            in_context_ifd_path = f"{demo_output_dir}/in_context_ifd_adv_s{args.num_shots}_r{args.num_return_sequences}.jsonl"
         else:
-            in_context_ifd_path = f"{demo_output_dir}/in_context_ifd_s{args.num_shots}_r{args.num_return_sequences}.json"
-    
-    
-    
+            in_context_ifd_path = f"{demo_output_dir}/in_context_ifd_s{args.num_shots}_r{args.num_return_sequences}.jsonl"
     
     df = pd.read_json(args.benchmark_path)
     demo_df = pd.read_json(args.demo_path)
@@ -456,7 +463,7 @@ def main():
             indent=4
         )
     
-    with open(f"{output_dir}/demo_path.json", "w") as f:
+    with open(f"{demo_output_dir}/demo_path.json", "w") as f:
         json.dump({"demo_path": args.demo_path}, f, indent=4)
 
 

@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "6,7,8,9"
 
 import pandas as pd
 import json
@@ -111,10 +111,10 @@ def llm_based_evaluation(instructions, responses, model, tokenizer, sampling_par
 
 
 # demo_version_list = ["demo_v1", "demo_v2", "demo_v3", "demo_4"]
-demo_version_list = ["demo_v9"]
-num_shots_list = [i for i in range(1, 9)]
+demo_version_list = ["demo_v3"]
+num_shots_list = [i for i in range(2, 3)]
 num_responses_per_instruction = 4
-fsj_mode = "random"
+fsj_mode = "ifd_rejection_adv"
 
 eval_model_path = "IFD-FSJ/models/Llama-Guard-3-8B"
 
