@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=8,9
+export CUDA_VISIBLE_DEVICES=6,7
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 
 
@@ -10,8 +10,8 @@ DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
 
 ADV_PROMPT_PATH="IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0/harmful_behaviors_llama2_ifd.json"
 
-# demo_version_choices=(demo_v0 demo_v1 demo_v2 demo_v3 demo_v4)
-demo_version_choices=(demo_v0)
+demo_version_choices=(demo_v0 demo_v1 demo_v2 demo_v3 demo_v4)
+# demo_version_choices=(demo_v4)
 
 declare -A demo_path_dict
 demo_path_dict=(
@@ -28,27 +28,27 @@ demo_path_dict=(
 )
 
 # num_shots_choices=(2 3 4 5 6 7 8)
-num_shots_choices=(4)
+num_shots_choices=(4 5 6 7 8)
 
 declare -A time_cost_dict
 time_cost_dict=(
-    [1]=5
-    [2]=10
-    [3]=15
-    [4]=50
-    [5]=60
-    [6]=70
-    [7]=80
-    [8]=90
+    [1]=2
+    [2]=4
+    [3]=6
+    [4]=8
+    [5]=10
+    [6]=12
+    [7]=14
+    [8]=16
 )
 
 for num_shots in "${num_shots_choices[@]}";
 do
     for demo_version in "${demo_version_choices[@]}";
     do
-        echo ${demo_version}
-        echo ${demo_path_dict[${demo_version}]}
-        echo ${num_shots}
+        echo "Demo version: ${demo_version}"
+        echo "Demo path: ${demo_path_dict[${demo_version}]}"
+        echo "Num shots: ${num_shots}"
         python IFD-FSJ/src/get_in_context_ifd.py \
             --model_path ${MODEL_PATH} \
             --max_length 4096 \

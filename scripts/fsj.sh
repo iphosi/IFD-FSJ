@@ -1,5 +1,6 @@
-export CUDA_VISIBLE_DEVICES=8,9
+export CUDA_VISIBLE_DEVICES=6,7,8,9
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
+export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
 
 # MODEL_NAME="Meta-Llama-3-8B-Instruct"
@@ -12,7 +13,7 @@ DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
 
 # demo_version_choices=(demo_v1 demo_v2 demo_v3 demo_v4)
 # demo_version_choices=(demo_v6 demo_v7 demo_v8 demo_v9)
-demo_version_choices=(demo_v3)
+demo_version_choices=(demo_v0)
 # demo_version_choices=(demo_v9)
 
 declare -A demo_path_dict
@@ -55,19 +56,19 @@ demo_embed_path_dict=(
 )
 
 # num_shots_choices=(1 2 3 4 5 6 7 8)
-num_shots_choices=(4)
+num_shots_choices=(2 4 6 8)
 
-for demo_version in "${demo_version_choices[@]}";
+for num_shots in "${num_shots_choices[@]}";
 do
-    for num_shots in "${num_shots_choices[@]}";
+    for demo_version in "${demo_version_choices[@]}";
     do
         echo "Demo version: ${demo_version}"
         echo "Demo path: ${demo_path_dict[${demo_version}]}"
         echo "Num shots: ${num_shots}"
         python IFD-FSJ/src/fsj.py \
-            --fsj_mode "ifd_rejection" \
-            --compute_adv_prompt_ifd \
+            --fsj_mode "random" \
             --use_adv_prompt \
+            --do_generation \
             --benchmark_name "AdvBench/harmful_behaviors" \
             --benchmark_path "IFD-FSJ/datasets/benchmarks/AdvBench//w_chat_template/sys_msg_v0/harmful_behaviors_llama2_ifd.json" \
             --benchmark_embed_path "IFD-FSJ/datasets/benchmarks/AdvBench/instruction_embed_arr.npy" \
@@ -81,7 +82,7 @@ do
             --num_shots ${num_shots} \
             --sim_threshold 0.5 \
             --max_num_attempts 8 \
-            --num_return_sequences 4 \
+            --num_return_sequences 8 \
             --temperature 1.0 \
             --top_p 1.0 \
             --max_tokens 100 \

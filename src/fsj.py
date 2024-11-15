@@ -1,6 +1,6 @@
 import os
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "4,5"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "8,9"
 
 import torch
 import numpy as np
@@ -44,7 +44,7 @@ def parse_args():
     parser.add_argument("--model_path", type=str, default="IFD-FSJ/models/Llama-2-7b-chat-hf")
     parser.add_argument("--max_length", type=int, default=4096)
     
-    parser.add_argument("--num_shots", type=int, default=4)
+    parser.add_argument("--num_shots", type=int, default=2)
     parser.add_argument("--sim_threshold", type=float, default=0.5)
     parser.add_argument("--max_num_attempts", type=int, default=8)
     
@@ -58,10 +58,6 @@ def parse_args():
     args = parser.parse_args()
     
     return args
-
-
-def get_ifd_drop(instruction, response):
-    pass
 
 
 def ifd_rejection_strategy(
@@ -98,6 +94,7 @@ def ifd_rejection_strategy(
             
         return ifd_drop_flag
     else:
+        in_context_ifd_arr[shot_idx] = row
         return True
     
         
@@ -326,7 +323,7 @@ def main():
         output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.fsj_mode}"
         
     demo_output_dir = f"{output_dir}/demonstrations/{args.demo_version}"
-    demo_output_path = f"{demo_output_dir}/demo_s{args.num_shots}_r{args.num_return_sequences}.json"
+    demo_output_path = f"{demo_output_dir}/demo_s{args.num_shots}.json"
     
     if args.use_adv_prompt:
         gen_output_dir = f"{output_dir}/w_adv_prompt/{args.demo_version}"
@@ -353,6 +350,11 @@ def main():
             in_context_ifd_path = f"{demo_output_dir}/in_context_ifd_adv_s{args.num_shots}_r{args.num_return_sequences}.jsonl"
         else:
             in_context_ifd_path = f"{demo_output_dir}/in_context_ifd_s{args.num_shots}_r{args.num_return_sequences}.jsonl"
+    
+    print("=" * 100)
+    print(f"Demonstration output path:\n{demo_output_path}")
+    print(f"Generation output path:\n{gen_output_path}")
+    print(f"In-context ifd output path:\n{in_context_ifd_path}")
     
     df = pd.read_json(args.benchmark_path)
     demo_df = pd.read_json(args.demo_path)
@@ -432,7 +434,7 @@ def main():
         gen_model = LLM(
             model=args.model_path,
             max_model_len=args.max_length,
-            gpu_memory_utilization=0.9,
+            gpu_memory_utilization=0.8,
             tensor_parallel_size=len(device_list),
             dtype="auto",
             swap_space=8

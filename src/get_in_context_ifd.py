@@ -159,8 +159,10 @@ def main():
         
     if os.path.exists(in_context_ifd_path):
         in_context_ifd_df = pd.read_json(in_context_ifd_path, lines=True)
+        print("Load pre-computed IFD.")
     else:
         in_context_ifd_df = None
+        print("Compute IFD from scratch.")
     
     demo_df = pd.read_json(args.demo_path)
     demo_idx_df = pd.read_json(demo_idx_path)
@@ -180,7 +182,6 @@ def main():
         demo_ifd_list = demos["ifd_ppl"].tolist()
 
         if in_context_ifd_df is None:
-            print("Compute IFD from scratch.")
             if args.compute_adv_prompt_ifd:
                 demo_instruction_list.append(adv_prompt_df.iloc[sample_idx]["instruction"])
                 demo_response_list.append(adv_prompt_df.iloc[sample_idx]["adv_prompt"])
@@ -195,7 +196,6 @@ def main():
                 ifd_list=demo_ifd_list
             )
         else:
-            print("Load pre-computed IFD.")
             in_context_ifd_arr = in_context_ifd_df.iloc[sample_idx]["in_context_ifd"]
             
             history_conversation_list = []
@@ -232,6 +232,7 @@ def main():
         output_dict = {
             "demo_idx": demo_idx_list,
             "orig_ifd": demo_ifd_list,
+            "adv_prompt_ifd": adv_prompt_df.iloc[sample_idx]["ifd_ppl"],
             "in_context_ifd": in_context_ifd_arr
         }
         

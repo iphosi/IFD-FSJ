@@ -111,10 +111,10 @@ def llm_based_evaluation(instructions, responses, model, tokenizer, sampling_par
 
 
 # demo_version_list = ["demo_v1", "demo_v2", "demo_v3", "demo_4"]
-demo_version_list = ["demo_v3"]
-num_shots_list = [i for i in range(2, 3)]
-num_responses_per_instruction = 4
-fsj_mode = "ifd_rejection_adv"
+demo_version_list = ["demo_v1"]
+num_shots_list = [i for i in range(2,9,2)]
+num_responses_per_instruction = 8
+fsj_mode = "random"
 
 eval_model_path = "IFD-FSJ/models/Llama-Guard-3-8B"
 
