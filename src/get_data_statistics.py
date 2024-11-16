@@ -4,18 +4,19 @@ import numpy as np
 
 
 if __name__ == "__main__":
-    model_type = "llama3"
-    # model_type = "llama2"
+    # model_type = "llama3"
+    model_type = "llama2"
     
     # data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ/no_sep/wo_chat_template"
     # data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ/no_sep/w_chat_template/sys_msg_v0"
-    data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
+    # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
     # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
+    data_dir = "IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0"
     
-    dataset_name = "filtered"
+    dataset_name = "harmful_behaviors"
     
-    ext = "ifd_1.0_inf_fla_780_256"
-    # ext = "ifd"
+    # ext = "ifd_1.0_inf_fla_780_256"
+    ext = "ifd"
     data_path = f"{data_dir}/{dataset_name}_{model_type}_{ext}.json"
     output_path = f"{data_dir}/{dataset_name}_{model_type}_{ext}_statistics.json"
     

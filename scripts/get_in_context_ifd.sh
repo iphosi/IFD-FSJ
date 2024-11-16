@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=6,7
+export CUDA_VISIBLE_DEVICES=4,5
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 
 
@@ -10,8 +10,8 @@ DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
 
 ADV_PROMPT_PATH="IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0/harmful_behaviors_llama2_ifd.json"
 
-demo_version_choices=(demo_v0 demo_v1 demo_v2 demo_v3 demo_v4)
-# demo_version_choices=(demo_v4)
+# demo_version_choices=(demo_v0 demo_v1 demo_v2 demo_v3 demo_v4)
+demo_version_choices=(demo_v1)
 
 declare -A demo_path_dict
 demo_path_dict=(
@@ -28,18 +28,18 @@ demo_path_dict=(
 )
 
 # num_shots_choices=(2 3 4 5 6 7 8)
-num_shots_choices=(4 5 6 7 8)
+num_shots_choices=(1)
 
 declare -A time_cost_dict
 time_cost_dict=(
-    [1]=2
-    [2]=4
-    [3]=6
-    [4]=8
-    [5]=10
-    [6]=12
-    [7]=14
-    [8]=16
+    [1]=4
+    [2]=6
+    [3]=8
+    [4]=10
+    [5]=12
+    [6]=14
+    [7]=16
+    [8]=18
 )
 
 for num_shots in "${num_shots_choices[@]}";
@@ -56,7 +56,6 @@ do
             --demo_path ${demo_path_dict[${demo_version}]} \
             --demo_data_dir ${DEMO_DATA_DIR} \
             --num_shots ${num_shots} \
-            --num_responses_per_instruction 4 \
             --adv_prompt_path ${ADV_PROMPT_PATH} \
             --compute_adv_prompt_ifd \
             > IFD-FSJ/log/log_4.out 2>&1 &

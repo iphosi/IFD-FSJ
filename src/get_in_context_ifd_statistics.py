@@ -5,11 +5,11 @@ import numpy as np
 
 
 if __name__ == "__main__":
-    fsj_mode = "random"
-    compute_adv_prompt_ifd = False
+    fsj_mode = "ifd_rejection_adv"
+    compute_adv_prompt_ifd = True
     data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors/{fsj_mode}/demonstrations"
-    demo_version = "demo_v0"
-    num_shots_list = [i for i in range(2, 9, 1)]
+    demo_version = "demo_v3"
+    num_shots_list = [i for i in range(2, 3, 1)]
 
     if compute_adv_prompt_ifd:
         output_path = f"{data_dir}/{demo_version}/in_context_ifd_adv_statistics.jsonl"

@@ -7,9 +7,6 @@ import numpy as np
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-from vllm import LLM, SamplingParams
-from vllm.lora.request import LoRARequest
-
 import json
 import pandas as pd
 from collections import deque
@@ -25,10 +22,8 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
     
-    parser.add_argument("--fsj_mode", type=str, default="ifd_rejection", choices=["random", "ifd_rejection"])
+    parser.add_argument("--selector_mode", type=str, default="random", choices=["random", "ifd_rejection"])
     parser.add_argument("--compute_adv_prompt_ifd", action="store_true")
-    parser.add_argument("--do_generation", action="store_true")
-    parser.add_argument("--use_adv_prompt", action="store_true")
     
     parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors")
     parser.add_argument("--benchmark_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench//w_chat_template/sys_msg_v0/harmful_behaviors_llama2_ifd.json")
@@ -46,18 +41,42 @@ def parse_args():
     
     parser.add_argument("--num_shots", type=int, default=2)
     parser.add_argument("--sim_threshold", type=float, default=0.5)
+    parser.add_argument("--ifd_drop_threshold", type=float, default=0.005)
     parser.add_argument("--max_num_attempts", type=int, default=8)
-    
-    parser.add_argument("--num_return_sequences", type=int, default=4)
-    parser.add_argument("--temperature", type=float, default=1.0)
-    parser.add_argument("--top_p", type=float, default=1.0)
-    parser.add_argument("--max_tokens", type=int, default=100)
     
     parser.add_argument("--system_message", type=str, default="")
     
     args = parser.parse_args()
     
     return args
+
+
+class DemoSelector:
+    def __init__(
+        self,
+        selector_mode,
+        num_shots,
+        sim_threshold,
+        max_num_attempts,
+        demo_instruction_embed_arr,
+        demo_instruction_list,
+        demo_response_list,
+        demo_ifd_list,
+        instruction_embed_arr,
+        instruction_list,
+        adv_prompt_list,
+        adv_prompt_ifd_list,
+        compute_adv_prompt_ifd=False,
+        in_context_ifd_path=None,
+        tokenizer=None,
+        model=None,
+        max_length=4096
+    ):
+        self.compute_adv_prompt_ifd = compute_adv_prompt_ifd
+        self.in_context_ifd_path = in_context_ifd_path
+        self.tokenizer = tokenizer
+        self.model = model
+        self.max_length = max_length
 
 
 def ifd_rejection_strategy(
@@ -69,7 +88,8 @@ def ifd_rejection_strategy(
     cand_instruction,
     cand_response,
     cand_ifd,
-    history_conversation_list
+    history_conversation_list,
+    ifd_drop_threshold
 ):
     top_conversation_list = [
         {"role": "user", "content": cand_instruction},
@@ -87,7 +107,7 @@ def ifd_rejection_strategy(
     
     if shot_idx < len(in_context_ifd_arr) - 1:
         ifd_drop_arr = np.array(in_context_ifd_arr[shot_idx + 1]) - np.array(row)
-        ifd_drop_flag = (ifd_drop_arr[shot_idx + 1:] > 0).all()
+        ifd_drop_flag = (ifd_drop_arr[shot_idx + 1:] > ifd_drop_threshold).all()
         
         if ifd_drop_flag:
             in_context_ifd_arr[shot_idx] = row
@@ -132,9 +152,10 @@ def similarity_strategy(
 
 
 def demo_selection(
-    fsj_mode,
+    selector_mode,
     num_shots,
     sim_threshold,
+    ifd_drop_threshold,
     max_num_attempts,
     demo_instruction_embed_arr,
     demo_instruction_list,
@@ -151,11 +172,14 @@ def demo_selection(
     max_length=4096
 ):
     shot_list = []
+    orig_ifd_drop_threshold = ifd_drop_threshold
+    assert orig_ifd_drop_threshold != 0
     
     for i in tqdm(range(len(instruction_list))):
         selected_idx_list = deque([])
         selected_ifd_list = deque([])
         history_conversation_list = deque([])
+        curr_ifd_drop_threshold = orig_ifd_drop_threshold
         
         if compute_adv_prompt_ifd:
             history_conversation_list.extend(
@@ -169,16 +193,22 @@ def demo_selection(
         else:
             in_context_ifd_arr = [[0] * num_shots for _ in range(num_shots)]
             
-        for j in range(num_shots):
+        j = 0
+            
+        while j < num_shots:
             num_attempts = 0
             selected = False
             shot_idx = num_shots - j - 1
+            
+            history = set()
 
             while not selected and num_attempts < max_num_attempts:
                 cand_idx = np.random.randint(demo_instruction_embed_arr.shape[0])
                 
-                if cand_idx in selected_idx_list:
+                if cand_idx in history:
                     continue
+                
+                history.add(cand_idx)
                 
                 sim_flag = similarity_strategy(
                     cand_idx=cand_idx,
@@ -189,9 +219,9 @@ def demo_selection(
                 )
                 
                 if sim_flag:
-                    if fsj_mode == "random":
+                    if selector_mode == "random":
                         selected = True
-                    elif fsj_mode == "ifd_rejection":
+                    elif selector_mode == "ifd_rejection":
                         selected = ifd_rejection_strategy(
                             tokenizer=tokenizer,
                             model=model,
@@ -201,35 +231,44 @@ def demo_selection(
                             cand_instruction=demo_instruction_list[cand_idx],
                             cand_response=demo_response_list[cand_idx],
                             cand_ifd=demo_ifd_list[cand_idx],
-                            history_conversation_list=history_conversation_list
+                            history_conversation_list=history_conversation_list,
+                            ifd_drop_threshold=curr_ifd_drop_threshold
                         )
                     else:
                         raise NotImplementedError
                     
                 if selected:
-                    selected_idx_list.appendleft(cand_idx)
-                    selected_ifd_list.appendleft(demo_ifd_list[cand_idx])
-                    history_conversation_list.appendleft(
-                        {"role": "assistant", "content": demo_response_list[cand_idx]}
-                    )
-                    history_conversation_list.appendleft(
-                        {"role": "user", "content": demo_instruction_list[cand_idx]}
-                    )
                     break
 
                 num_attempts += 1
-                    
-        if len(selected_idx_list) < num_shots:
-            print("Max number of attempts is reached.")
-            print(f"Actual number of selected demos: {len(selected_idx_list)}")
-            
-            if compute_adv_prompt_ifd:
-                non_zero_idx = len(in_context_ifd_arr) - len(selected_idx_list) - 1
-            else:
-                non_zero_idx = len(in_context_ifd_arr) - len(selected_idx_list)
                 
-            in_context_ifd_arr = np.array(in_context_ifd_arr)[non_zero_idx:, non_zero_idx:].tolist()
+            if selected:
+                selected_idx_list.appendleft(cand_idx)
+                selected_ifd_list.appendleft(demo_ifd_list[cand_idx])
+                history_conversation_list.appendleft(
+                    {"role": "assistant", "content": demo_response_list[cand_idx]}
+                )
+                history_conversation_list.appendleft(
+                    {"role": "user", "content": demo_instruction_list[cand_idx]}
+                )
+                j += 1
+            else:
+                curr_ifd_drop_threshold -= abs(orig_ifd_drop_threshold)
+                
+                if selected_idx_list:
+                    selected_idx_list.popleft()
+                    selected_ifd_list.popleft()
+                    history_conversation_list.popleft()
+                    history_conversation_list.popleft()
+                    j -= 1
+                
+                print("=" * 100)
+                print("Max number of attempts is reached.")
+                print("Relax the ifd drop constraint and restart.")
+                print(f"Current ifd drop threshold: {curr_ifd_drop_threshold}")
         
+        assert len(selected_idx_list) == num_shots
+
         shot_list.append(list(selected_idx_list))
         
         if in_context_ifd_path:
@@ -244,101 +283,24 @@ def demo_selection(
                 f.write(json.dumps(output_dict) + "\n")
         
     return shot_list
-
-
-def fsj(
-    tokenizer,
-    model,
-    sampling_params,
-    system_message,
-    instruction_list,
-    shot_list,
-    demo_instruction_list,
-    demo_response_list,
-    adv_prompt_list,
-    use_adv_prompt
-):
-    query_list = []
-    
-    for i in range(len(instruction_list)):
-        conversation_list = [
-            {"role": "system", "content": system_message},
-        ]
-
-        for demo_idx in shot_list[i]:
-            conversation_list.extend(
-                [
-                    {"role": "user", "content": demo_instruction_list[demo_idx]},
-                    {"role": "assistant", "content": demo_response_list[demo_idx]},
-                ]
-            )
-            
-        conversation_list.append(
-            {"role": "user", "content": instruction_list[i]}
-        )
-        
-        if use_adv_prompt and adv_prompt_list:
-            adv_prompt = adv_prompt_list[i]
-        else:
-            adv_prompt = ""
-            
-        query_list.append(
-            tokenizer.apply_chat_template(
-                conversation_list,
-                tokenize=False,
-                add_generation_prompt=True
-            ) + adv_prompt
-        )
-    
-    print("=" * 100)
-    print(query_list[0])
-    print("=" * 100)
-    
-    output_list = model.generate(
-        query_list,
-        sampling_params,
-    )
-    response_list = []
-    
-    for output in output_list:
-        response_list.append(
-            [
-                output.outputs[i].text
-                for i in range(sampling_params.n)
-            ]
-        )
-        
-    return response_list
     
 
 def main():
     args = parse_args()
     print(args)
     
-    device_list = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
-    
     if args.compute_adv_prompt_ifd:
-        output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.fsj_mode}_adv"
+        output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.selector_mode}_adv"
     else:
-        output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.fsj_mode}"
+        output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.selector_mode}"
         
     demo_output_dir = f"{output_dir}/demonstrations/{args.demo_version}"
     demo_output_path = f"{demo_output_dir}/demo_s{args.num_shots}.json"
     
-    if args.use_adv_prompt:
-        gen_output_dir = f"{output_dir}/w_adv_prompt/{args.demo_version}"
-    else:
-        gen_output_dir = f"{output_dir}/wo_adv_prompt/{args.demo_version}"
-    
-    gen_output_path = f"{gen_output_dir}/generation_s{args.num_shots}_r{args.num_return_sequences}.json"
-    
     if not os.path.exists(demo_output_dir):
         os.makedirs(demo_output_dir)
         
-    if not os.path.exists(gen_output_dir):
-        os.makedirs(gen_output_dir)
-        
-    if args.fsj_mode == "random":
+    if args.selector_mode == "random":
         tokenizer = None
         model = None
         in_context_ifd_path = None
@@ -347,13 +309,12 @@ def main():
         tokenizer = AutoTokenizer.from_pretrained(args.model_path)
         
         if args.compute_adv_prompt_ifd:
-            in_context_ifd_path = f"{demo_output_dir}/in_context_ifd_adv_s{args.num_shots}_r{args.num_return_sequences}.jsonl"
+            in_context_ifd_path = f"{demo_output_dir}/in_context_ifd_adv_s{args.num_shots}.jsonl"
         else:
-            in_context_ifd_path = f"{demo_output_dir}/in_context_ifd_s{args.num_shots}_r{args.num_return_sequences}.jsonl"
+            in_context_ifd_path = f"{demo_output_dir}/in_context_ifd_s{args.num_shots}.jsonl"
     
     print("=" * 100)
     print(f"Demonstration output path:\n{demo_output_path}")
-    print(f"Generation output path:\n{gen_output_path}")
     print(f"In-context ifd output path:\n{in_context_ifd_path}")
     
     df = pd.read_json(args.benchmark_path)
@@ -370,94 +331,37 @@ def main():
     demo_ifd_list = demo_df["ifd_ppl"].tolist()
     demo_instruction_embed_arr = np.load(args.demo_embed_path)
     
-    if os.path.exists(demo_output_path):
-        print("=" * 100)
-        print("Load demonstrations.")
-        shot_list = pd.read_json(demo_output_path)["demo_idx"].tolist()
-    else:
-        print("=" * 100)
-        print("Select demonstrations.")
+    print("=" * 100)
+    print("Select demonstrations.")
 
-        shot_list = demo_selection(
-            fsj_mode=args.fsj_mode,
-            num_shots=args.num_shots,
-            sim_threshold=args.sim_threshold,
-            max_num_attempts=args.max_num_attempts,
-            demo_instruction_embed_arr=demo_instruction_embed_arr,
-            demo_instruction_list=demo_instruction_list,
-            demo_response_list=demo_response_list,
-            demo_ifd_list=demo_ifd_list,
-            instruction_embed_arr=instruction_embed_arr,
-            instruction_list=instruction_list,
-            adv_prompt_list=adv_prompt_list,
-            adv_prompt_ifd_list=adv_prompt_ifd_list,
-            compute_adv_prompt_ifd=args.compute_adv_prompt_ifd,
-            in_context_ifd_path=in_context_ifd_path,
-            tokenizer=tokenizer,
-            model=model,
-            max_length=args.max_length
-        )
+    shot_list = demo_selection(
+        selector_mode=args.selector_mode,
+        num_shots=args.num_shots,
+        sim_threshold=args.sim_threshold,
+        ifd_drop_threshold=args.ifd_drop_threshold,
+        max_num_attempts=args.max_num_attempts,
+        demo_instruction_embed_arr=demo_instruction_embed_arr,
+        demo_instruction_list=demo_instruction_list,
+        demo_response_list=demo_response_list,
+        demo_ifd_list=demo_ifd_list,
+        instruction_embed_arr=instruction_embed_arr,
+        instruction_list=instruction_list,
+        adv_prompt_list=adv_prompt_list,
+        adv_prompt_ifd_list=adv_prompt_ifd_list,
+        compute_adv_prompt_ifd=args.compute_adv_prompt_ifd,
+        in_context_ifd_path=in_context_ifd_path,
+        tokenizer=tokenizer,
+        model=model,
+        max_length=args.max_length
+    )
+    
+    if args.num_shots > 0:
+        demo_output_dict = {"demo_idx": shot_list}
         
-        if args.num_shots != 0:
-            demo_output_dict = {"demo_idx": shot_list}
-            
-            demo_output_df = pd.DataFrame(demo_output_dict)
-            
-            demo_output_df.to_json(
-                demo_output_path,
-                mode="w",
-                lines=False,
-                force_ascii=False,
-                orient="records",
-                indent=4
-            )
+        demo_output_df = pd.DataFrame(demo_output_dict)
         
-    if args.do_generation and not os.path.exists(gen_output_path):
-        print("=" * 100)
-        print("Do few-shot jailbreaking.")
-        del tokenizer, model
-        
-        gen_tokenizer = AutoTokenizer.from_pretrained(
-            args.model_path,
-            model_max_length=args.max_length,
-            padding_side="left",
-            truncation_side="left",
-        )
-        
-        sampling_params = SamplingParams(
-            n=args.num_return_sequences,
-            temperature=args.temperature,
-            top_p=args.top_p,
-            max_tokens=args.max_tokens
-        )
-            
-        gen_model = LLM(
-            model=args.model_path,
-            max_model_len=args.max_length,
-            gpu_memory_utilization=0.8,
-            tensor_parallel_size=len(device_list),
-            dtype="auto",
-            swap_space=8
-        )
-            
-        response_list = fsj(
-            tokenizer=gen_tokenizer,
-            model=gen_model,
-            sampling_params=sampling_params,
-            system_message=args.system_message,
-            instruction_list=instruction_list,
-            shot_list=shot_list,
-            demo_instruction_list=demo_instruction_list,
-            demo_response_list=demo_response_list,
-            adv_prompt_list=adv_prompt_list,
-            use_adv_prompt=args.use_adv_prompt
-        )
-        
-        df["model_response"] = response_list
-        df["demo_idx"] = shot_list
-        
-        df.to_json(
-            gen_output_path,
+        demo_output_df.to_json(
+            demo_output_path,
             mode="w",
             lines=False,
             force_ascii=False,

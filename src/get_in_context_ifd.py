@@ -30,8 +30,7 @@ def parse_args():
     parser.add_argument("--demo_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0/filtered_llama2_ifd_0.0_0.4_fla_577_256.json")
     
     parser.add_argument("--demo_data_dir", type=str, default="IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors/random/demonstrations")
-    parser.add_argument("--num_shots", type=int, default=3)
-    parser.add_argument("--num_responses_per_instruction", type=int, default=4)
+    parser.add_argument("--num_shots", type=int, default=4)
     
     parser.add_argument("--adv_prompt_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0/harmful_behaviors_llama2_ifd.json")
     parser.add_argument("--compute_adv_prompt_ifd", action="store_true")
@@ -141,10 +140,10 @@ def main():
     args = parse_args()
     print(args)
     
-    demo_idx_path = f"{args.demo_data_dir}/{args.demo_version}/demo_s{args.num_shots}_r{args.num_responses_per_instruction}.json"
+    demo_idx_path = f"{args.demo_data_dir}/{args.demo_version}/demo_s{args.num_shots}.json"
     
-    in_context_ifd_path = f"{args.demo_data_dir}/{args.demo_version}/in_context_ifd_s{args.num_shots}_r{args.num_responses_per_instruction}.jsonl"
-    in_context_ifd_adv_path = f"{args.demo_data_dir}/{args.demo_version}/in_context_ifd_adv_s{args.num_shots}_r{args.num_responses_per_instruction}.jsonl"
+    in_context_ifd_path = f"{args.demo_data_dir}/{args.demo_version}/in_context_ifd_s{args.num_shots}.jsonl"
+    in_context_ifd_adv_path = f"{args.demo_data_dir}/{args.demo_version}/in_context_ifd_adv_s{args.num_shots}.jsonl"
     
     if args.compute_adv_prompt_ifd:
         output_path = in_context_ifd_adv_path
@@ -228,6 +227,9 @@ def main():
             )
             adv_prompt_ifd_col = np.array(adv_prompt_ifd_col).reshape(-1, 1)
             in_context_ifd_arr = np.hstack((in_context_ifd_arr, adv_prompt_ifd_col)).tolist()
+        
+        if args.compute_adv_prompt_ifd:
+            demo_ifd_list.pop()
         
         output_dict = {
             "demo_idx": demo_idx_list,
