@@ -8,7 +8,7 @@ if __name__ == "__main__":
     selector_mode = "random"
     compute_adv_prompt_ifd = True
     data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors_subset_50/{selector_mode}/demonstrations"
-    demo_version = "demo_v3"
+    demo_version = "demo_v4"
     num_shots_list = [i for i in range(2, 15, 2)]
 
     if compute_adv_prompt_ifd:

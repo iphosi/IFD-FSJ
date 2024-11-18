@@ -58,6 +58,8 @@ class DemoSelector:
         selector_mode,
         num_shots,
         sim_threshold,
+        ifd_drop_threshold,
+        relax_ratio,
         max_num_attempts,
         demo_instruction_embed_arr,
         demo_instruction_list,
@@ -73,6 +75,11 @@ class DemoSelector:
         model=None,
         max_length=4096
     ):
+        self.selector_mode = selector_mode
+        self.num_shots = num_shots
+        
+        
+        
         self.compute_adv_prompt_ifd = compute_adv_prompt_ifd
         self.in_context_ifd_path = in_context_ifd_path
         self.tokenizer = tokenizer
@@ -256,13 +263,6 @@ def demo_selection(
                 j += 1
             elif selector_mode.startswith("ifd_rejection"):
                 curr_ifd_drop_threshold -= relax_ratio * abs(orig_ifd_drop_threshold)
-                
-                # if selected_idx_list:
-                #     selected_idx_list.popleft()
-                #     selected_ifd_list.popleft()
-                #     history_conversation_list.popleft()
-                #     history_conversation_list.popleft()
-                #     j -= 1
                 
                 print("=" * 100)
                 print("Max number of attempts is reached.")
