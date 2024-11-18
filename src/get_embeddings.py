@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "9"
 
 import numpy as np
 import torch
@@ -11,7 +11,7 @@ import pandas as pd
 
 
 if __name__ == "__main__":
-    data_path = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0/filtered_llama3_ifd_1.0_inf_fla_780_256.json"
+    data_path = "IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0/harmful_behaviors_subset_100_llama2_ifd.json"
     output_path = f"{os.path.splitext(data_path)[0]}_instruction_embed_arr.npy"
     
     df = pd.read_json(data_path)

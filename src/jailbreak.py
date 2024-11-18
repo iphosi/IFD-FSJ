@@ -5,6 +5,8 @@ from vllm.lora.request import LoRARequest
 
 from transformers import AutoTokenizer
 
+from count_num_tokens import count_num_tokens
+
 import pandas as pd
 
 import argparse
@@ -17,9 +19,9 @@ def parse_args():
     parser.add_argument("--compute_adv_prompt_ifd", action="store_true")
     parser.add_argument("--use_adv_prompt", action="store_true")
     
-    parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors")
-    parser.add_argument("--benchmark_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench//w_chat_template/sys_msg_v0/harmful_behaviors_llama2_ifd.json")
-    
+    parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors_subset")
+    parser.add_argument("--benchmark_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0/harmful_behaviors_subset_100_llama2_ifd.json")
+        
     parser.add_argument("--demo_version", type=str, default="demo_v3")
     parser.add_argument("--demo_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0/filtered_llama2_ifd_0.8_1.0_fla_8642_256.json")
     
@@ -55,6 +57,7 @@ def jailbreak(
     use_adv_prompt
 ):
     query_list = []
+    num_tokens_list = []
     
     for i in range(len(instruction_list)):
         conversation_list = [
@@ -78,17 +81,19 @@ def jailbreak(
         else:
             adv_prompt = ""
             
-        query_list.append(
-            tokenizer.apply_chat_template(
-                conversation_list,
-                tokenize=False,
-                add_generation_prompt=True
-            ) + adv_prompt
-        )
+        query = tokenizer.apply_chat_template(
+            conversation_list,
+            tokenize=False,
+            add_generation_prompt=True
+        ) + adv_prompt
+            
+        query_list.append(query)
+        num_tokens_list.append(count_num_tokens(query, tokenizer))
     
     print("=" * 100)
     print(query_list[0])
     print("=" * 100)
+    print(f"Max number of tokens: {max(num_tokens_list)}")
     
     output_list = model.generate(
         query_list,
@@ -111,10 +116,13 @@ def main():
     args = parse_args()
     print(args)
     
-    if args.compute_adv_prompt_ifd:
+    if "ifd" in args.selector_mode and args.compute_adv_prompt_ifd:
         output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.selector_mode}_adv"
     else:
         output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.selector_mode}"
+    
+    demo_output_dir = f"{output_dir}/demonstrations/{args.demo_version}"
+    demo_output_path = f"{demo_output_dir}/demo_s{args.num_shots}.json"
     
     if args.use_adv_prompt:
         gen_output_dir = f"{output_dir}/w_adv_prompt/{args.demo_version}"
@@ -129,6 +137,14 @@ def main():
     print(f"Generation output path:\n{gen_output_path}")
     
     device_list = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
+    
+    df = pd.read_json(args.benchmark_path)
+    demo_df = pd.read_json(args.demo_path)
+    
+    instruction_list = df["instruction"].tolist()
+    adv_prompt_list = df["adv_prompt"].tolist()
+    demo_instruction_list = demo_df["instruction"].tolist()
+    demo_response_list = demo_df["output"].tolist()
     
     print("=" * 100)
     print("Load demonstrations.")
@@ -160,7 +176,7 @@ def main():
         swap_space=8
     )
         
-    response_list = fsj(
+    response_list = jailbreak(
         tokenizer=gen_tokenizer,
         model=gen_model,
         sampling_params=sampling_params,

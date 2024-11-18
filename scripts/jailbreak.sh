@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=6.7,8,9
+export CUDA_VISIBLE_DEVICES=6,7,8,9
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
@@ -11,7 +11,11 @@ MODEL_PATH="IFD-FSJ/models/Llama-2-7b-chat-hf"
 # DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
 DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
 
-# demo_version_choices=(demo_v1 demo_v2 demo_v3 demo_v4)
+BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0"
+SUBSET_NAME="harmful_behaviors_subset_50"
+BENCHMARK_NAME="AdvBench/${SUBSET_NAME}"
+
+# demo_version_choices=(demo_v0 demo_v1 demo_v2 demo_v3 demo_v4)
 # demo_version_choices=(demo_v6 demo_v7 demo_v8 demo_v9)
 demo_version_choices=(demo_v3)
 # demo_version_choices=(demo_v9)
@@ -38,8 +42,8 @@ demo_path_dict=(
     [demo_v9]="${DEMO_DIR}/filtered_llama2_ifd_1.0_inf_fla_1471_256.json"
 )
 
-# num_shots_choices=(1 2 3 4 5 6 7 8)
-num_shots_choices=(2)
+# num_shots_choices=(4)
+num_shots_choices=(2 4 6 8)
 
 for num_shots in "${num_shots_choices[@]}";
 do
@@ -48,12 +52,12 @@ do
         echo "Demo version: ${demo_version}"
         echo "Demo path: ${demo_path_dict[${demo_version}]}"
         echo "Num shots: ${num_shots}"
-        python IFD-FSJ/src/select_demos.py \
+        python IFD-FSJ/src/jailbreak.py \
             --selector_mode "ifd_rejection" \
             --compute_adv_prompt_ifd \
             --use_adv_prompt \
-            --benchmark_name "AdvBench/harmful_behaviors" \
-            --benchmark_path "IFD-FSJ/datasets/benchmarks/AdvBench//w_chat_template/sys_msg_v0/harmful_behaviors_llama2_ifd.json" \
+            --benchmark_name ${BENCHMARK_NAME} \
+            --benchmark_path "${BENCHMARK_DIR}/${SUBSET_NAME}_llama2_ifd.json" \
             --demo_version ${demo_version} \
             --demo_path ${demo_path_dict[${demo_version}]} \
             --output_dir "IFD-FSJ/evaluation" \
@@ -61,12 +65,12 @@ do
             --model_path ${MODEL_PATH} \
             --max_length 4096 \
             --num_shots ${num_shots} \
-            --num_return_sequences 4 \
+            --num_return_sequences 8 \
             --temperature 1.0 \
             --top_p 1.0 \
             --max_tokens 100 \
-            > IFD-FSJ/log/log_0.out 2>&1 &
+            > IFD-FSJ/log/log_1.out 2>&1 &
 
-        sleep 9m
+        sleep 2m
     done
 done

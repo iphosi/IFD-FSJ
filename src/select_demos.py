@@ -25,9 +25,9 @@ def parse_args():
     parser.add_argument("--selector_mode", type=str, default="random", choices=["random", "ifd_rejection"])
     parser.add_argument("--compute_adv_prompt_ifd", action="store_true")
     
-    parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors")
-    parser.add_argument("--benchmark_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench//w_chat_template/sys_msg_v0/harmful_behaviors_llama2_ifd.json")
-    parser.add_argument("--benchmark_embed_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/instruction_embed_arr.npy")
+    parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors_subset_50")
+    parser.add_argument("--benchmark_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0/harmful_behaviors_subset_50_llama2_ifd.json")
+    parser.add_argument("--benchmark_embed_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0/harmful_behaviors_subset_50_llama2_ifd_instruction_embed_arr.npy")
     
     parser.add_argument("--demo_version", type=str, default="demo_v3")
     parser.add_argument("--demo_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0/filtered_llama2_ifd_0.8_1.0_fla_8642_256.json")
@@ -41,7 +41,8 @@ def parse_args():
     
     parser.add_argument("--num_shots", type=int, default=2)
     parser.add_argument("--sim_threshold", type=float, default=0.5)
-    parser.add_argument("--ifd_drop_threshold", type=float, default=0.005)
+    parser.add_argument("--ifd_drop_threshold", type=float, default=0.1)
+    parser.add_argument("--relax_ratio", type=float, default=0.1)
     parser.add_argument("--max_num_attempts", type=int, default=8)
     
     parser.add_argument("--system_message", type=str, default="")
@@ -156,6 +157,7 @@ def demo_selection(
     num_shots,
     sim_threshold,
     ifd_drop_threshold,
+    relax_ratio,
     max_num_attempts,
     demo_instruction_embed_arr,
     demo_instruction_list,
@@ -252,20 +254,22 @@ def demo_selection(
                     {"role": "user", "content": demo_instruction_list[cand_idx]}
                 )
                 j += 1
-            else:
-                curr_ifd_drop_threshold -= abs(orig_ifd_drop_threshold)
+            elif selector_mode.startswith("ifd_rejection"):
+                curr_ifd_drop_threshold -= relax_ratio * abs(orig_ifd_drop_threshold)
                 
-                if selected_idx_list:
-                    selected_idx_list.popleft()
-                    selected_ifd_list.popleft()
-                    history_conversation_list.popleft()
-                    history_conversation_list.popleft()
-                    j -= 1
+                # if selected_idx_list:
+                #     selected_idx_list.popleft()
+                #     selected_ifd_list.popleft()
+                #     history_conversation_list.popleft()
+                #     history_conversation_list.popleft()
+                #     j -= 1
                 
                 print("=" * 100)
                 print("Max number of attempts is reached.")
                 print("Relax the ifd drop constraint and restart.")
                 print(f"Current ifd drop threshold: {curr_ifd_drop_threshold}")
+            else:
+                raise NotImplementedError
         
         assert len(selected_idx_list) == num_shots
 
@@ -289,7 +293,7 @@ def main():
     args = parse_args()
     print(args)
     
-    if args.compute_adv_prompt_ifd:
+    if "ifd" in args.selector_mode and args.compute_adv_prompt_ifd:
         output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.selector_mode}_adv"
     else:
         output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.selector_mode}"
@@ -339,6 +343,7 @@ def main():
         num_shots=args.num_shots,
         sim_threshold=args.sim_threshold,
         ifd_drop_threshold=args.ifd_drop_threshold,
+        relax_ratio=args.relax_ratio,
         max_num_attempts=args.max_num_attempts,
         demo_instruction_embed_arr=demo_instruction_embed_arr,
         demo_instruction_list=demo_instruction_list,

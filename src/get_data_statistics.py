@@ -13,7 +13,7 @@ if __name__ == "__main__":
     # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
     data_dir = "IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0"
     
-    dataset_name = "harmful_behaviors"
+    dataset_name = "harmful_behaviors_subset_100"
     
     # ext = "ifd_1.0_inf_fla_780_256"
     ext = "ifd"
