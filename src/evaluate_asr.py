@@ -114,9 +114,9 @@ def main():
     use_default_eval_template = False
     # demo_version_list = ["demo_v0", "demo_v1", "demo_v2", "demo_v3", "demo_v4"]
     demo_version_list = ["demo_v3"]
-    num_shots_list = [i for i in range(2,9,2)]
+    num_shots_list = [i for i in range(10,13,2)]
     num_responses_per_instruction = 8
-    selector_mode = "ifd_rejection_adv"
+    selector_mode = "ifd_rejection"
     benchmark_name = "harmful_behaviors_subset_50"
 
     eval_model_path = "IFD-FSJ/models/Llama-Guard-3-8B"

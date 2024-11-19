@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 eval_template_version = 1
 num_responses_per_instruction = 8
-data_dir = "/home/dq/repos/IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors_subset_50/random/w_adv_prompt"
+data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors_subset_50/random/w_adv_prompt"
 output_path = f"{data_dir}/llm_based_p{eval_template_version}_asr_r{num_responses_per_instruction}.png"
 data_path_list = [
     f"{data_dir}/demo_v0/llm_based_p{eval_template_version}_asr_r{num_responses_per_instruction}.jsonl",

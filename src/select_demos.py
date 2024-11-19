@@ -11,8 +11,8 @@ import json
 import pandas as pd
 from collections import deque
 
-from utils import get_perplexity_and_embedding_whole_text, get_perplexity_and_embedding_part_text
 from get_in_context_ifd import get_in_context_ifd_arr_row
+from demo_selector import DemoSelector
 
 from tqdm import tqdm
 
@@ -50,243 +50,6 @@ def parse_args():
     args = parser.parse_args()
     
     return args
-
-
-class DemoSelector:
-    def __init__(
-        self,
-        selector_mode,
-        num_shots,
-        sim_threshold,
-        ifd_drop_threshold,
-        relax_ratio,
-        max_num_attempts,
-        demo_instruction_embed_arr,
-        demo_instruction_list,
-        demo_response_list,
-        demo_ifd_list,
-        instruction_embed_arr,
-        instruction_list,
-        adv_prompt_list,
-        adv_prompt_ifd_list,
-        compute_adv_prompt_ifd=False,
-        in_context_ifd_path=None,
-        tokenizer=None,
-        model=None,
-        max_length=4096
-    ):
-        self.selector_mode = selector_mode
-        self.num_shots = num_shots
-        
-        
-        
-        self.compute_adv_prompt_ifd = compute_adv_prompt_ifd
-        self.in_context_ifd_path = in_context_ifd_path
-        self.tokenizer = tokenizer
-        self.model = model
-        self.max_length = max_length
-
-
-def ifd_rejection_strategy(
-    tokenizer,
-    model,
-    max_length,
-    shot_idx,
-    in_context_ifd_arr,
-    cand_instruction,
-    cand_response,
-    cand_ifd,
-    history_conversation_list,
-    ifd_drop_threshold
-):
-    top_conversation_list = [
-        {"role": "user", "content": cand_instruction},
-        {"role": "assistant", "content": cand_response}
-    ]
-    row = get_in_context_ifd_arr_row(
-        tokenizer=tokenizer,
-        model=model,
-        max_length=max_length,
-        history_conversation_list=list(history_conversation_list),
-        top_conversation_list=top_conversation_list,
-        top_conversation_ifd=cand_ifd
-    )
-    row = [0] * (len(in_context_ifd_arr) - len(row)) + row
-    
-    if shot_idx < len(in_context_ifd_arr) - 1:
-        ifd_drop_arr = np.array(in_context_ifd_arr[shot_idx + 1]) - np.array(row)
-        ifd_drop_flag = (ifd_drop_arr[shot_idx + 1:] > ifd_drop_threshold).all()
-        
-        if ifd_drop_flag:
-            in_context_ifd_arr[shot_idx] = row
-            
-        return ifd_drop_flag
-    else:
-        in_context_ifd_arr[shot_idx] = row
-        return True
-    
-        
-def similarity_strategy(
-    cand_idx,
-    instruction_embed,
-    demo_instruction_embed_arr,
-    selected_idx_list,
-    sim_threshold
-):
-    sim_flag = (
-        torch.cosine_similarity(
-            torch.tensor(demo_instruction_embed_arr[cand_idx]),
-            torch.tensor(instruction_embed),
-            dim=0
-        ) <= sim_threshold
-    ).item()
-    
-    if not sim_flag:
-        return False
-    
-    for idx in selected_idx_list:
-        sim_flag = (
-            torch.cosine_similarity(
-                torch.tensor(demo_instruction_embed_arr[cand_idx]),
-                torch.tensor(demo_instruction_embed_arr[idx]),
-                dim=0
-            ) <= sim_threshold
-        ).item()
-        
-        if not sim_flag:
-            return False
-        
-    return True
-
-
-def demo_selection(
-    selector_mode,
-    num_shots,
-    sim_threshold,
-    ifd_drop_threshold,
-    relax_ratio,
-    max_num_attempts,
-    demo_instruction_embed_arr,
-    demo_instruction_list,
-    demo_response_list,
-    demo_ifd_list,
-    instruction_embed_arr,
-    instruction_list,
-    adv_prompt_list,
-    adv_prompt_ifd_list,
-    compute_adv_prompt_ifd,
-    in_context_ifd_path=None,
-    tokenizer=None,
-    model=None,
-    max_length=4096
-):
-    shot_list = []
-    orig_ifd_drop_threshold = ifd_drop_threshold
-    assert orig_ifd_drop_threshold != 0
-    
-    for i in tqdm(range(len(instruction_list))):
-        selected_idx_list = deque([])
-        selected_ifd_list = deque([])
-        history_conversation_list = deque([])
-        curr_ifd_drop_threshold = orig_ifd_drop_threshold
-        
-        if compute_adv_prompt_ifd:
-            history_conversation_list.extend(
-                [
-                    {"role": "user", "content": instruction_list[i]},
-                    {"role": "assistant", "content": adv_prompt_list[i]}
-                ]
-            )
-            in_context_ifd_arr = [[0] * (num_shots + 1) for _ in range(num_shots + 1)]
-            in_context_ifd_arr[-1][-1] = adv_prompt_ifd_list[i]
-        else:
-            in_context_ifd_arr = [[0] * num_shots for _ in range(num_shots)]
-            
-        j = 0
-            
-        while j < num_shots:
-            num_attempts = 0
-            selected = False
-            shot_idx = num_shots - j - 1
-            
-            history = set()
-
-            while not selected and num_attempts < max_num_attempts:
-                cand_idx = np.random.randint(demo_instruction_embed_arr.shape[0])
-                
-                if cand_idx in history:
-                    continue
-                
-                history.add(cand_idx)
-                
-                sim_flag = similarity_strategy(
-                    cand_idx=cand_idx,
-                    instruction_embed=instruction_embed_arr[i],
-                    demo_instruction_embed_arr=demo_instruction_embed_arr,
-                    selected_idx_list=selected_idx_list,
-                    sim_threshold=sim_threshold
-                )
-                
-                if sim_flag:
-                    if selector_mode == "random":
-                        selected = True
-                    elif selector_mode == "ifd_rejection":
-                        selected = ifd_rejection_strategy(
-                            tokenizer=tokenizer,
-                            model=model,
-                            max_length=max_length,
-                            shot_idx=shot_idx,
-                            in_context_ifd_arr=in_context_ifd_arr,
-                            cand_instruction=demo_instruction_list[cand_idx],
-                            cand_response=demo_response_list[cand_idx],
-                            cand_ifd=demo_ifd_list[cand_idx],
-                            history_conversation_list=history_conversation_list,
-                            ifd_drop_threshold=curr_ifd_drop_threshold
-                        )
-                    else:
-                        raise NotImplementedError
-                    
-                if selected:
-                    break
-
-                num_attempts += 1
-                
-            if selected:
-                selected_idx_list.appendleft(cand_idx)
-                selected_ifd_list.appendleft(demo_ifd_list[cand_idx])
-                history_conversation_list.appendleft(
-                    {"role": "assistant", "content": demo_response_list[cand_idx]}
-                )
-                history_conversation_list.appendleft(
-                    {"role": "user", "content": demo_instruction_list[cand_idx]}
-                )
-                j += 1
-            elif selector_mode.startswith("ifd_rejection"):
-                curr_ifd_drop_threshold -= relax_ratio * abs(orig_ifd_drop_threshold)
-                
-                print("=" * 100)
-                print("Max number of attempts is reached.")
-                print("Relax the ifd drop constraint and restart.")
-                print(f"Current ifd drop threshold: {curr_ifd_drop_threshold}")
-            else:
-                raise NotImplementedError
-        
-        assert len(selected_idx_list) == num_shots
-
-        shot_list.append(list(selected_idx_list))
-        
-        if in_context_ifd_path:
-            output_dict = {
-                "demo_idx": list(selected_idx_list),
-                "orig_ifd": list(selected_ifd_list),
-                "adv_prompt_ifd": adv_prompt_ifd_list[i],
-                "in_context_ifd": in_context_ifd_arr
-            }
-            
-            with open(in_context_ifd_path, "a") as f:
-                f.write(json.dumps(output_dict) + "\n")
-        
-    return shot_list
     
 
 def main():
@@ -337,8 +100,7 @@ def main():
     
     print("=" * 100)
     print("Select demonstrations.")
-
-    shot_list = demo_selection(
+    selector = DemoSelector(
         selector_mode=args.selector_mode,
         num_shots=args.num_shots,
         sim_threshold=args.sim_threshold,
@@ -359,7 +121,8 @@ def main():
         model=model,
         max_length=args.max_length
     )
-    
+    shot_list = selector.demo_selection()
+
     if args.num_shots > 0:
         demo_output_dict = {"demo_idx": shot_list}
         
