@@ -9,28 +9,27 @@ MODEL_NAME="Llama-2-7b-chat-hf"
 MODEL_PATH="IFD-FSJ/models/Llama-2-7b-chat-hf"
 
 # DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
-DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
+DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_0.0_10.0"
 
-BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0"
+BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0"
 SUBSET_NAME="harmful_behaviors_subset_50"
 BENCHMARK_NAME="AdvBench/${SUBSET_NAME}"
 
 # demo_version_choices=(demo_v0 demo_v1 demo_v2 demo_v3 demo_v4)
-demo_version_choices=(demo_v3)
+demo_version_choices=(demo_v4)
 
 declare -A demo_path_dict
 
 demo_path_dict=(
-    [demo_v0]="${DEMO_DIR}/filtered_llama2_ifd_0.0_0.4_fla_577_256.json"
-    [demo_v1]="${DEMO_DIR}/filtered_llama2_ifd_0.4_0.6_fla_2969_256.json"
-    [demo_v2]="${DEMO_DIR}/filtered_llama2_ifd_0.6_0.8_fla_12689_256.json"
-    [demo_v3]="${DEMO_DIR}/filtered_llama2_ifd_0.8_1.0_fla_8642_256.json"
-    [demo_v4]="${DEMO_DIR}/filtered_llama2_ifd_1.0_inf_fla_1239_256.json"
-    [demo_v5]="${DEMO_DIR}/filtered_llama2_ifd_0.0_inf_fla_26116_256.json"
+    [demo_v0]="${DEMO_DIR}/demo_v0/filtered_ifd_0.4_1.2.json"
+    [demo_v1]="${DEMO_DIR}/demo_v1/filtered_ifd_0.4_0.6.json"
+    [demo_v2]="${DEMO_DIR}/demo_v2/filtered_ifd_0.6_0.8.json"
+    [demo_v3]="${DEMO_DIR}/demo_v3/filtered_ifd_0.8_1.0.json"
+    [demo_v4]="${DEMO_DIR}/demo_v4/filtered_ifd_1.0_1.2.json"
 )
 
-# num_shots_choices=(4)
-num_shots_choices=(12)
+# num_shots_choices=(2 4 6 8 10 12 14 16)
+num_shots_choices=(8)
 
 for num_shots in "${num_shots_choices[@]}";
 do
@@ -40,10 +39,10 @@ do
         echo "Demo path: ${demo_path_dict[${demo_version}]}"
         echo "Num shots: ${num_shots}"
         python IFD-FSJ/src/jailbreak.py \
-            --selector_mode "ifd_rejection" \
-            --use_adv_prompt \
+            --selector_mode "greedy" \
+            --wrt_adv_prefix \
             --benchmark_name ${BENCHMARK_NAME} \
-            --benchmark_path "${BENCHMARK_DIR}/${SUBSET_NAME}_llama2_ifd.json" \
+            --benchmark_path "${BENCHMARK_DIR}/${SUBSET_NAME}.json" \
             --demo_version ${demo_version} \
             --demo_path ${demo_path_dict[${demo_version}]} \
             --output_dir "IFD-FSJ/evaluation" \
@@ -55,7 +54,7 @@ do
             --temperature 1.0 \
             --top_p 1.0 \
             --max_tokens 100 \
-            > IFD-FSJ/log/log_1.out 2>&1 &
+            > IFD-FSJ/log/log_3.out 2>&1 &
 
         sleep 2m
     done

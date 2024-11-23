@@ -2,6 +2,6 @@ models
 log
 PKU-SafeRLHF
 original.jsonl
-*_backup
+*_backup*
 __pycache__
 test*.py

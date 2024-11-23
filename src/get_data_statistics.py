@@ -2,6 +2,8 @@ import pandas as pd
 import json
 import numpy as np
 
+import os
+
 
 if __name__ == "__main__":
     # model_type = "llama3"
@@ -10,16 +12,14 @@ if __name__ == "__main__":
     # data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ/no_sep/wo_chat_template"
     # data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ/no_sep/w_chat_template/sys_msg_v0"
     # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
-    data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
-    # data_dir = "IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0"
+    data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_0.0_10.0"
+    # data_dir = f"IFD-FSJ/datasets/benchmarks/AdvBench/{model_type}/w_chat_template/sys_msg_v0"
     
     # dataset_name = "harmful_behaviors_subset_50"
-    dataset_name = "filtered"
+    dataset_name = "demo_v4/filtered_ifd_1.0_1.2"
     
-    ext = "ifd_0.0_inf_fla_26116_256"
-    # ext = "ifd"
-    data_path = f"{data_dir}/{dataset_name}_{model_type}_{ext}.json"
-    output_path = f"{data_dir}/{dataset_name}_{model_type}_{ext}_statistics.json"
+    data_path = f"{data_dir}/{dataset_name}.json"
+    output_path = f"{data_dir}/{dataset_name}_statistics.json"
     
     df = pd.read_json(data_path)
     

@@ -15,15 +15,15 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
     
-    parser.add_argument("--selector_mode", type=str, default="random", choices=["random", "ifd_rejection"])
-    parser.add_argument("--compute_adv_prompt_ifd", action="store_true")
-    parser.add_argument("--use_adv_prompt", action="store_true")
+    parser.add_argument("--selector_mode", type=str, default="random", choices=["random", "greedy"])
+    parser.add_argument("--wrt_adv_prefix", action="store_true")
+    parser.add_argument("--use_adv_prefix", action="store_true")
     
-    parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors_subset")
-    parser.add_argument("--benchmark_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/w_chat_template/sys_msg_v0/harmful_behaviors_subset_100_llama2_ifd.json")
+    parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors_subset_50")
+    parser.add_argument("--benchmark_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_50.json")
         
-    parser.add_argument("--demo_version", type=str, default="demo_v3")
-    parser.add_argument("--demo_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0/filtered_llama2_ifd_0.8_1.0_fla_8642_256.json")
+    parser.add_argument("--demo_version", type=str, default="demo_v0")
+    parser.add_argument("--demo_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_0.0_10.0/demo_v0/filtered_ifd_0.4_1.2.json")
     
     parser.add_argument("--output_dir", type=str, default="IFD-FSJ/evaluation")
     
@@ -32,6 +32,7 @@ def parse_args():
     parser.add_argument("--max_length", type=int, default=4096)
     
     parser.add_argument("--num_shots", type=int, default=2)
+    parser.add_argument("--context_window_size", type=int, default=-1)
     parser.add_argument("--num_return_sequences", type=int, default=4)
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--top_p", type=float, default=1.0)
@@ -53,8 +54,8 @@ def jailbreak(
     shot_list,
     demo_instruction_list,
     demo_response_list,
-    adv_prompt_list,
-    use_adv_prompt
+    adv_prefix_list,
+    use_adv_prefix
 ):
     query_list = []
     num_tokens_list = []
@@ -76,16 +77,16 @@ def jailbreak(
             {"role": "user", "content": instruction_list[i]}
         )
         
-        if use_adv_prompt and adv_prompt_list:
-            adv_prompt = adv_prompt_list[i]
+        if use_adv_prefix and adv_prefix_list:
+            adv_prefix = adv_prefix_list[i]
         else:
-            adv_prompt = ""
+            adv_prefix = ""
             
         query = tokenizer.apply_chat_template(
             conversation_list,
             tokenize=False,
             add_generation_prompt=True
-        ) + adv_prompt
+        ) + adv_prefix
             
         query_list.append(query)
         num_tokens_list.append(count_num_tokens(query, tokenizer))
@@ -116,23 +117,30 @@ def main():
     args = parse_args()
     print(args)
     
-    if "ifd" in args.selector_mode and args.compute_adv_prompt_ifd:
+    if args.context_window_size == -1:
+        args.context_window_size = args.num_shots - 1
+        window = ""
+    else:
+        assert args.num_shots > args.context_window_size > 0
+        window = f"_w{args.context_window_size}"
+    
+    if args.selector_mode != "random" and args.wrt_adv_prefix:
         output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.selector_mode}_adv"
     else:
         output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.selector_mode}"
     
     demo_output_dir = f"{output_dir}/demonstrations/{args.demo_version}"
-    demo_output_path = f"{demo_output_dir}/demo_s{args.num_shots}.json"
+    demo_output_path = f"{demo_output_dir}/demo_s{args.num_shots}{window}.json"
     
-    if args.use_adv_prompt:
-        gen_output_dir = f"{output_dir}/w_adv_prompt/{args.demo_version}"
+    if args.use_adv_prefix:
+        gen_output_dir = f"{output_dir}/w_adv_prefix/{args.demo_version}"
     else:
-        gen_output_dir = f"{output_dir}/wo_adv_prompt/{args.demo_version}"
+        gen_output_dir = f"{output_dir}/wo_adv_prefix/{args.demo_version}"
         
     if not os.path.exists(gen_output_dir):
         os.makedirs(gen_output_dir)
     
-    gen_output_path = f"{gen_output_dir}/generation_s{args.num_shots}_r{args.num_return_sequences}.json"
+    gen_output_path = f"{gen_output_dir}/generation_s{args.num_shots}{window}_r{args.num_return_sequences}.json"
     
     print(f"Generation output path:\n{gen_output_path}")
     
@@ -142,7 +150,7 @@ def main():
     demo_df = pd.read_json(args.demo_path)
     
     instruction_list = df["instruction"].tolist()
-    adv_prompt_list = df["adv_prompt"].tolist()
+    adv_prefix_list = df["adv_prefix"].tolist()
     demo_instruction_list = demo_df["instruction"].tolist()
     demo_response_list = demo_df["output"].tolist()
     
@@ -170,7 +178,7 @@ def main():
     gen_model = LLM(
         model=args.model_path,
         max_model_len=args.max_length,
-        gpu_memory_utilization=0.8,
+        gpu_memory_utilization=0.9,
         tensor_parallel_size=len(device_list),
         dtype="auto",
         swap_space=8
@@ -185,8 +193,8 @@ def main():
         shot_list=shot_list,
         demo_instruction_list=demo_instruction_list,
         demo_response_list=demo_response_list,
-        adv_prompt_list=adv_prompt_list,
-        use_adv_prompt=args.use_adv_prompt
+        adv_prefix_list=adv_prefix_list,
+        use_adv_prefix=args.use_adv_prefix
     )
 
     df["model_response"] = response_list

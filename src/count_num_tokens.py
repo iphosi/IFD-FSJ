@@ -11,10 +11,13 @@ def count_num_tokens(text, tokenizer):
 
 
 if __name__ == "__main__":
-    data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/w_chat_template/sys_msg_v0"
-    data_path = f"{data_dir}/filtered_llama2_ifd_1.0_inf_fla_1239_256.json"
     model_path = "IFD-FSJ/models/Llama-2-7b-chat-hf"
-    output_path = f"{data_dir}/filtered_llama2_ifd_num_tokens_statistics.jsonl"
+    # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_0.0_10.0/demo_v4"
+    # data_path = f"{data_dir}/filtered_ifd_1.0_1.2.json"
+    data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ/llama2_sep"
+    data_path = f"{data_dir}/mistral_demonstration_list_official.json"
+    
+    output_path = f"{data_dir}/num_tokens_statistics.jsonl"
 
     df = pd.read_json(data_path)
 

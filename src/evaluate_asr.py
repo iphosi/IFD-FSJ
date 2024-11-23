@@ -114,9 +114,12 @@ def main():
     use_default_eval_template = False
     # demo_version_list = ["demo_v0", "demo_v1", "demo_v2", "demo_v3", "demo_v4"]
     demo_version_list = ["demo_v3"]
-    num_shots_list = [i for i in range(10,13,2)]
+    num_shots_list = [i for i in range(2,17,2)]
+    window = ""
     num_responses_per_instruction = 8
-    selector_mode = "ifd_rejection"
+    # selector_mode = "random"
+    # selector_mode = "ifd_rejection"
+    selector_mode = "ifd_greedy_adv"
     benchmark_name = "harmful_behaviors_subset_50"
 
     eval_model_path = "IFD-FSJ/models/Llama-Guard-3-8B"
@@ -162,11 +165,11 @@ def main():
         sampling_params = None
 
     for demo_version in demo_version_list:
-        data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/{benchmark_name}/{selector_mode}/w_adv_prompt/{demo_version}"
+        data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/{benchmark_name}/{selector_mode}/wo_adv_prompt/{demo_version}"
         print("=" * 100)
         
         for num_shots in num_shots_list:
-            data_path = f"{data_dir}/generation_s{num_shots}_r{num_responses_per_instruction}.json"
+            data_path = f"{data_dir}/generation_s{num_shots}{window}_r{num_responses_per_instruction}.json"
 
             df = pd.read_json(data_path)
             
@@ -189,7 +192,7 @@ def main():
                 "response_flag": response_flag_list
             }
             
-            with open(f"{data_dir}/{prefix}_asr_r{num_responses_per_instruction}.jsonl", "a") as f:
+            with open(f"{data_dir}/{prefix}_asr{window}_r{num_responses_per_instruction}.jsonl", "a") as f:
                 f.write(json.dumps(asr_dict) + "\n")
 
 

@@ -5,14 +5,14 @@ import json
 
 
 if __name__ == "__main__":
-    data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
-    output_path = f"{data_dir}/filtered_llama3_ifd_cat_distr_256.png"
+    data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_0.0_10.0"
+    output_path = f"{data_dir}/filtered_cat_distr.png"
     data_path_list = [
-        f"{data_dir}/filtered_llama3_ifd_0.0_0.4_fla_573_256_statistics.json",
-        f"{data_dir}/filtered_llama3_ifd_0.4_0.6_fla_2316_256_statistics.json",
-        f"{data_dir}/filtered_llama3_ifd_0.6_0.8_fla_8992_256_statistics.json",
-        f"{data_dir}/filtered_llama3_ifd_0.8_1.0_fla_8077_256_statistics.json",
-        f"{data_dir}/filtered_llama3_ifd_1.0_inf_fla_780_256_statistics.json",
+        f"{data_dir}/demo_v0/filtered_ifd_0.4_1.2_statistics.json",
+        f"{data_dir}/demo_v1/filtered_ifd_0.4_0.6_statistics.json",
+        f"{data_dir}/demo_v2/filtered_ifd_0.6_0.8_statistics.json",
+        f"{data_dir}/demo_v3/filtered_ifd_0.8_1.0_statistics.json",
+        f"{data_dir}/demo_v4/filtered_ifd_1.0_1.2_statistics.json",
     ]
     n = len(data_path_list)
     
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     
     category_list = []
     count_list = []
-    label_list = ["ifd_0.0_0.4", "ifd_0.4_0.6", "ifd_0.6_0.8", "ifd_0.8_1.0", "ifd_1.0_inf"]
+    label_list = ["demo_v0", "demo_v1", "demo_v2", "demo_v3", "demo_v4"]
     
     for i in range(len(data_path_list)):
         with open(data_path_list[i], "r") as f:
