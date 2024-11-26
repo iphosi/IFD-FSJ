@@ -6,13 +6,13 @@ import numpy as np
 
 if __name__ == "__main__":
     # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/wo_chat_template"
-    # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_0.0_10.0"
-    data_dir = "IFD-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0"
+    data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_c_12.0_14.0"
+    # data_dir = "IFD-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0"
     # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/wo_chat_template"
     # data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ/llama2_sep/w_chat_template/sys_msg_v0"
-    data_path = f"{data_dir}/harmful_behaviors_subset_50.json"
+    data_path = f"{data_dir}/unfiltered.json"
     # data_output_path = f"{data_dir}/unfiltered_llama2_ppl_0.0_10.0_dropna.json"
-    fig_output_path = f"{data_dir}/harmful_behaviors_subset_50.png"
+    fig_output_path = f"{data_dir}/unfiltered.png"
 
     df = pd.read_json(data_path)
     

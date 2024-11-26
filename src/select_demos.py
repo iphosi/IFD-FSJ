@@ -24,13 +24,13 @@ def parse_args():
     parser.add_argument("--selector_mode", type=str, default="greedy", choices=["random", "greedy", "rejection"])
     parser.add_argument("--wrt_adv_prefix", action="store_true")
     
-    parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors_subset_50")
-    parser.add_argument("--benchmark_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_50.json")
-    parser.add_argument("--benchmark_embed_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_50_instruction_embed_arr.npy")
+    parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors_ifd_0.0_0.2")
+    parser.add_argument("--benchmark_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ifd_0.0_0.2.json")
+    parser.add_argument("--benchmark_embed_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ifd_0.0_0.2_instruction_embed_arr.npy")
     
-    parser.add_argument("--demo_version", type=str, default="demo_v0")
-    parser.add_argument("--demo_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_0.0_10.0/demo_v0/filtered_ifd_0.4_1.2.json")
-    parser.add_argument("--demo_embed_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_0.0_10.0/demo_v0/instruction_embed_arr.npy")
+    parser.add_argument("--demo_version", type=str, default="demo_v1.0")
+    parser.add_argument("--demo_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_c_4.0_6.0/demo_v1.0/filtered_ifd_0.4_1.0.json")
+    parser.add_argument("--demo_embed_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_c_4.0_6.0/demo_v1.0/instruction_embed_arr.npy")
     
     parser.add_argument("--output_dir", type=str, default="IFD-FSJ/evaluation")
     
@@ -93,7 +93,14 @@ def main():
     print(f"Demonstration output path:\n{demo_output_path}")
     print(f"In-context array output path:\n{in_context_arr_path}")
     
-    df = pd.read_json(args.benchmark_path)
+    if os.path.exists(in_context_arr_path):
+        checkpoint = len(pd.read_json(in_context_arr_path, lines=True))
+    else:
+        checkpoint = 0
+        
+    print(f"Resume from checkpoint {checkpoint}.")
+    
+    df = pd.read_json(args.benchmark_path)[checkpoint:]
     demo_df = pd.read_json(args.demo_path)
     
     adv_prefix_list = df["adv_prefix"].tolist()

@@ -12,12 +12,12 @@ if __name__ == "__main__":
     # data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ/no_sep/wo_chat_template"
     # data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ/no_sep/w_chat_template/sys_msg_v0"
     # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
-    data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_0.0_10.0"
+    data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_c_12.0_14.0"
     # data_dir = f"IFD-FSJ/datasets/benchmarks/AdvBench/{model_type}/w_chat_template/sys_msg_v0"
     
-    # dataset_name = "harmful_behaviors_subset_50"
-    dataset_name = "demo_v4/filtered_ifd_1.0_1.2"
-    
+    # dataset_name = "harmful_behaviors_ifd_0.2_0.4"
+    dataset_name = "demo_v5.0/filtered_ifd_0.4_1.0"
+    # dataset_name = "unfiltered"
     data_path = f"{data_dir}/{dataset_name}.json"
     output_path = f"{data_dir}/{dataset_name}_statistics.json"
     
