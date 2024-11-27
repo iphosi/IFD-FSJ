@@ -11,6 +11,15 @@ import pandas as pd
 
 import argparse
 
+from prompts import SYSTEM_MESSAGE_V0, SYSTEM_MESSAGE_V1, SYSTEM_MESSAGE_V2
+
+
+system_message_dict = {
+    "v0": SYSTEM_MESSAGE_V0,
+    "v1": SYSTEM_MESSAGE_V1,
+    "v2": SYSTEM_MESSAGE_V2,
+}
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -19,11 +28,11 @@ def parse_args():
     parser.add_argument("--wrt_adv_prefix", action="store_true")
     parser.add_argument("--use_adv_prefix", action="store_true")
     
-    parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors_subset_50")
-    parser.add_argument("--benchmark_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_50.json")
+    parser.add_argument("--benchmark_name", type=str, default="AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ifd_0.0_0.2")
+    parser.add_argument("--benchmark_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ifd_0.0_0.2.json")
         
-    parser.add_argument("--demo_version", type=str, default="demo_v0")
-    parser.add_argument("--demo_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_0.0_10.0/demo_v0/filtered_ifd_0.4_1.2.json")
+    parser.add_argument("--demo_version", type=str, default="demo_v1.0")
+    parser.add_argument("--demo_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_c_4.0_6.0/demo_v1.0/filtered_ifd_0.4_1.0.json")
     
     parser.add_argument("--output_dir", type=str, default="IFD-FSJ/evaluation")
     
@@ -38,7 +47,7 @@ def parse_args():
     parser.add_argument("--top_p", type=float, default=1.0)
     parser.add_argument("--max_tokens", type=int, default=100)
     
-    parser.add_argument("--system_message", type=str, default="")
+    parser.add_argument("--system_message_version", type=str, default="v0")
     
     args = parser.parse_args()
     
@@ -62,7 +71,7 @@ def jailbreak(
     
     for i in range(len(instruction_list)):
         conversation_list = [
-            {"role": "system", "content": system_message},
+            {"role": "system", "content": system_message}
         ]
 
         for demo_idx in shot_list[i]:
@@ -133,9 +142,9 @@ def main():
     demo_output_path = f"{demo_output_dir}/demo_s{args.num_shots}{window}.json"
     
     if args.use_adv_prefix:
-        gen_output_dir = f"{output_dir}/w_adv_prefix/{args.demo_version}"
+        gen_output_dir = f"{output_dir}/generations/sys_msg_{args.system_message_version}/w_adv_prefix/{args.demo_version}"
     else:
-        gen_output_dir = f"{output_dir}/wo_adv_prefix/{args.demo_version}"
+        gen_output_dir = f"{output_dir}/generations/sys_msg_{args.system_message_version}/wo_adv_prefix/{args.demo_version}"
         
     if not os.path.exists(gen_output_dir):
         os.makedirs(gen_output_dir)
@@ -154,12 +163,17 @@ def main():
     demo_instruction_list = demo_df["instruction"].tolist()
     demo_response_list = demo_df["output"].tolist()
     
-    print("=" * 100)
-    print("Load demonstrations.")
-    shot_list = pd.read_json(demo_output_path)["demo_idx"].tolist()
+    if args.num_shots > 0:
+        print("=" * 100)
+        print("Load demonstrations.")
+        shot_list = pd.read_json(demo_output_path)["demo_idx"].tolist()
 
-    print("=" * 100)
-    print("Do few-shot jailbreaking.")
+        print("=" * 100)
+        print("Do few-shot jailbreaking.")
+    else:
+        shot_list = [[] for _ in range(len(instruction_list))]
+        print("=" * 100)
+        print("Do zero-shot jailbreaking.")
 
     gen_tokenizer = AutoTokenizer.from_pretrained(
         args.model_path,
@@ -188,7 +202,7 @@ def main():
         tokenizer=gen_tokenizer,
         model=gen_model,
         sampling_params=sampling_params,
-        system_message=args.system_message,
+        system_message=system_message_dict[args.system_message_version],
         instruction_list=instruction_list,
         shot_list=shot_list,
         demo_instruction_list=demo_instruction_list,

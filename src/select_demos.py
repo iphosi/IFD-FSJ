@@ -17,6 +17,15 @@ from tqdm import tqdm
 
 import argparse
 
+from prompts import SYSTEM_MESSAGE_V0, SYSTEM_MESSAGE_V1, SYSTEM_MESSAGE_V2
+
+
+system_message_dict = {
+    "v0": SYSTEM_MESSAGE_V0,
+    "v1": SYSTEM_MESSAGE_V1,
+    "v2": SYSTEM_MESSAGE_V2,
+}
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -47,7 +56,7 @@ def parse_args():
     parser.add_argument("--num_cands_per_attempt", type=int, default=2)
     parser.add_argument("--max_num_attempts", type=int, default=8)
     
-    parser.add_argument("--system_message", type=str, default="")
+    parser.add_argument("--system_message_version", type=str, default="v0")
     
     args = parser.parse_args()
     
@@ -114,10 +123,30 @@ def main():
     demo_ifd_list = demo_df["ifd_ppl"].tolist()
     demo_instruction_embed_arr = np.load(args.demo_embed_path)
     
+    sample_instruction = instruction_list[0]
+    sample_adv_prefix = adv_prefix_list[0]
+    sample_demo_instruction = demo_instruction_list[0]
+    sample_demo_response = demo_response_list[0]
+    
+    system_message = system_message_dict[args.system_message_version]
+    
+    print("=" * 100)
+    print(f"System message:\n{system_message}")
+    
+    print("=" * 100)
+    print(f"Sample instruction:\n{sample_instruction}")
+    print("-" * 100)
+    print(f"Sample adversarial prefix:\n{sample_adv_prefix}")
+    print("-" * 100)
+    print(f"Sample demo instruction:\n{sample_demo_instruction}")
+    print("-" * 100)
+    print(f"Sample demo instruction:\n{sample_demo_response}")
+    
     print("=" * 100)
     print("Select demonstrations.")
     selector = DemoSelector(
         selector_mode=args.selector_mode,
+        system_message=system_message,
         demo_instruction_embed_arr=demo_instruction_embed_arr,
         demo_instruction_list=demo_instruction_list,
         demo_response_list=demo_response_list,

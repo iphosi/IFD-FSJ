@@ -17,6 +17,7 @@ class DemoSelector:
     def __init__(
         self,
         selector_mode,
+        system_message,
         demo_instruction_embed_arr,
         demo_instruction_list,
         demo_response_list,
@@ -40,6 +41,7 @@ class DemoSelector:
         max_length=4096
     ):
         self.selector_mode = selector_mode
+        self.system_message = system_message
         self.num_shots = num_shots
         self.context_window_size = context_window_size
         self.global_step = 0
@@ -144,7 +146,7 @@ class DemoSelector:
                     {"role": "assistant", "content": cand_response}
                 ]
                 
-                conversation = [{"role": "system", "content": ""}]
+                conversation = [{"role": "system", "content": self.system_message}]
                 conversation.extend(top_conversation_list)
                 conversation.extend(list(history_conversation_list))
                 
@@ -213,7 +215,7 @@ class DemoSelector:
                     {"role": "assistant", "content": cand_response}
                 ]
                 
-                conversation = [{"role": "system", "content": ""}]
+                conversation = [{"role": "system", "content": self.system_message}]
                 conversation.extend(top_conversation_list)
                 conversation.extend(list(history_conversation_list))
                 

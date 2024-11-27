@@ -10,7 +10,7 @@ from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 from vllm.lora.request import LoRARequest
 
-from prompts import EVALUATION_PROMPT_v1
+from prompts import EVALUATION_PROMPT_V1
 
 from tqdm import tqdm
 
@@ -147,7 +147,7 @@ def main():
         )
         
         if not use_default_eval_template:
-            eval_tokenizer.chat_template = EVALUATION_PROMPT_v1
+            eval_tokenizer.chat_template = EVALUATION_PROMPT_V1
             prefix = f"{prefix}_p1"
         else:
             prefix = f"{prefix}_p0"

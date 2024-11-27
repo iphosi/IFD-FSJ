@@ -11,10 +11,9 @@ if __name__ == "__main__":
     # selector_mode = "random"
 
     wrt_adv_prefix = True
-    data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors_ifd_0.0_0.2/{selector_mode}/demonstrations"
-    demo_version = "demo_v1.1"
-    num_shots_list = [i for i in range(8, 9, 2)]
-    
+    data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/llama2/w_chat_template/sys_msg_v1/harmful_behaviors_ifd_0.0_0.2/{selector_mode}/demonstrations"
+    demo_version = "demo_v3.1"
+    num_shots_list = [i for i in range(6, 7, 2)]
     window = ""
 
     if wrt_adv_prefix:
@@ -27,6 +26,8 @@ if __name__ == "__main__":
             data_path = f"{data_dir}/{demo_version}/in_context_adv_arr_s{num_shots}.jsonl"
         else:
             data_path = f"{data_dir}/{demo_version}/in_context_arr_s{num_shots}.jsonl"
+            
+        print(data_path)
             
         assert os.path.exists(data_path)
 
