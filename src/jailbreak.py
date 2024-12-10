@@ -11,20 +11,21 @@ import pandas as pd
 
 import argparse
 
-from prompts import SYSTEM_MESSAGE_V0, SYSTEM_MESSAGE_V1, SYSTEM_MESSAGE_V2
+from prompts import SYSTEM_MESSAGE_V0, SYSTEM_MESSAGE_V1, SYSTEM_MESSAGE_V2, SYSTEM_MESSAGE_V3
 
 
 system_message_dict = {
     "v0": SYSTEM_MESSAGE_V0,
     "v1": SYSTEM_MESSAGE_V1,
     "v2": SYSTEM_MESSAGE_V2,
+    "v3": SYSTEM_MESSAGE_V3
 }
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     
-    parser.add_argument("--selector_mode", type=str, default="random", choices=["random", "greedy"])
+    parser.add_argument("--selector_mode", type=str, default="random", choices=["random", "greedy", "ifsj_rs"])
     parser.add_argument("--wrt_adv_prefix", action="store_true")
     parser.add_argument("--use_adv_prefix", action="store_true")
     
@@ -70,9 +71,10 @@ def jailbreak(
     num_tokens_list = []
     
     for i in range(len(instruction_list)):
-        conversation_list = [
-            {"role": "system", "content": system_message}
-        ]
+        # conversation_list = [
+        #     {"role": "system", "content": system_message}
+        # ]
+        conversation_list = []
 
         for demo_idx in shot_list[i]:
             conversation_list.extend(
@@ -87,7 +89,7 @@ def jailbreak(
         )
         
         if use_adv_prefix and adv_prefix_list:
-            adv_prefix = adv_prefix_list[i]
+            adv_prefix = " " + adv_prefix_list[i]
         else:
             adv_prefix = ""
             
@@ -126,20 +128,13 @@ def main():
     args = parse_args()
     print(args)
     
-    if args.context_window_size == -1:
-        args.context_window_size = args.num_shots - 1
-        window = ""
-    else:
-        assert args.num_shots > args.context_window_size > 0
-        window = f"_w{args.context_window_size}"
-    
-    if args.selector_mode != "random" and args.wrt_adv_prefix:
+    if args.selector_mode not in ["random", "ifsj_rs"] and args.wrt_adv_prefix:
         output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.selector_mode}_adv"
     else:
         output_dir = f"{args.output_dir}/{args.model_name}/{args.benchmark_name}/{args.selector_mode}"
     
     demo_output_dir = f"{output_dir}/demonstrations/{args.demo_version}"
-    demo_output_path = f"{demo_output_dir}/demo_s{args.num_shots}{window}.json"
+    demo_output_path = f"{demo_output_dir}/demo_s{args.num_shots}.json"
     
     if args.use_adv_prefix:
         gen_output_dir = f"{output_dir}/generations/sys_msg_{args.system_message_version}/w_adv_prefix/{args.demo_version}"
@@ -149,28 +144,37 @@ def main():
     if not os.path.exists(gen_output_dir):
         os.makedirs(gen_output_dir)
     
-    gen_output_path = f"{gen_output_dir}/generation_s{args.num_shots}{window}_r{args.num_return_sequences}.json"
+    gen_output_path = f"{gen_output_dir}/generation_s{args.num_shots}_r{args.num_return_sequences}.json"
     
     print(f"Generation output path:\n{gen_output_path}")
     
     device_list = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
     
     df = pd.read_json(args.benchmark_path)
-    demo_df = pd.read_json(args.demo_path)
     
     instruction_list = df["instruction"].tolist()
     adv_prefix_list = df["adv_prefix"].tolist()
-    demo_instruction_list = demo_df["instruction"].tolist()
-    demo_response_list = demo_df["output"].tolist()
     
+    print("=" * 100)
+    print(f"Number of samples: {len(instruction_list)}")
+
     if args.num_shots > 0:
         print("=" * 100)
         print("Load demonstrations.")
+        demo_df = pd.read_json(args.demo_path)
+        demo_instruction_list = demo_df["instruction"].tolist()
+        demo_response_list = demo_df["output"].tolist()
+        
         shot_list = pd.read_json(demo_output_path)["demo_idx"].tolist()
+        assert len(shot_list) == len(instruction_list)
+        assert len(shot_list[0]) == args.num_shots
 
         print("=" * 100)
         print("Do few-shot jailbreaking.")
     else:
+        demo_instruction_list = []
+        demo_response_list = []
+        
         shot_list = [[] for _ in range(len(instruction_list))]
         print("=" * 100)
         print("Do zero-shot jailbreaking.")

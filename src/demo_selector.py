@@ -18,6 +18,7 @@ class DemoSelector:
         self,
         selector_mode,
         system_message,
+        output_prefix,
         demo_instruction_embed_arr,
         demo_instruction_list,
         demo_response_list,
@@ -42,6 +43,8 @@ class DemoSelector:
     ):
         self.selector_mode = selector_mode
         self.system_message = system_message
+        self.output_prefix = output_prefix
+        
         self.num_shots = num_shots
         self.context_window_size = context_window_size
         self.global_step = 0
@@ -97,22 +100,7 @@ class DemoSelector:
             ) <= self.sim_threshold
         ).item()
         
-        if not sim_flag:
-            return False
-        
-        for idx in selected_idx_list:
-            sim_flag = (
-                torch.cosine_similarity(
-                    torch.tensor(self.demo_instruction_embed_arr[cand_idx]),
-                    torch.tensor(self.demo_instruction_embed_arr[idx]),
-                    dim=0
-                ) <= self.sim_threshold
-            ).item()
-            
-            if not sim_flag:
-                return False
-            
-        return True
+        return sim_flag
         
     def rejection_strategy(
         self,
@@ -169,6 +157,7 @@ class DemoSelector:
                 ifd = ppl_out_condition / ppl_out_alone
                 cand_row[-1] = ifd
                 cand_value = 1 - ifd / in_context_ifd_arr[shot_idx + 1][-1]
+                
             else:
                 cand_value = cand_ifd
                 
@@ -197,6 +186,11 @@ class DemoSelector:
         
         if shot_idx < len(in_context_ifd_arr) - 1:
             response = history_conversation_list[-1]["content"]
+            
+            assert self.output_prefix in response
+            
+            response = response.replace(self.output_prefix, "")
+            
             ppl_out_alone, loss_out_alone = get_perplexity_and_embedding_whole_text(self.tokenizer, self.model, response, self.max_length)
         else:
             ppl_out_alone, loss_out_alone = None, None
@@ -215,7 +209,8 @@ class DemoSelector:
                     {"role": "assistant", "content": cand_response}
                 ]
                 
-                conversation = [{"role": "system", "content": self.system_message}]
+                # conversation = [{"role": "system", "content": self.system_message}]
+                conversation = []
                 conversation.extend(top_conversation_list)
                 conversation.extend(list(history_conversation_list))
                 
@@ -238,6 +233,13 @@ class DemoSelector:
                 ifd = ppl_out_condition / ppl_out_alone
                 cand_row[-1] = ifd
                 cand_value = 1 - ifd / in_context_ifd_arr[shot_idx + 1][-1]
+                
+                # print("-" * 100)
+                # print(whole_text)
+                # print(response)
+                # print(ifd)
+                # print(in_context_ifd_arr[shot_idx + 1][-1])
+                # print(cand_value)
             else:
                 cand_value = cand_ifd
                 
@@ -303,6 +305,8 @@ class DemoSelector:
                             k += 1
                     
                     if cand_idx_list:
+                        print("=" * 100)
+                        print(f"Number of candidates: {len(cand_idx_list)}")
                         if self.selector_mode == "random":
                             selected = True
                         elif self.selector_mode == "greedy":
@@ -324,6 +328,8 @@ class DemoSelector:
                             )
                         else:
                             raise NotImplementedError
+                    else:
+                        print("Please improve the diversity of the demonstration dataset.")
                         
                     if selected:
                         break
@@ -349,6 +355,8 @@ class DemoSelector:
                         {"role": "user", "content": self.demo_instruction_list[cand_idx]}
                     )
                     j += 1
+                elif self.selector_mode == "random":
+                    pass
                 elif self.selector_mode == "greedy":
                     curr_lower_value_threshold -= self.relax_ratio * abs(self.lower_value_threshold)
                     

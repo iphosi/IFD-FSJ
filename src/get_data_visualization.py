@@ -6,29 +6,31 @@ import numpy as np
 
 if __name__ == "__main__":
     # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/wo_chat_template"
-    data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v1/ppl_c_8.0_10.0"
-    # data_dir = "IFD-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v1"
+    # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v2/ppl_c_8.0_10.0"
+    # data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-Qwen2.5-t500/qwen2.5/w_chat_template/sys_msg_v0/ppl_c_0.0_2.0/demo_v9"
+    data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ-Llama2-t300/llama2/w_chat_template/sys_msg_v0"
+    # data_dir = "IFD-FSJ/datasets/benchmarks/AdvBench/qwen2.5/w_chat_template/sys_msg_v0"
     # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/wo_chat_template"
     # data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ/llama2_sep/w_chat_template/sys_msg_v0"
     data_path = f"{data_dir}/unfiltered.json"
-    # data_output_path = f"{data_dir}/unfiltered_dropna.json"
+    data_output_path = f"{data_dir}/unfiltered_dropna.json"
     fig_output_path = f"{data_dir}/unfiltered.png"
 
     df = pd.read_json(data_path)
     
     df.dropna(inplace=True)
         
-    # df.to_json(
-    #     data_output_path,
-    #     mode="w",
-    #     lines=False,
-    #     force_ascii=False,
-    #     orient="records",
-    #     indent=4
-    # )
+    df.to_json(
+        data_output_path,
+        mode="w",
+        lines=False,
+        force_ascii=False,
+        orient="records",
+        indent=4
+    )
 
-    bins = [0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2]
-    labels = ["0.0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1.0", "1.0-1.2"]
+    bins = [0, 0.2, 0.4, 0.6, 0.8, 1.0, float("inf")]
+    labels = ["0.0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1.0", "1.0+"]
 
     df["binned"] = pd.cut(df["ifd_ppl"], bins=bins, labels=labels, right=False)
     freq_counts = df["binned"].value_counts().sort_index()

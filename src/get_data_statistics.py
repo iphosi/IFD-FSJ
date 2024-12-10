@@ -8,15 +8,20 @@ import os
 if __name__ == "__main__":
     # model_type = "llama3"
     model_type = "llama2"
+    # model_type = "qwen2.5"
     
-    # data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ/no_sep/wo_chat_template"
-    # data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ/no_sep/w_chat_template/sys_msg_v0"
+    # data_dir = f"IFD-FSJ/datasets/demonstrations/AdvBench-V2-Llama2-t200/{model_type}/w_chat_template/sys_msg_v0"
+    # data_dir = f"IFD-FSJ/datasets/demonstrations/I-FSJ/llama2_sep/{model_type}/wo_chat_template"
+    # data_dir = f"IFD-FSJ/datasets/demonstrations/I-FSJ/llama2_sep/{model_type}/w_chat_template/sys_msg_v0"
     # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
-    data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v1/ppl_c_8.0_10.0"
-    # data_dir = f"IFD-FSJ/datasets/benchmarks/AdvBench/{model_type}/w_chat_template/sys_msg_v1"
-    
-    # dataset_name = "harmful_behaviors"
-    dataset_name = "demo_v3.1/filtered_ifd_0.4_0.6"
+    # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v2"
+    # data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-Llama2-t500/llama2/w_chat_template/sys_msg_v0"
+    # data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-Qwen2.5-t500/qwen2.5/w_chat_template/sys_msg_v0/ppl_c_0.0_2.0"
+    data_dir = f"IFD-FSJ/datasets/benchmarks/AdvBench-V5/{model_type}/w_chat_template/sys_msg_v0"
+
+    # dataset_name = "mistral_demonstration_list_official"
+    dataset_name = "harmful_behaviors_subset"
+    # dataset_name = "demo_v9/filtered_ifd_0.0_1.0"
     # dataset_name = "unfiltered"
     data_path = f"{data_dir}/{dataset_name}.json"
     output_path = f"{data_dir}/{dataset_name}_statistics.json"
@@ -30,18 +35,18 @@ if __name__ == "__main__":
         "num_samples": len(df) + num_nans,
         "num_nans": num_nans,
         "num_categories": "-" if "harm_category" not in df.columns else len(df.iloc[0]["harm_category"]),
-        "max_ppl_A_direct": round(df["ppl_A_direct"].max(), 3),
-        "min_ppl_A_direct": round(df["ppl_A_direct"].min(), 3),
-        "mean_ppl_A_direct": round(df["ppl_A_direct"].mean(), 3),
-        "std_ppl_A_direct": round(df["ppl_A_direct"].std(), 3),
-        "max_ppl_A_condition": round(df["ppl_A_condition"].max(), 3),
-        "min_ppl_A_condition": round(df["ppl_A_condition"].min(), 3),
-        "mean_ppl_A_condition": round(df["ppl_A_condition"].mean(), 3),
-        "std_ppl_A_condition": round(df["ppl_A_condition"].std(), 3),
-        "max_ifd_ppl": round(df["ifd_ppl"].max(), 3),
-        "min_ifd_ppl": round(df["ifd_ppl"].min(), 3),
-        "mean_ifd_ppl": round(df["ifd_ppl"].mean(), 3),
-        "std_ifd_ppl": round(df["ifd_ppl"].std(), 3),
+        "max_ppl_A_direct": "-" if len(df) == 0 else round(df["ppl_A_direct"].max(), 3),
+        "min_ppl_A_direct": "-" if len(df) == 0 else round(df["ppl_A_direct"].min(), 3),
+        "mean_ppl_A_direct": "-" if len(df) == 0 else round(df["ppl_A_direct"].mean(), 3),
+        "std_ppl_A_direct": "-" if len(df) == 0 else round(df["ppl_A_direct"].std(), 3),
+        "max_ppl_A_condition": "-" if len(df) == 0 else round(df["ppl_A_condition"].max(), 3),
+        "min_ppl_A_condition": "-" if len(df) == 0 else round(df["ppl_A_condition"].min(), 3),
+        "mean_ppl_A_condition": "-" if len(df) == 0 else round(df["ppl_A_condition"].mean(), 3),
+        "std_ppl_A_condition": "-" if len(df) == 0 else round(df["ppl_A_condition"].std(), 3),
+        "max_ifd_ppl": "-" if len(df) == 0 else round(df["ifd_ppl"].max(), 3),
+        "min_ifd_ppl": "-" if len(df) == 0 else round(df["ifd_ppl"].min(), 3),
+        "mean_ifd_ppl": "-" if len(df) == 0 else round(df["ifd_ppl"].mean(), 3),
+        "std_ifd_ppl": "-" if len(df) == 0 else round(df["ifd_ppl"].std(), 3),
     }
     
     if "harm_category" not in df.columns:

@@ -11,9 +11,10 @@ if __name__ == "__main__":
     # selector_mode = "random"
 
     wrt_adv_prefix = True
-    data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/llama2/w_chat_template/sys_msg_v1/harmful_behaviors_ifd_0.0_0.2/{selector_mode}/demonstrations"
-    demo_version = "demo_v3.1"
-    num_shots_list = [i for i in range(6, 7, 2)]
+    # data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ppl_c_0.0_3.0/{selector_mode}/demonstrations"
+    data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/{selector_mode}/demonstrations"
+    demo_version = "demo_v5.1"
+    num_shots_list = [i for i in range(4, 9, 4)]
     window = ""
 
     if wrt_adv_prefix:

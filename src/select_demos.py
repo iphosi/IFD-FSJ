@@ -17,13 +17,17 @@ from tqdm import tqdm
 
 import argparse
 
-from prompts import SYSTEM_MESSAGE_V0, SYSTEM_MESSAGE_V1, SYSTEM_MESSAGE_V2
+from prompts import (
+    SYSTEM_MESSAGE_V0, INSTRUCTION_PREFIX_V0, OUTPUT_PREFIX_V0,
+    SYSTEM_MESSAGE_V1, INSTRUCTION_PREFIX_V1, OUTPUT_PREFIX_V1,
+    SYSTEM_MESSAGE_V2, INSTRUCTION_PREFIX_V2, OUTPUT_PREFIX_V2
+)
 
 
 system_message_dict = {
-    "v0": SYSTEM_MESSAGE_V0,
-    "v1": SYSTEM_MESSAGE_V1,
-    "v2": SYSTEM_MESSAGE_V2,
+    "v0": {"system_message": SYSTEM_MESSAGE_V0, "instruction_prefix": INSTRUCTION_PREFIX_V0, "output_prefix": OUTPUT_PREFIX_V0},
+    "v1": {"system_message": SYSTEM_MESSAGE_V1, "instruction_prefix": INSTRUCTION_PREFIX_V1, "output_prefix": OUTPUT_PREFIX_V1},
+    "v2": {"system_message": SYSTEM_MESSAGE_V2, "instruction_prefix": INSTRUCTION_PREFIX_V2, "output_prefix": OUTPUT_PREFIX_V2}
 }
 
 
@@ -102,7 +106,7 @@ def main():
     print(f"Demonstration output path:\n{demo_output_path}")
     print(f"In-context array output path:\n{in_context_arr_path}")
     
-    if os.path.exists(in_context_arr_path):
+    if in_context_arr_path is not None and os.path.exists(in_context_arr_path):
         checkpoint = len(pd.read_json(in_context_arr_path, lines=True))
     else:
         checkpoint = 0
@@ -128,7 +132,8 @@ def main():
     sample_demo_instruction = demo_instruction_list[0]
     sample_demo_response = demo_response_list[0]
     
-    system_message = system_message_dict[args.system_message_version]
+    system_message = system_message_dict[args.system_message_version]["system_message"]
+    output_prefix = system_message_dict[args.system_message_version]["output_prefix"]
     
     print("=" * 100)
     print(f"System message:\n{system_message}")
@@ -140,13 +145,14 @@ def main():
     print("-" * 100)
     print(f"Sample demo instruction:\n{sample_demo_instruction}")
     print("-" * 100)
-    print(f"Sample demo instruction:\n{sample_demo_response}")
+    print(f"Sample demo response:\n{sample_demo_response}")
     
     print("=" * 100)
     print("Select demonstrations.")
     selector = DemoSelector(
         selector_mode=args.selector_mode,
         system_message=system_message,
+        output_prefix=output_prefix,
         demo_instruction_embed_arr=demo_instruction_embed_arr,
         demo_instruction_list=demo_instruction_list,
         demo_response_list=demo_response_list,
@@ -171,19 +177,18 @@ def main():
     )
     shot_list = selector.demo_selection()
 
-    if args.num_shots > 0:
-        demo_output_dict = {"demo_idx": shot_list}
-        
-        demo_output_df = pd.DataFrame(demo_output_dict)
-        
-        demo_output_df.to_json(
-            demo_output_path,
-            mode="w",
-            lines=False,
-            force_ascii=False,
-            orient="records",
-            indent=4
-        )
+    demo_output_dict = {"demo_idx": shot_list}
+    
+    demo_output_df = pd.DataFrame(demo_output_dict)
+    
+    demo_output_df.to_json(
+        demo_output_path,
+        mode="w",
+        lines=False,
+        force_ascii=False,
+        orient="records",
+        indent=4
+    )
     
     with open(f"{demo_output_dir}/demo_path.json", "w") as f:
         json.dump({"demo_path": args.demo_path}, f, indent=4)

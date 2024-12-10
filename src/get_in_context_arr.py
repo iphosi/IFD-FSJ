@@ -27,12 +27,12 @@ def parse_args():
     parser.add_argument("--max_length", type=int, default=4096)
     
     parser.add_argument("--demo_version", type=str, default="demo_v0")
-    parser.add_argument("--demo_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_0.0_10.0/demo_v0/filtered_ifd_0.4_1.2.json")
+    parser.add_argument("--demo_path", type=str, default="")
     
-    parser.add_argument("--demo_data_dir", type=str, default="IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/harmful_behaviors_subset_50/random/demonstrations")
+    parser.add_argument("--demo_data_dir", type=str, default="IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V1/harmful_behaviors_subset_50/random/demonstrations")
     parser.add_argument("--num_shots", type=int, default=4)
     
-    parser.add_argument("--adv_prefix_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_50.json")
+    parser.add_argument("--adv_prefix_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench-V1/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_50.json")
     parser.add_argument("--wrt_adv_prefix", action="store_true")
 
     args = parser.parse_args()
@@ -121,7 +121,7 @@ def get_in_context_arr_col(
     return in_context_ifd_arr_col, in_context_ppl_arr_col
 
 
-def get_in_context_arr(tokenizer, model, max_length, instruction_list, response_list, ifd_list, ppl_direct_list, ppl_condition_list):
+def get_in_context_arr_backup(tokenizer, model, max_length, instruction_list, response_list, ifd_list, ppl_direct_list, ppl_condition_list):
     in_context_ifd_arr = []
     in_context_ppl_arr = []
     history_conversation_list = []
@@ -154,6 +154,60 @@ def get_in_context_arr(tokenizer, model, max_length, instruction_list, response_
     in_context_ppl_arr = np.column_stack(in_context_ppl_arr).tolist()
     
     return in_context_ifd_arr, in_context_ppl_arr
+
+
+def get_in_context_arr(tokenizer, model, max_length, instruction_list, response_list, ifd_list):
+    in_context_ifd_arr = [[0] * len(instruction_list) for _ in range(len(instruction_list))]
+    
+    conversation_list = []
+    
+    response = response_list[-1]
+    
+    for i in range(len(instruction_list)):
+        in_context_ifd_arr[i][i] = ifd_list[i]
+        
+        conversation_list.extend(
+            [
+                {"role": "user", "content": instruction_list[i]},
+                {"role": "assistant", "content": response_list[i]}
+            ]
+        )
+    
+    ppl_out_alone, loss_out_alone = get_perplexity_and_embedding_whole_text(tokenizer, model, response, max_length)
+    
+    for i in range(len(instruction_list) - 1):
+        conversation = []
+        conversation.extend(conversation_list[2 * i:])
+        
+        whole_text = tokenizer.apply_chat_template(
+            conversation,
+            tokenize=False,
+            add_generation_prompt=False
+        )
+        instruction = tokenizer.apply_chat_template(
+            conversation[:-1],
+            tokenize=False,
+            add_generation_prompt=False
+        )
+        
+        # print("=" * 100)
+        # print(whole_text)
+        # print("-" * 100)
+        # print(instruction)
+        # print("-" * 100)
+        # print(response)
+        # print("-" * 100)
+        
+        instruction_input_ids = tokenizer.encode(instruction, return_tensors="pt", truncation=True, max_length=max_length).to(device)
+        instruction_len = instruction_input_ids.shape[1]
+
+        ppl_out_condition, loss_out_condition = get_perplexity_and_embedding_part_text(tokenizer, model, whole_text, response, max_length)
+
+        ifd = ppl_out_condition / ppl_out_alone
+        
+        in_context_ifd_arr[i][-1] = ifd
+        
+    return in_context_ifd_arr
 
 
 def main():
@@ -192,13 +246,9 @@ def main():
         
         adv_prefix_list = adv_prefix_df["adv_prefix"].tolist()
         adv_prefix_ifd_list = adv_prefix_df["ifd_ppl"].tolist()
-        adv_prefix_ppl_direct_list = adv_prefix_df["ppl_A_direct"].tolist()
-        adv_prefix_ppl_condition_list = adv_prefix_df["ppl_A_condition"].tolist()
     else:
         adv_prefix_list = None
         adv_prefix_ifd_list = None
-        adv_prefix_ppl_direct_list = None
-        adv_prefix_ppl_condition_list = None
         
     instruction_list = adv_prefix_df["instruction"].tolist()
     
@@ -211,26 +261,20 @@ def main():
         demo_instruction_list = demos["instruction"].tolist()
         demo_response_list = demos["output"].tolist()
         demo_ifd_list = demos["ifd_ppl"].tolist()
-        demo_ppl_direct_list = demos["ppl_A_direct"].tolist()
-        demo_ppl_condition_list = demos["ppl_A_condition"].tolist()
 
         if in_context_ifd_df is None:
             if args.wrt_adv_prefix:
                 demo_instruction_list.append(instruction_list[sample_idx])
                 demo_response_list.append(adv_prefix_list[sample_idx])
                 demo_ifd_list.append(adv_prefix_ifd_list[sample_idx])
-                demo_ppl_direct_list.append(adv_prefix_ppl_direct_list[sample_idx])
-                demo_ppl_condition_list.append(adv_prefix_ppl_condition_list[sample_idx])
                 
-            in_context_ifd_arr, in_context_ppl_arr = get_in_context_arr(
+            in_context_ifd_arr = get_in_context_arr(
                 tokenizer=tokenizer,
                 model=model,
                 max_length=args.max_length,
                 instruction_list=demo_instruction_list,
                 response_list=demo_response_list,
                 ifd_list=demo_ifd_list,
-                ppl_direct_list=demo_ppl_direct_list,
-                ppl_condition_list=demo_ppl_condition_list
             )
             
             pass
@@ -240,10 +284,7 @@ def main():
         output_dict = {
             "demo_idx": demo_idx_list,
             "in_context_ifd": in_context_ifd_arr,
-            "in_context_ppl": in_context_ppl_arr,
-            "orig_ifd": demo_ifd_list,
-            "orig_ppl_direct": demo_ppl_direct_list,
-            "orig_ppl_condition": demo_ppl_condition_list
+            "orig_ifd": demo_ifd_list
         }
         
         with open(output_path, "a") as f:

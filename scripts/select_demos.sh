@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=4,5
+export CUDA_VISIBLE_DEVICES=6,9
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
@@ -7,88 +7,77 @@ MODEL_NAME="Llama-2-7b-chat-hf"
 MODEL_PATH="IFD-FSJ/models/Llama-2-7b-chat-hf"
 MODEL_TYPE="llama2"
 
-SYSTEM_MESSAGE_VERSION="v1"
-DEMO_DIR="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/${MODEL_TYPE}/w_chat_template/sys_msg_${SYSTEM_MESSAGE_VERSION}"
+# MODEL_NAME="Qwen2.5-7B-Instruct"
+# MODEL_PATH="IFD-FSJ/models/Qwen2.5-7B-Instruct"
+# MODEL_TYPE="qwen2.5"
 
-BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/AdvBench/${MODEL_TYPE}/w_chat_template/sys_msg_${SYSTEM_MESSAGE_VERSION}"
-SUBSET_NAME="harmful_behaviors_ifd_0.0_0.2"
-BENCHMARK_NAME="AdvBench/${MODEL_TYPE}/w_chat_template/sys_msg_${SYSTEM_MESSAGE_VERSION}/${SUBSET_NAME}"
+SYSTEM_MESSAGE_VERSION="v0"
+
+BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_${SYSTEM_MESSAGE_VERSION}"
+SUBSET_NAME="harmful_behaviors_subset"
+BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_${SYSTEM_MESSAGE_VERSION}/${SUBSET_NAME}"
+
+# BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/AdvBench/${MODEL_TYPE}/w_chat_template/sys_msg_${SYSTEM_MESSAGE_VERSION}"
+# SUBSET_NAME="harmful_behaviors_ppl_c_0.0_3.0"
+# BENCHMARK_NAME="AdvBench/${MODEL_TYPE}/w_chat_template/sys_msg_${SYSTEM_MESSAGE_VERSION}/${SUBSET_NAME}"
+
+# BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/I-FSJ/${MODEL_TYPE}/w_chat_template/sys_msg_${SYSTEM_MESSAGE_VERSION}"
+# SUBSET_NAME="instruction"
+# BENCHMARK_NAME="I-FSJ/${MODEL_TYPE}/w_chat_template/sys_msg_${SYSTEM_MESSAGE_VERSION}/${SUBSET_NAME}"
 
 # demo_version_choices=(demo_v1 demo_v2 demo_v3 demo_v4)
-# demo_version_choices=(demo_v4.0 demo_v5.0)
-# demo_version_choices=(demo_v1.0 demo_v1.1 demo_v1.2 demo_v1.3 demo_v2.0 demo_v2.1 demo_v2.2 demo_v2.3 demo_v3.0 demo_v3.1 demo_v3.2 demo_v3.3 demo_v4.0 demo_v5.0)
-# demo_version_choices=(demo_v3.1 demo_v3.2 demo_v3.3 demo_v4.0 demo_v5.0)
-demo_version_choices=(demo_v3.1)
-# demo_version_choices=(demo_v1.0 demo_v1.1 demo_v1.2 demo_v1.3)
-# demo_version_choices=(demo_v2.0 demo_v2.1 demo_v2.2 demo_v2.3)
-# demo_version_choices=(demo_v3.0 demo_v3.1 demo_v3.2 demo_v3.3)
-# demo_version_choices=(demo_v1.2 demo_v1.3 demo_v2.2 demo_v2.3 demo_v3.2 demo_v3.3)
+demo_version_choices=(demo_v5.1)
 
 declare -A demo_path_dict
 declare -A demo_embed_path_dict
 
 demo_path_dict=(
-    [demo_v0]="${DEMO_DIR}/ppl_2.0_12.0/demo_v0/filtered_ifd_0.4_1.2.json"
-    [demo_v1]="${DEMO_DIR}/ppl_2.0_12.0/demo_v1/filtered_ifd_0.4_0.6.json"
-    [demo_v2]="${DEMO_DIR}/ppl_2.0_12.0/demo_v2/filtered_ifd_0.6_0.8.json"
-    [demo_v3]="${DEMO_DIR}/ppl_2.0_12.0/demo_v3/filtered_ifd_0.8_1.0.json"
-    [demo_v4]="${DEMO_DIR}/ppl_2.0_12.0/demo_v4/filtered_ifd_1.0_1.2.json"
-    [demo_v1.0]="${DEMO_DIR}/ppl_c_4.0_6.0/demo_v1.0/filtered_ifd_0.4_1.0.json"
-    [demo_v1.1]="${DEMO_DIR}/ppl_c_4.0_6.0/demo_v1.1/filtered_ifd_0.4_0.6.json"
-    [demo_v1.2]="${DEMO_DIR}/ppl_c_4.0_6.0/demo_v1.2/filtered_ifd_0.6_0.8.json"
-    [demo_v1.3]="${DEMO_DIR}/ppl_c_4.0_6.0/demo_v1.3/filtered_ifd_0.8_1.0.json"
-    [demo_v2.0]="${DEMO_DIR}/ppl_c_6.0_8.0/demo_v2.0/filtered_ifd_0.4_1.0.json"
-    [demo_v2.1]="${DEMO_DIR}/ppl_c_6.0_8.0/demo_v2.1/filtered_ifd_0.4_0.6.json"
-    [demo_v2.2]="${DEMO_DIR}/ppl_c_6.0_8.0/demo_v2.2/filtered_ifd_0.6_0.8.json"
-    [demo_v2.3]="${DEMO_DIR}/ppl_c_6.0_8.0/demo_v2.3/filtered_ifd_0.8_1.0.json"
-    [demo_v3.0]="${DEMO_DIR}/ppl_c_8.0_10.0/demo_v3.0/filtered_ifd_0.4_1.0.json"
-    [demo_v3.1]="${DEMO_DIR}/ppl_c_8.0_10.0/demo_v3.1/filtered_ifd_0.4_0.6.json"
-    [demo_v3.2]="${DEMO_DIR}/ppl_c_8.0_10.0/demo_v3.2/filtered_ifd_0.6_0.8.json"
-    [demo_v3.3]="${DEMO_DIR}/ppl_c_8.0_10.0/demo_v3.3/filtered_ifd_0.8_1.0.json"
-    [demo_v3.4]="${DEMO_DIR}/ppl_c_8.0_10.0/demo_v3.4/filtered_wo_ifd_0.6_0.8.json"
-    [demo_v4.0]="${DEMO_DIR}/ppl_c_10.0_12.0/demo_v4.0/filtered_ifd_0.4_1.0.json"
-    [demo_v5.0]="${DEMO_DIR}/ppl_c_12.0_14.0/demo_v5.0/filtered_ifd_0.4_1.0.json"
+    [demo_v2.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V2-Llama2-t50/llama2_sep_3/llama2/w_chat_template/sys_msg_v0/demo_v2.1/filtered.json"
+    [demo_v2]="IFD-FSJ/datasets/demonstrations/AdvBench-V2-Llama2-t200/llama2/w_chat_template/sys_msg_v0/demo_v2/filtered_ppl_c_0.0_4.0.json"
+    [demo_v4.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V4-Llama2-t400/llama2_sep_1/llama2/w_chat_template/sys_msg_v0/demo_v4.1/filtered.json"
+    [demo_v4.2]="IFD-FSJ/datasets/demonstrations/AdvBench-V4-Llama2-t400/llama2_sep_4/llama2/w_chat_template/sys_msg_v0/demo_v4.2/filtered.json"
+    [demo_v5.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.1/filtered.json"
+    [demo_v6.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V6-Llama2-t50/no_sep/llama2/w_chat_template/sys_msg_v0/demo_v6.1/filtered.json"
+    [demo_v10]="IFD-FSJ/datasets/demonstrations/I-FSJ/llama2_sep/llama2/w_chat_template/sys_msg_v0/mistral_demonstration_list_official.json"
 )
 demo_embed_path_dict=(
-    [demo_v0]="${DEMO_DIR}/ppl_2.0_12.0/demo_v0/instruction_embed_arr.npy"
-    [demo_v1]="${DEMO_DIR}/ppl_2.0_12.0/demo_v1/instruction_embed_arr.npy"
-    [demo_v2]="${DEMO_DIR}/ppl_2.0_12.0/demo_v2/instruction_embed_arr.npy"
-    [demo_v3]="${DEMO_DIR}/ppl_2.0_12.0/demo_v3/instruction_embed_arr.npy"
-    [demo_v4]="${DEMO_DIR}/ppl_2.0_12.0/demo_v4/instruction_embed_arr.npy"
-    [demo_v1.0]="${DEMO_DIR}/ppl_c_4.0_6.0/demo_v1.0/instruction_embed_arr.npy"
-    [demo_v1.1]="${DEMO_DIR}/ppl_c_4.0_6.0/demo_v1.1/instruction_embed_arr.npy"
-    [demo_v1.2]="${DEMO_DIR}/ppl_c_4.0_6.0/demo_v1.2/instruction_embed_arr.npy"
-    [demo_v1.3]="${DEMO_DIR}/ppl_c_4.0_6.0/demo_v1.3/instruction_embed_arr.npy"
-    [demo_v2.0]="${DEMO_DIR}/ppl_c_6.0_8.0/demo_v2.0/instruction_embed_arr.npy"
-    [demo_v2.1]="${DEMO_DIR}/ppl_c_6.0_8.0/demo_v2.1/instruction_embed_arr.npy"
-    [demo_v2.2]="${DEMO_DIR}/ppl_c_6.0_8.0/demo_v2.2/instruction_embed_arr.npy"
-    [demo_v2.3]="${DEMO_DIR}/ppl_c_6.0_8.0/demo_v2.3/instruction_embed_arr.npy"
-    [demo_v3.0]="${DEMO_DIR}/ppl_c_8.0_10.0/demo_v3.0/instruction_embed_arr.npy"
-    [demo_v3.1]="${DEMO_DIR}/ppl_c_8.0_10.0/demo_v3.1/instruction_embed_arr.npy"
-    [demo_v3.2]="${DEMO_DIR}/ppl_c_8.0_10.0/demo_v3.2/instruction_embed_arr.npy"
-    [demo_v3.3]="${DEMO_DIR}/ppl_c_8.0_10.0/demo_v3.3/instruction_embed_arr.npy"
-    [demo_v3.4]="${DEMO_DIR}/ppl_c_8.0_10.0/demo_v3.4/instruction_embed_arr.npy"
-    [demo_v4.0]="${DEMO_DIR}/ppl_c_10.0_12.0/demo_v4.0/instruction_embed_arr.npy"
-    [demo_v5.0]="${DEMO_DIR}/ppl_c_12.0_14.0/demo_v5.0/instruction_embed_arr.npy"
+    [demo_v2.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V2-Llama2-t50/llama2_sep_3/llama2/w_chat_template/sys_msg_v0/demo_v2.1/instruction_embed_arr.npy"
+    [demo_v2]="IFD-FSJ/datasets/demonstrations/AdvBench-V2-Llama2-t200/llama2/w_chat_template/sys_msg_v0/demo_v2/instruction_embed_arr.npy"
+    [demo_v4.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V4-Llama2-t400/llama2_sep_1/llama2/w_chat_template/sys_msg_v0/demo_v4.1/instruction_embed_arr.npy"
+    [demo_v4.2]="IFD-FSJ/datasets/demonstrations/AdvBench-V4-Llama2-t400/llama2_sep_4/llama2/w_chat_template/sys_msg_v0/demo_v4.2/instruction_embed_arr.npy"
+    [demo_v5.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.1/instruction_embed_arr.npy"
+    [demo_v6.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V6-Llama2-t50/no_sep/llama2/w_chat_template/sys_msg_v0/demo_v6.1/instruction_embed_arr.npy"
+    [demo_v10]="IFD-FSJ/datasets/demonstrations/I-FSJ/llama2_sep/llama2/w_chat_template/sys_msg_v0/instruction_embed_arr.npy"
 )
 
 # num_shots_choices=(2 4 6 8 10 12 14 16)
-num_shots_choices=(6)
-# num_shots_choices=(2 4 6 8)
+num_shots_choices=(8)
 
 declare -A time_cost_dict
 time_cost_dict=(
-    [2]=5
-    [4]=15
-    [6]=30
-    [8]=40
-    [10]=60
-    [12]=80
-    [14]=100
-    [16]=120
+    [2]=15
+    [4]=40
+    [6]=120
+    [8]=180
+    [10]=170
+    [12]=200
+    [14]=220
+    [16]=250
     [20]=205
     [24]=205
 )
+# time_cost_dict=(
+#     [2]=10
+#     [4]=25
+#     [6]=35
+#     [8]=45
+#     [10]=60
+#     [12]=80
+#     [14]=100
+#     [16]=120
+#     [20]=205
+#     [24]=205
+# )
 
 for num_shots in "${num_shots_choices[@]}";
 do
@@ -111,16 +100,16 @@ do
             --model_path ${MODEL_PATH} \
             --max_length 4096 \
             --num_shots ${num_shots} \
-            --sim_threshold 0.5 \
+            --sim_threshold 1 \
             --lower_value_threshold -1 \
             --upper_value_threshold 0.04 \
             --relax_ratio 0.2 \
-            --num_cands_per_attempt 16 \
+            --num_cands_per_attempt 64 \
             --max_num_attempts 1 \
             --system_message_version ${SYSTEM_MESSAGE_VERSION} \
             > IFD-FSJ/log/log_0.out 2>&1 &
 
-        sleep ${time_cost_dict[${num_shots}]}m
-        # sleep 1m
+        # sleep ${time_cost_dict[${num_shots}]}m
+        sleep 1m
     done
 done
