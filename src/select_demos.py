@@ -19,22 +19,18 @@ import argparse
 
 from prompts import (
     SYSTEM_MESSAGE_V0, INSTRUCTION_PREFIX_V0, OUTPUT_PREFIX_V0,
-    SYSTEM_MESSAGE_V1, INSTRUCTION_PREFIX_V1, OUTPUT_PREFIX_V1,
-    SYSTEM_MESSAGE_V2, INSTRUCTION_PREFIX_V2, OUTPUT_PREFIX_V2
 )
 
 
 system_message_dict = {
-    "v0": {"system_message": SYSTEM_MESSAGE_V0, "instruction_prefix": INSTRUCTION_PREFIX_V0, "output_prefix": OUTPUT_PREFIX_V0},
-    "v1": {"system_message": SYSTEM_MESSAGE_V1, "instruction_prefix": INSTRUCTION_PREFIX_V1, "output_prefix": OUTPUT_PREFIX_V1},
-    "v2": {"system_message": SYSTEM_MESSAGE_V2, "instruction_prefix": INSTRUCTION_PREFIX_V2, "output_prefix": OUTPUT_PREFIX_V2}
+    "v0": {"system_message": SYSTEM_MESSAGE_V0, "instruction_prefix": INSTRUCTION_PREFIX_V0, "output_prefix": OUTPUT_PREFIX_V0}
 }
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     
-    parser.add_argument("--selector_mode", type=str, default="greedy", choices=["random", "greedy", "rejection"])
+    parser.add_argument("--selector_mode", type=str, default="greedy", choices=["random", "greedy"])
     parser.add_argument("--wrt_adv_prefix", action="store_true")
     
     parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors_ifd_0.0_0.2")

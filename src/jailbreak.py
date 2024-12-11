@@ -11,14 +11,13 @@ import pandas as pd
 
 import argparse
 
-from prompts import SYSTEM_MESSAGE_V0, SYSTEM_MESSAGE_V1, SYSTEM_MESSAGE_V2, SYSTEM_MESSAGE_V3
+from prompts import (
+    SYSTEM_MESSAGE_V0, INSTRUCTION_PREFIX_V0, OUTPUT_PREFIX_V0,
+)
 
 
 system_message_dict = {
-    "v0": SYSTEM_MESSAGE_V0,
-    "v1": SYSTEM_MESSAGE_V1,
-    "v2": SYSTEM_MESSAGE_V2,
-    "v3": SYSTEM_MESSAGE_V3
+    "v0": {"system_message": SYSTEM_MESSAGE_V0, "instruction_prefix": INSTRUCTION_PREFIX_V0, "output_prefix": OUTPUT_PREFIX_V0}
 }
 
 
@@ -71,9 +70,6 @@ def jailbreak(
     num_tokens_list = []
     
     for i in range(len(instruction_list)):
-        # conversation_list = [
-        #     {"role": "system", "content": system_message}
-        # ]
         conversation_list = []
 
         for demo_idx in shot_list[i]:
@@ -201,12 +197,14 @@ def main():
         dtype="auto",
         swap_space=8
     )
+    
+    system_message = system_message_dict[args.system_message_version]["system_message"]
         
     response_list = jailbreak(
         tokenizer=gen_tokenizer,
         model=gen_model,
         sampling_params=sampling_params,
-        system_message=system_message_dict[args.system_message_version],
+        system_message=system_message,
         instruction_list=instruction_list,
         shot_list=shot_list,
         demo_instruction_list=demo_instruction_list,

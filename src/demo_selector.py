@@ -29,7 +29,7 @@ class DemoSelector:
         adv_prefix_ifd_list,
         num_shots=2,
         context_window_size=2,
-        sim_threshold=0.5,
+        sim_threshold=1.0,
         lower_value_threshold=0.0,
         upper_value_threshold=0.1,
         relax_ratio=0.1,
@@ -83,9 +83,6 @@ class DemoSelector:
         self.model=model
         self.max_length=max_length
         
-    def generate(self):
-        pass
-        
     def similarity_strategy(
         self,
         cand_idx,
@@ -101,77 +98,6 @@ class DemoSelector:
         ).item()
         
         return sim_flag
-        
-    def rejection_strategy(
-        self,
-        cand_idx_list,
-        shot_idx,
-        lower_value_threshold,
-        upper_value_threshold,
-        in_context_ifd_arr,
-        history_conversation_list
-    ):
-        max_cand_value = float("-inf")
-        selected_row = None
-        
-        if shot_idx < len(in_context_ifd_arr) - 1:
-            response = history_conversation_list[-1]["content"]
-            ppl_out_alone, loss_out_alone = get_perplexity_and_embedding_whole_text(self.tokenizer, self.model, response, self.max_length)
-        else:
-            ppl_out_alone, loss_out_alone = None, None
-        
-        for k in range(len(cand_idx_list)):
-            cand_idx = cand_idx_list[k]
-            cand_instruction = self.demo_instruction_list[cand_idx]
-            cand_response = self.demo_response_list[cand_idx]
-            cand_ifd = self.demo_ifd_list[cand_idx]
-            cand_row = [0] * len(in_context_ifd_arr)
-            cand_row[shot_idx] = cand_ifd
-            
-            if shot_idx < len(in_context_ifd_arr) - 1:
-                top_conversation_list = [
-                    {"role": "user", "content": cand_instruction},
-                    {"role": "assistant", "content": cand_response}
-                ]
-                
-                conversation = [{"role": "system", "content": self.system_message}]
-                conversation.extend(top_conversation_list)
-                conversation.extend(list(history_conversation_list))
-                
-                whole_text = self.tokenizer.apply_chat_template(
-                    conversation,
-                    tokenize=False,
-                    add_generation_prompt=False
-                )
-                instruction = self.tokenizer.apply_chat_template(
-                    conversation[:-1],
-                    tokenize=False,
-                    add_generation_prompt=False
-                )
-                
-                instruction_input_ids = self.tokenizer.encode(instruction, return_tensors="pt", truncation=True, max_length=self.max_length).to(self.device)
-                instruction_len = instruction_input_ids.shape[1]
-
-                ppl_out_condition, loss_out_condition = get_perplexity_and_embedding_part_text(self.tokenizer, self.model, whole_text, response, self.max_length)
-
-                ifd = ppl_out_condition / ppl_out_alone
-                cand_row[-1] = ifd
-                cand_value = 1 - ifd / in_context_ifd_arr[shot_idx + 1][-1]
-                
-            else:
-                cand_value = cand_ifd
-                
-            if upper_value_threshold >= cand_value > max_cand_value:
-                max_cand_value = cand_value
-                selected_row = cand_row
-                
-                cand_idx_list[0], cand_idx_list[k] = cand_idx_list[k], cand_idx_list[0]
-                
-        if max_cand_value > lower_value_threshold or shot_idx == len(in_context_ifd_arr) - 1:
-            in_context_ifd_arr[shot_idx] = selected_row
-            return True
-        else:
-            return False
       
     def greedy_strategy(
         self,
@@ -187,10 +113,6 @@ class DemoSelector:
         if shot_idx < len(in_context_ifd_arr) - 1:
             response = history_conversation_list[-1]["content"]
             
-            assert self.output_prefix in response
-            
-            response = response.replace(self.output_prefix, "")
-            
             ppl_out_alone, loss_out_alone = get_perplexity_and_embedding_whole_text(self.tokenizer, self.model, response, self.max_length)
         else:
             ppl_out_alone, loss_out_alone = None, None
@@ -209,7 +131,6 @@ class DemoSelector:
                     {"role": "assistant", "content": cand_response}
                 ]
                 
-                # conversation = [{"role": "system", "content": self.system_message}]
                 conversation = []
                 conversation.extend(top_conversation_list)
                 conversation.extend(list(history_conversation_list))
@@ -234,12 +155,6 @@ class DemoSelector:
                 cand_row[-1] = ifd
                 cand_value = 1 - ifd / in_context_ifd_arr[shot_idx + 1][-1]
                 
-                # print("-" * 100)
-                # print(whole_text)
-                # print(response)
-                # print(ifd)
-                # print(in_context_ifd_arr[shot_idx + 1][-1])
-                # print(cand_value)
             else:
                 cand_value = cand_ifd
                 
@@ -317,15 +232,6 @@ class DemoSelector:
                                 in_context_ifd_arr=in_context_ifd_arr,
                                 history_conversation_list=history_conversation_list
                             )
-                        elif self.selector_mode == "rejection":
-                            selected = self.rejection_strategy(
-                                cand_idx_list=cand_idx_list,
-                                shot_idx=shot_idx,
-                                lower_value_threshold=curr_lower_value_threshold,
-                                upper_value_threshold=curr_upper_value_threshold,
-                                in_context_ifd_arr=in_context_ifd_arr,
-                                history_conversation_list=history_conversation_list
-                            )
                         else:
                             raise NotImplementedError
                     else:
@@ -365,16 +271,6 @@ class DemoSelector:
                     print("Max number of attempts is reached.")
                     print("Relax the constraint and restart.")
                     print(f"Current lower value threshold: {curr_lower_value_threshold}.")
-                elif self.selector_mode == "rejection":
-                    curr_lower_value_threshold -= self.relax_ratio * abs(self.lower_value_threshold)
-                    curr_upper_value_threshold += self.relax_ratio * abs(self.upper_value_threshold)
-
-                    print("=" * 100)
-                    print(f"Number of selected demos: {len(selected_idx_list)}.")
-                    print("Max number of attempts is reached.")
-                    print("Relax the constraint and restart.")
-                    print(f"Current lower value threshold: {curr_lower_value_threshold}.")
-                    print(f"Current upper value threshold: {curr_upper_value_threshold}.")
                 else:
                     raise NotImplementedError
                 

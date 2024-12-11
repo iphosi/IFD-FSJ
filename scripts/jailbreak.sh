@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=4,5,6,9
+export CUDA_VISIBLE_DEVICES=2,3,6,9
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
@@ -24,23 +24,18 @@ BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NA
 # SUBSET_NAME="instruction"
 # BENCHMARK_NAME="I-FSJ/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
-demo_version_choices=(demo_v0)
+demo_version_choices=(demo_v5.1)
 # demo_version_choices=(demo_v5)
 
 declare -A demo_path_dict
 
 demo_path_dict=(
     [demo_v0]="IFD-FSJ/datasets/demonstrations"
-    [demo_v2.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V2-Llama2-t50/llama2_sep_3/llama2/w_chat_template/sys_msg_v0/demo_v2.1/filtered.json"
-    [demo_v2]="IFD-FSJ/datasets/demonstrations/AdvBench-V2-Llama2-t200/llama2/w_chat_template/sys_msg_v0/demo_v2/filtered_ppl_c_0.0_4.0.json"
-    [demo_v4.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V4-Llama2-t400/llama2_sep_1/llama2/w_chat_template/sys_msg_v0/demo_v4.1/filtered.json"
-    [demo_v4.2]="IFD-FSJ/datasets/demonstrations/AdvBench-V4-Llama2-t400/llama2_sep_4/llama2/w_chat_template/sys_msg_v0/demo_v4.2/filtered.json"
-    [demo_v5.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama2_sep_4/llama2/w_chat_template/sys_msg_v0/demo_v5.1/filtered.json"
-    [demo_v10]="IFD-FSJ/datasets/demonstrations/I-FSJ/llama2_sep/llama2/w_chat_template/sys_msg_v0/mistral_demonstration_list_official.json"
+    [demo_v5.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.1/filtered.json"
 )
 
 # num_shots_choices=(2 4 6 8 10 12 14 16)
-num_shots_choices=(0)
+num_shots_choices=(2)
 
 for num_shots in "${num_shots_choices[@]}";
 do
@@ -50,7 +45,7 @@ do
         echo "Demo path: ${demo_path_dict[${demo_version}]}"
         echo "Num shots: ${num_shots}"
         python IFD-FSJ/src/jailbreak.py \
-            --selector_mode "random" \
+            --selector_mode "greedy" \
             --wrt_adv_prefix \
             --benchmark_name ${BENCHMARK_NAME} \
             --benchmark_path "${BENCHMARK_DIR}/${SUBSET_NAME}.json" \

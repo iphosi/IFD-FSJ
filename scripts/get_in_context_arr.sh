@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=2,3
+export CUDA_VISIBLE_DEVICES=4,5
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 
 
@@ -10,7 +10,7 @@ MODEL_PATH="IFD-FSJ/models/Llama-2-7b-chat-hf"
 
 ADV_PREFIX_PATH="IFD-FSJ/datasets/benchmarks/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset.json"
 
-DEMO_DATA_DIR="IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/ifsj_rs/demonstrations"
+DEMO_DATA_DIR="IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/random/demonstrations"
 
 # demo_version_choices=(demo_v3 demo_v4)
 demo_version_choices=(demo_v5.1)
@@ -19,11 +19,7 @@ demo_version_choices=(demo_v5.1)
 declare -A demo_path_dict
 
 demo_path_dict=(
-    [demo_v2.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V2-Llama2-t50/llama2_sep_3/llama2/w_chat_template/sys_msg_v0/demo_v2.1/filtered.json"
-    [demo_v4.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V4-Llama2-t400/llama2_sep_1/llama2/w_chat_template/sys_msg_v0/demo_v4.1/filtered.json"
-    [demo_v4.2]="IFD-FSJ/datasets/demonstrations/AdvBench-V4-Llama2-t400/llama2_sep_4/llama2/w_chat_template/sys_msg_v0/demo_v4.2/filtered.json"
     [demo_v5.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.1/filtered.json"
-    [demo_v10]="IFD-FSJ/datasets/demonstrations/I-FSJ/llama2_sep/llama2/w_chat_template/sys_msg_v0/mistral_demonstration_list_official.json"
 )
 
 # num_shots_choices=(2 3 4 5 6 7 8)
@@ -57,7 +53,7 @@ do
             --num_shots ${num_shots} \
             --adv_prefix_path ${ADV_PREFIX_PATH} \
             --wrt_adv_prefix \
-            > IFD-FSJ/log/log_0.out 2>&1 &
+            > IFD-FSJ/log/log_1.out 2>&1 &
 
         # sleep ${time_cost_dict[${num_shots}]}m
         sleep 1m

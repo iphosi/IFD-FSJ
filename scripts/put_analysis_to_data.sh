@@ -1,5 +1,5 @@
-# MODEL_TYPE="llama3"
-MODEL_TYPE="llama2"
+MODEL_TYPE="llama3"
+# MODEL_TYPE="llama2"
 # MODEL_TYPE="qwen2.5"
 
 # DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V2-Llama2-t50"
