@@ -8,9 +8,9 @@ import os
 
 if __name__ == "__main__":
     wrt_adv_prefix = True
-    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/demonstrations"
-    demo_version = "demo_v5.1.1"
-    num_shots_list = [2,4,8]
+    data_dir = "IFD-FSJ/evaluation/Starling-LM-7B-beta/AdvBench-V5/starlinglm/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/demonstrations"
+    demo_version = "demo_v5.1.6"
+    num_shots_list = [2]
 
     if wrt_adv_prefix:
         output_path = f"{data_dir}/{demo_version}/in_context_adv_arr_statistics.jsonl"

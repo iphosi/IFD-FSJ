@@ -1,0 +1,1 @@
+{"num_shots": 2, "mean_total_value": 0.009, "std_total_value": 0.002, "frac_pos_total_value": 1.0, "shot_value": {"0": {"mean_value": 0.001, "std_value": 0.0, "frac_pos_value": 1.0}, "1": {"mean_value": 0.008, "std_value": 0.002, "frac_pos_value": 1.0}}}

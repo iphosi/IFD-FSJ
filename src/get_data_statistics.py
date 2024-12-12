@@ -6,20 +6,9 @@ import os
 
 
 if __name__ == "__main__":
-    # model_type = "llama3"
-    model_type = "llama2"
-    # model_type = "qwen2.5"
-    
-    # data_dir = f"IFD-FSJ/datasets/demonstrations/AdvBench-V2-Llama2-t200/{model_type}/w_chat_template/sys_msg_v0"
-    # data_dir = f"IFD-FSJ/datasets/demonstrations/I-FSJ/llama2_sep/{model_type}/wo_chat_template"
-    # data_dir = f"IFD-FSJ/datasets/demonstrations/I-FSJ/llama2_sep/{model_type}/w_chat_template/sys_msg_v0"
-    # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/w_chat_template/sys_msg_v0"
-    # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v2"
-    data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama3-t50/llama3/w_chat_template/sys_msg_v0"
-    # data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-Qwen2.5-t500/qwen2.5/w_chat_template/sys_msg_v0/ppl_c_0.0_2.0"
-    # data_dir = f"IFD-FSJ/datasets/benchmarks/AdvBench-V5/{model_type}/w_chat_template/sys_msg_v0"
+    data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/starlinglm/w_chat_template/sys_msg_v0"
+    # data_dir = f"IFD-FSJ/datasets/benchmarks/AdvBench-V5/mistral/w_chat_template/sys_msg_v0"
 
-    # dataset_name = "mistral_demonstration_list_official"
     # dataset_name = "harmful_behaviors_subset"
     dataset_name = "unfiltered"
     data_path = f"{data_dir}/{dataset_name}.json"
