@@ -13,7 +13,7 @@ from prompts import INSTRUCTION_PREFIX_V0
 
 
 if __name__ == "__main__":
-    data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama3/w_chat_template/sys_msg_v0/demo_v5.2"
+    data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama3-t50/llama3/w_chat_template/sys_msg_v0/demo_v5.2.2"
     data_path = f"{data_dir}/filtered.json"
     output_path = f"{data_dir}/instruction_embed_arr.npy"
     

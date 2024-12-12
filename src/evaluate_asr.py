@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "2,3,6,9"
+os.environ["CUDA_VISIBLE_DEVICES"] = "4,5,6,9"
 
 import pandas as pd
 import json
@@ -115,23 +115,12 @@ def llm_based_evaluation(instructions, responses, model, tokenizer, sampling_par
 
 def main():    
     use_default_eval_template = False
-    # demo_version_list = ["demo_v0", "demo_v1", "demo_v2", "demo_v3", "demo_v4"]
-    demo_version_list = ["demo_v5.1"]
-    num_shots_list = [2,4,8]
+    demo_version_list = ["demo_v5.1.1"]
+    num_shots_list = [8]
     
     num_responses_per_instruction = 16
-    # selector_mode = "random"
-    # selector_mode = "ifsj_rs"
-    selector_mode = "greedy_adv"
-    benchmark_name = "harmful_behaviors_subset"
-    # benchmark_name = "harmful_behaviors_ppl_c_0.0_3.0"
-    # benchmark_name = "harmful_behaviors_ppl_c_0.0_9.0"
-    # benchmark_name = "instruction"
-    # benchmark_name = "mistral_demonstration"
     
-    # data_dir = f"IFD-FSJ/evaluation/Meta-Llama-3-8B-Instruct/AdvBench-V2/llama3/w_chat_template/sys_msg_v0/{benchmark_name}/{selector_mode}/generations/sys_msg_v0/wo_adv_prefix"
-    # data_dir = f"IFD-FSJ/evaluation/Qwen2.5-7B-Instruct/AdvBench/qwen2.5/w_chat_template/sys_msg_v0/{benchmark_name}/{selector_mode}/generations/sys_msg_v0/wo_adv_prefix"
-    data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/{benchmark_name}/{selector_mode}/generations/sys_msg_v0/wo_adv_prefix"
+    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
 
     eval_model_path = "IFD-FSJ/models/Llama-Guard-3-8B"
 

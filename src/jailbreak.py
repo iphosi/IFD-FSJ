@@ -46,6 +46,7 @@ def parse_args():
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--top_p", type=float, default=1.0)
     parser.add_argument("--max_tokens", type=int, default=100)
+    parser.add_argument("--min_tokens", type=int, default=50)
     
     parser.add_argument("--system_message_version", type=str, default="v0")
     
@@ -186,7 +187,8 @@ def main():
         n=args.num_return_sequences,
         temperature=args.temperature,
         top_p=args.top_p,
-        max_tokens=args.max_tokens
+        max_tokens=args.max_tokens,
+        min_tokens=args.min_tokens
     )
         
     gen_model = LLM(

@@ -7,16 +7,10 @@ import os
 
 
 if __name__ == "__main__":
-    selector_mode = "greedy_adv"
-    # selector_mode = "ifsj_rs"
-    # selector_mode = "random"
-
     wrt_adv_prefix = True
-    # data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ppl_c_0.0_3.0/{selector_mode}/demonstrations"
-    data_dir = f"IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/{selector_mode}/demonstrations"
-    demo_version = "demo_v5.1"
-    num_shots_list = [4,8]
-    window = ""
+    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/demonstrations"
+    demo_version = "demo_v5.1.1"
+    num_shots_list = [2,4,8]
 
     if wrt_adv_prefix:
         output_path = f"{data_dir}/{demo_version}/in_context_adv_arr_statistics.jsonl"

@@ -1,15 +1,15 @@
-export CUDA_VISIBLE_DEVICES=4,5
+export CUDA_VISIBLE_DEVICES=2,3
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
 
-MODEL_NAME="Meta-Llama-3-8B-Instruct"
-MODEL_PATH="IFD-FSJ/models/Meta-Llama-3-8B-Instruct"
-MODEL_TYPE="llama3"
+# MODEL_NAME="Meta-Llama-3-8B-Instruct"
+# MODEL_PATH="IFD-FSJ/models/Meta-Llama-3-8B-Instruct"
+# MODEL_TYPE="llama3"
 
-# MODEL_NAME="Llama-2-7b-chat-hf"
-# MODEL_PATH="IFD-FSJ/models/Llama-2-7b-chat-hf"
-# MODEL_TYPE="llama2"
+MODEL_NAME="Llama-2-7b-chat-hf"
+MODEL_PATH="IFD-FSJ/models/Llama-2-7b-chat-hf"
+MODEL_TYPE="llama2"
 
 # MODEL_NAME="Qwen2.5-7B-Instruct"
 # MODEL_PATH="IFD-FSJ/models/Qwen2.5-7B-Instruct"
@@ -30,18 +30,20 @@ BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_${SYSTEM_MESSA
 # BENCHMARK_NAME="I-FSJ/${MODEL_TYPE}/w_chat_template/sys_msg_${SYSTEM_MESSAGE_VERSION}/${SUBSET_NAME}"
 
 # demo_version_choices=(demo_v1 demo_v2 demo_v3 demo_v4)
-demo_version_choices=(demo_v5.2)
+demo_version_choices=(demo_v5.1.1)
 
 declare -A demo_path_dict
 declare -A demo_embed_path_dict
 
 demo_path_dict=(
-    [demo_v5.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.1/filtered.json"
-    [demo_v5.2]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama3/w_chat_template/sys_msg_v0/demo_v5.2/filtered.json"
+    [demo_v5.1.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.1.1/filtered.json"
+    [demo_v5.1.2]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama3/w_chat_template/sys_msg_v0/demo_v5.1.2/filtered.json"
+    [demo_v5.2.2]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama3-t50/llama3/w_chat_template/sys_msg_v0/demo_v5.2.2/filtered.json"
 )
 demo_embed_path_dict=(
-    [demo_v5.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.1/instruction_embed_arr.npy"
-    [demo_v5.2]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama3/w_chat_template/sys_msg_v0/demo_v5.2/instruction_embed_arr.npy"
+    [demo_v5.1.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.1.1/instruction_embed_arr.npy"
+    [demo_v5.1.2]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama3/w_chat_template/sys_msg_v0/demo_v5.1.2/instruction_embed_arr.npy"
+    [demo_v5.2.2]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama3-t50/llama3/w_chat_template/sys_msg_v0/demo_v5.2.2/instruction_embed_arr.npy"
 )
 
 num_shots_choices=(8)
@@ -81,14 +83,14 @@ do
             --model_path ${MODEL_PATH} \
             --max_length 4096 \
             --num_shots ${num_shots} \
-            --sim_threshold 0.6 \
+            --sim_threshold 1.0 \
             --lower_value_threshold -1 \
             --upper_value_threshold 1 \
             --relax_ratio 0.2 \
             --num_cands_per_attempt 64 \
             --max_num_attempts 1 \
             --system_message_version ${SYSTEM_MESSAGE_VERSION} \
-            > IFD-FSJ/log/log_1.out 2>&1 &
+            > IFD-FSJ/log/log_0.out 2>&1 &
 
         # sleep ${time_cost_dict[${num_shots}]}m
         sleep 1m
