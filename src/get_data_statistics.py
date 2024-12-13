@@ -6,11 +6,11 @@ import os
 
 
 if __name__ == "__main__":
-    data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/starlinglm/w_chat_template/sys_msg_v0"
-    # data_dir = f"IFD-FSJ/datasets/benchmarks/AdvBench-V5/mistral/w_chat_template/sys_msg_v0"
+    data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/qwen2.5/w_chat_template/sys_msg_v0/demo_v5.5.5"
+    # data_dir = f"IFD-FSJ/datasets/benchmarks/AdvBench-V5/llama2/w_chat_template/sys_msg_v0"
 
     # dataset_name = "harmful_behaviors_subset"
-    dataset_name = "unfiltered"
+    dataset_name = "filtered"
     data_path = f"{data_dir}/{dataset_name}.json"
     output_path = f"{data_dir}/{dataset_name}_statistics.json"
     

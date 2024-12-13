@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "4,5,6,9"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2,3,6,9"
 
 import pandas as pd
 import json
@@ -113,14 +113,18 @@ def llm_based_evaluation(instructions, responses, model, tokenizer, sampling_par
     )
 
 
-def main():    
+def main():
     use_default_eval_template = False
-    demo_version_list = ["demo_v5.1.1"]
-    num_shots_list = [8]
+    demo_version_list = ["demo_v5.4.4"]
+    num_shots_list = [2]
+    # demo_version_list = ["demo_v0"]
+    # num_shots_list = [0]
     
     num_responses_per_instruction = 16
     
-    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+    data_dir_list = [
+        "IFD-FSJ/evaluation/OpenChat-3.6-8B/AdvBench-V5/openchat3.6/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+    ]
 
     eval_model_path = "IFD-FSJ/models/Llama-Guard-3-8B"
 
@@ -164,37 +168,38 @@ def main():
         eval_tokenizer = None
         sampling_params = None
 
-    for demo_version in demo_version_list:
-        data_dir = f"{data_dir}/{demo_version}"
-        print("=" * 100)
-        
-        for num_shots in num_shots_list:
-            data_path = f"{data_dir}/generation_s{num_shots}_r{num_responses_per_instruction}.json"
-
-            df = pd.read_json(data_path)
+    for data_dir in data_dir_list:
+        for demo_version in demo_version_list:
+            data_dir = f"{data_dir}/{demo_version}"
+            print("=" * 100)
             
-            response_list = df["model_response"].tolist()
+            for num_shots in num_shots_list:
+                data_path = f"{data_dir}/generation_s{num_shots}_r{num_responses_per_instruction}.json"
 
-            if use_llm_based_evaluation:
-                if "w_adv_prefix" in data_path:
-                    instruction_list = (df["instruction"] + "\n\n" + df["adv_prefix"]).tolist()
+                df = pd.read_json(data_path)
+                
+                response_list = df["model_response"].tolist()
+
+                if use_llm_based_evaluation:
+                    if "w_adv_prefix" in data_path:
+                        instruction_list = (df["instruction"] + "\n\n" + df["adv_prefix"]).tolist()
+                    else:
+                        instruction_list = df["instruction"].tolist()
+                        
+                    asr, sample_lvl_asr, response_flag_list = llm_based_evaluation(instruction_list, response_list, eval_model, eval_tokenizer, sampling_params)
                 else:
-                    instruction_list = df["instruction"].tolist()
-                    
-                asr, sample_lvl_asr, response_flag_list = llm_based_evaluation(instruction_list, response_list, eval_model, eval_tokenizer, sampling_params)
-            else:
-                raise NotImplementedError
-            
-            asr_dict = {
-                "demo_version": demo_version,
-                "num_shots": num_shots,
-                "asr": asr,
-                "sample_lvl_asr": sample_lvl_asr,
-                "response_flag": response_flag_list
-            }
-            
-            with open(f"{data_dir}/{prefix}_asr_r{num_responses_per_instruction}.jsonl", "a") as f:
-                f.write(json.dumps(asr_dict) + "\n")
+                    raise NotImplementedError
+                
+                asr_dict = {
+                    "demo_version": demo_version,
+                    "num_shots": num_shots,
+                    "asr": asr,
+                    "sample_lvl_asr": sample_lvl_asr,
+                    "response_flag": response_flag_list
+                }
+                
+                with open(f"{data_dir}/{prefix}_asr_r{num_responses_per_instruction}.jsonl", "a") as f:
+                    f.write(json.dumps(asr_dict) + "\n")
 
 
 if __name__ == "__main__":

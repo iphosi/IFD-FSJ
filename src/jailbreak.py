@@ -86,7 +86,7 @@ def jailbreak(
         )
         
         if use_adv_prefix and adv_prefix_list:
-            adv_prefix = " " + adv_prefix_list[i]
+            adv_prefix = "" + adv_prefix_list[i]
         else:
             adv_prefix = ""
             

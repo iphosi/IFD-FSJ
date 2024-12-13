@@ -1,21 +1,26 @@
-export CUDA_VISIBLE_DEVICES=4,5
+export CUDA_VISIBLE_DEVICES=6,9
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 
-# MODEL_NAME="Meta-Llama-3-8B-Instruct"
-# MODEL_TYPE="llama3"
 # MODEL_NAME="Llama-2-7b-chat-hf"
 # MODEL_TYPE="llama2"
-# MODEL_NAME="Mistral-7B-Instruct-v0.3"
-# MODEL_TYPE="mistral"
-MODEL_NAME="OpenChat-3.6-8B"
-MODEL_TYPE="openchat3.6"
-# MODEL_NAME="Qwen2.5-7B-Instruct"
-# MODEL_TYPE="qwen2.5"
+# MODEL_NAME="Meta-Llama-3-8B-Instruct"
+# MODEL_TYPE="llama3"
+# MODEL_NAME="Meta-Llama-3.1-8B-Instruct"
+# MODEL_TYPE="llama3.1"
+# MODEL_NAME="OpenChat-3.6-8B"
+# MODEL_TYPE="openchat3.6"
+MODEL_NAME="Qwen2.5-7B-Instruct"
+MODEL_TYPE="qwen2.5"
 # MODEL_NAME="Starling-LM-7B-beta"
 # MODEL_TYPE="starlinglm"
 
 # DATA_DIR="IFD-FSJ/datasets/benchmarks/AdvBench-V5"
-DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50"
+# DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50"
+# DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama3-t50"
+# DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama3.1-t50"
+# DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-OpenChat3.6-t50"
+DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50"
+# DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50"
 
 # DATASET_NAME="harmful_behaviors"
 DATASET_NAME="unfiltered"
@@ -34,4 +39,4 @@ python Superfiltering/code_ifd/modified_data_analysis.py \
     --model_name_or_path IFD-FSJ/models/${MODEL_NAME} \
     --max_length 1280 \
     --system_message_version ${SYSTEM_MESSAGE_VERSION} \
-    > IFD-FSJ/log/log_1.out 2>&1 &
+    > IFD-FSJ/log/log_3.out 2>&1 &
