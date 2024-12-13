@@ -8,20 +8,19 @@ import os
 
 if __name__ == "__main__":
     wrt_adv_prefix = True
-    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/ifsj_rs/demonstrations"
-    demo_version = "demo_v5.1.1_sim_0.6"
-    num_shots_list = [4]
+    data_dir = "IFD-FSJ/evaluation/Qwen2.5-7B-Instruct/AdvBench-V5/qwen2.5/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/demonstrations/demo_v5.1.5"
+    num_shots_list = [2,4,8]
 
     if wrt_adv_prefix:
-        output_path = f"{data_dir}/{demo_version}/in_context_adv_arr_statistics.jsonl"
+        output_path = f"{data_dir}/in_context_adv_arr_statistics.jsonl"
     else:
-        output_path = f"{data_dir}/{demo_version}/in_context_arr_statistics.jsonl"
+        output_path = f"{data_dir}/in_context_arr_statistics.jsonl"
 
     for num_shots in num_shots_list:
         if wrt_adv_prefix:
-            data_path = f"{data_dir}/{demo_version}/in_context_adv_arr_s{num_shots}.jsonl"
+            data_path = f"{data_dir}/in_context_adv_arr_s{num_shots}.jsonl"
         else:
-            data_path = f"{data_dir}/{demo_version}/in_context_arr_s{num_shots}.jsonl"
+            data_path = f"{data_dir}/in_context_arr_s{num_shots}.jsonl"
             
         print(data_path)
             
