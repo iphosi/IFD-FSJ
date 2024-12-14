@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "2,3,6,9"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2,3,4,5"
 
 import pandas as pd
 import json
@@ -115,15 +115,15 @@ def llm_based_evaluation(instructions, responses, model, tokenizer, sampling_par
 
 def main():
     use_default_eval_template = False
-    demo_version_list = ["demo_v5.4.4"]
-    num_shots_list = [2]
+    demo_version_list = ["demo_v5.6.6"]
+    num_shots_list = [8]
     # demo_version_list = ["demo_v0"]
     # num_shots_list = [0]
     
     num_responses_per_instruction = 16
     
     data_dir_list = [
-        "IFD-FSJ/evaluation/OpenChat-3.6-8B/AdvBench-V5/openchat3.6/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+        "IFD-FSJ/evaluation/Starling-LM-7B-beta/AdvBench-V5/starlinglm/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
     ]
 
     eval_model_path = "IFD-FSJ/models/Llama-Guard-3-8B"
@@ -168,9 +168,9 @@ def main():
         eval_tokenizer = None
         sampling_params = None
 
-    for data_dir in data_dir_list:
+    for i in range(len(data_dir_list)):
         for demo_version in demo_version_list:
-            data_dir = f"{data_dir}/{demo_version}"
+            data_dir = f"{data_dir_list[i]}/{demo_version}"
             print("=" * 100)
             
             for num_shots in num_shots_list:
