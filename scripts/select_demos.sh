@@ -1,12 +1,12 @@
-export CUDA_VISIBLE_DEVICES=2,3
+export CUDA_VISIBLE_DEVICES=6,9
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
 
-MODEL_NAME="Llama-2-7b-chat-hf"
-MODEL_TYPE="llama2"
-# MODEL_NAME="Meta-Llama-3-8B-Instruct"
-# MODEL_TYPE="llama3"
+# MODEL_NAME="Llama-2-7b-chat-hf"
+# MODEL_TYPE="llama2"
+MODEL_NAME="Meta-Llama-3-8B-Instruct"
+MODEL_TYPE="llama3"
 # MODEL_NAME="Meta-Llama-3.1-8B-Instruct"
 # MODEL_TYPE="llama3.1"
 # MODEL_NAME="OpenChat-3.6-8B"
@@ -26,7 +26,7 @@ BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/HarmBench-V6/${MODEL_TYPE}/w_chat_tem
 SUBSET_NAME="harmbench_behaviors_subset"
 BENCHMARK_NAME="HarmBench-V6/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
-demo_version_choices=(demo_v6.1.1)
+demo_version_choices=(demo_v6.2.2)
 
 declare -A demo_path_dict
 declare -A demo_embed_path_dict
@@ -99,7 +99,7 @@ do
             --num_cands_per_attempt 64 \
             --max_num_attempts 1 \
             --system_message_version v0 \
-            > IFD-FSJ/log/log_2.out 2>&1 &
+            > IFD-FSJ/log/log_0.out 2>&1 &
 
         sleep ${time_cost_dict[${num_shots}]}m
         # sleep 1m
