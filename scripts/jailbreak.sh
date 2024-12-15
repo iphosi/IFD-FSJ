@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=2,3,4,5
+export CUDA_VISIBLE_DEVICES=4,5,6,9
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
@@ -9,25 +9,25 @@ export VLLM_WORKER_MULTIPROC_METHOD=spawn
 # MODEL_TYPE="llama3"
 # MODEL_NAME="Meta-Llama-3.1-8B-Instruct"
 # MODEL_TYPE="llama3.1"
-# MODEL_NAME="OpenChat-3.6-8B"
-# MODEL_TYPE="openchat3.6"
+MODEL_NAME="OpenChat-3.6-8B"
+MODEL_TYPE="openchat3.6"
 # MODEL_NAME="Qwen2.5-7B-Instruct"
 # MODEL_TYPE="qwen2.5"
-MODEL_NAME="Starling-LM-7B-beta"
-MODEL_TYPE="starlinglm"
+# MODEL_NAME="Starling-LM-7B-beta"
+# MODEL_TYPE="starlinglm"
 
 MODEL_PATH="IFD-FSJ/models/${MODEL_NAME}"
 
-BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
-SUBSET_NAME="harmful_behaviors_subset"
-BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
+# BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
+# SUBSET_NAME="harmful_behaviors_subset"
+# BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
-# BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/HarmBench-V2/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
-# SUBSET_NAME="harmbench_behaviors"
-# BENCHMARK_NAME="HarmBench-V2/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
+BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/HarmBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
+SUBSET_NAME="harmbench_behaviors_subset"
+BENCHMARK_NAME="HarmBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
 # demo_version_choices=(demo_v0)
-demo_version_choices=(demo_v5.6.6)
+demo_version_choices=(demo_v5.4.4)
 
 declare -A demo_path_dict
 
@@ -49,7 +49,7 @@ demo_path_dict=(
 )
 
 # num_shots_choices=(2)
-num_shots_choices=(8)
+num_shots_choices=(2)
 
 for num_shots in "${num_shots_choices[@]}";
 do
@@ -72,11 +72,11 @@ do
             --num_shots ${num_shots} \
             --num_return_sequences 16 \
             --temperature 1.0 \
-            --top_p 0.5 \
+            --top_p 1.0 \
             --max_tokens 100 \
             --min_tokens 50 \
             --system_message_version v0 \
-            > IFD-FSJ/log/log_1.out 2>&1 &
+            > IFD-FSJ/log/log_0.out 2>&1 &
 
         sleep 3m
     done
