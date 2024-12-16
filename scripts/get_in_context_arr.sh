@@ -1,9 +1,9 @@
-export CUDA_VISIBLE_DEVICES=6,9
+export CUDA_VISIBLE_DEVICES=2,3
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 
 
-MODEL_NAME="Llama-2-7b-chat-hf"
-MODEL_TYPE="llama2"
+# MODEL_NAME="Llama-2-7b-chat-hf"
+# MODEL_TYPE="llama2"
 # MODEL_NAME="Meta-Llama-3-8B-Instruct"
 # MODEL_TYPE="llama3"
 # MODEL_NAME="Meta-Llama-3.1-8B-Instruct"
@@ -12,8 +12,8 @@ MODEL_TYPE="llama2"
 # MODEL_TYPE="openchat3.6"
 # MODEL_NAME="Qwen2.5-7B-Instruct"
 # MODEL_TYPE="qwen2.5"
-# MODEL_NAME="Starling-LM-7B-beta"
-# MODEL_TYPE="starlinglm"
+MODEL_NAME="Starling-LM-7B-beta"
+MODEL_TYPE="starlinglm"
 
 MODEL_PATH="IFD-FSJ/models/${MODEL_NAME}"
 
@@ -21,7 +21,7 @@ ADV_PREFIX_PATH="IFD-FSJ/datasets/benchmarks/AdvBench-V5/${MODEL_TYPE}/w_chat_te
 
 DEMO_DATA_DIR="IFD-FSJ/evaluation/${MODEL_NAME}/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/harmful_behaviors_subset/ifsj_rs/demonstrations"
 
-demo_version_choices=(demo_v5.1.1)
+demo_version_choices=(demo_v5.6.6)
 
 declare -A demo_path_dict
 

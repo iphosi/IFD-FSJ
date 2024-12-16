@@ -40,122 +40,6 @@ def parse_args():
     return args
 
 
-def get_in_context_arr_row(tokenizer, model, max_length, history_conversation_list, top_conversation_list, top_conversation_ifd):
-    in_context_ifd_arr_row = [0] * ((len(history_conversation_list) // 2) + 1)
-    in_context_ifd_arr_row[0] = top_conversation_ifd
-    
-    for i in range(1, (len(history_conversation_list) // 2) + 1):
-        conversation = [{"role": "system", "content": ""}]
-        conversation.extend(top_conversation_list)
-        conversation.extend(history_conversation_list[:2 * i])
-        
-        whole_text = tokenizer.apply_chat_template(
-            conversation,
-            tokenize=False,
-            add_generation_prompt=False
-        )
-        instruction = tokenizer.apply_chat_template(
-            conversation[:-1],
-            tokenize=False,
-            add_generation_prompt=False
-        )
-        response = conversation[-1]["content"]
-        
-        instruction_input_ids = tokenizer.encode(instruction, return_tensors="pt", truncation=True, max_length=max_length).to(device)
-        instruction_len = instruction_input_ids.shape[1]
-
-        ppl_out_alone, loss_out_alone = get_perplexity_and_embedding_whole_text(tokenizer, model, response, max_length - instruction_len + 1)
-        ppl_out_condition, loss_out_condition = get_perplexity_and_embedding_part_text(tokenizer, model, whole_text, response, max_length)
-
-        in_context_ifd = ppl_out_condition / ppl_out_alone
-        
-        in_context_ifd_arr_row[i] = in_context_ifd
-        
-    return in_context_ifd_arr_row
-
-
-def get_in_context_arr_col(
-    tokenizer,
-    model,
-    max_length,
-    history_conversation_list,
-    bottom_conversation_list,
-    bottom_conversation_ifd,
-    bottom_conversation_ppl_direct,
-    bottom_conversation_ppl_condition
-):
-    in_context_ifd_arr_col = [0] * ((len(history_conversation_list) // 2) + 1)
-    in_context_ifd_arr_col[-1] = bottom_conversation_ifd
-    in_context_ppl_arr_col = [0] * ((len(history_conversation_list) // 2) + 1)
-    in_context_ppl_arr_col[-1] = bottom_conversation_ppl_condition
-    
-    ppl_out_alone = bottom_conversation_ppl_direct
-    loss_out_alone = np.log(ppl_out_alone)
-
-    for i in range((len(history_conversation_list) // 2) - 1, -1, -1):
-        conversation = [{"role": "system", "content": ""}]
-        conversation.extend(history_conversation_list[2 * i:])
-        conversation.extend(bottom_conversation_list)
-        
-        whole_text = tokenizer.apply_chat_template(
-            conversation,
-            tokenize=False,
-            add_generation_prompt=False
-        )
-        instruction = tokenizer.apply_chat_template(
-            conversation[:-1],
-            tokenize=False,
-            add_generation_prompt=False
-        )
-        response = conversation[-1]["content"]
-        
-        instruction_input_ids = tokenizer.encode(instruction, return_tensors="pt", truncation=True, max_length=max_length).to(device)
-
-        ppl_out_condition, loss_out_condition = get_perplexity_and_embedding_part_text(tokenizer, model, whole_text, response, max_length)
-
-        in_context_ifd = ppl_out_condition / ppl_out_alone
-        
-        in_context_ifd_arr_col[i] = in_context_ifd
-        in_context_ppl_arr_col[i] = ppl_out_condition
-        
-    return in_context_ifd_arr_col, in_context_ppl_arr_col
-
-
-def get_in_context_arr_backup(tokenizer, model, max_length, instruction_list, response_list, ifd_list, ppl_direct_list, ppl_condition_list):
-    in_context_ifd_arr = []
-    in_context_ppl_arr = []
-    history_conversation_list = []
-    
-    for i in range(len(instruction_list)):
-        bottom_conversation_list = [
-            {"role": "user", "content": instruction_list[i]},
-            {"role": "assistant", "content": response_list[i]},
-        ]
-        
-        ifd_col, ppl_col = get_in_context_arr_col(
-            tokenizer=tokenizer,
-            model=model,
-            max_length=max_length,
-            history_conversation_list=history_conversation_list,
-            bottom_conversation_list=bottom_conversation_list,
-            bottom_conversation_ifd=ifd_list[i],
-            bottom_conversation_ppl_direct=ppl_direct_list[i],
-            bottom_conversation_ppl_condition=ppl_condition_list[i]
-        )
-        ifd_col = ifd_col + [0] * (len(instruction_list) - len(ifd_col))
-        in_context_ifd_arr.append(ifd_col)
-        
-        ppl_col = ppl_col + [0] * (len(instruction_list) - len(ppl_col))
-        in_context_ppl_arr.append(ppl_col)
-        
-        history_conversation_list.extend(bottom_conversation_list)
-        
-    in_context_ifd_arr = np.column_stack(in_context_ifd_arr).tolist()
-    in_context_ppl_arr = np.column_stack(in_context_ppl_arr).tolist()
-    
-    return in_context_ifd_arr, in_context_ppl_arr
-
-
 def get_in_context_arr(tokenizer, model, max_length, instruction_list, response_list, ifd_list):
     in_context_ifd_arr = [[0] * len(instruction_list) for _ in range(len(instruction_list))]
     
@@ -189,14 +73,6 @@ def get_in_context_arr(tokenizer, model, max_length, instruction_list, response_
             tokenize=False,
             add_generation_prompt=False
         )
-        
-        # print("=" * 100)
-        # print(whole_text)
-        # print("-" * 100)
-        # print(instruction)
-        # print("-" * 100)
-        # print(response)
-        # print("-" * 100)
         
         instruction_input_ids = tokenizer.encode(instruction, return_tensors="pt", truncation=True, max_length=max_length).to(device)
         instruction_len = instruction_input_ids.shape[1]
