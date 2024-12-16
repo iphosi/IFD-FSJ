@@ -6,35 +6,35 @@ import os
 
 
 if __name__ == "__main__":
-    data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/qwen2.5/w_chat_template/sys_msg_v0/demo_v5.5.5"
-    # data_dir = f"IFD-FSJ/datasets/benchmarks/AdvBench-V5/llama2/w_chat_template/sys_msg_v0"
+    # data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/qwen2.5/w_chat_template/sys_msg_v0/demo_v5.5.5"
+    data_dir = "IFD-FSJ/datasets/benchmarks/AdvBench-V7/llama2/w_chat_template/sys_msg_v0"
 
-    # dataset_name = "harmful_behaviors_subset"
-    dataset_name = "filtered"
+    dataset_name = "harmful_behaviors"
+    # dataset_name = "filtered"
     data_path = f"{data_dir}/{dataset_name}.json"
     output_path = f"{data_dir}/{dataset_name}_statistics.json"
     
     df = pd.read_json(data_path)
     
-    num_nans = sum(df["ifd_ppl"].isnull())
-    df.dropna(inplace=True)
+    num_nans = sum(df["ppl_A_condition"].isnull())
+    df["ppl_A_condition"].dropna(inplace=True)
         
     summary_dict = {
         "num_samples": len(df) + num_nans,
-        "num_nans": num_nans,
+        "num_nans": sum(df["ifd_ppl"].isnull()),
         "num_categories": "-" if "harm_category" not in df.columns else len(df.iloc[0]["harm_category"]),
-        "max_ppl_A_direct": "-" if len(df) == 0 else round(df["ppl_A_direct"].max(), 3),
-        "min_ppl_A_direct": "-" if len(df) == 0 else round(df["ppl_A_direct"].min(), 3),
-        "mean_ppl_A_direct": "-" if len(df) == 0 else round(df["ppl_A_direct"].mean(), 3),
-        "std_ppl_A_direct": "-" if len(df) == 0 else round(df["ppl_A_direct"].std(), 3),
-        "max_ppl_A_condition": "-" if len(df) == 0 else round(df["ppl_A_condition"].max(), 3),
-        "min_ppl_A_condition": "-" if len(df) == 0 else round(df["ppl_A_condition"].min(), 3),
-        "mean_ppl_A_condition": "-" if len(df) == 0 else round(df["ppl_A_condition"].mean(), 3),
-        "std_ppl_A_condition": "-" if len(df) == 0 else round(df["ppl_A_condition"].std(), 3),
-        "max_ifd_ppl": "-" if len(df) == 0 else round(df["ifd_ppl"].max(), 3),
-        "min_ifd_ppl": "-" if len(df) == 0 else round(df["ifd_ppl"].min(), 3),
-        "mean_ifd_ppl": "-" if len(df) == 0 else round(df["ifd_ppl"].mean(), 3),
-        "std_ifd_ppl": "-" if len(df) == 0 else round(df["ifd_ppl"].std(), 3),
+        "max_ppl_A_direct": "-" if len(df) == 0 else round(float(df["ppl_A_direct"].max()), 3),
+        "min_ppl_A_direct": "-" if len(df) == 0 else round(float(df["ppl_A_direct"].min()), 3),
+        "mean_ppl_A_direct": "-" if len(df) == 0 else round(float(df["ppl_A_direct"].mean()), 3),
+        "std_ppl_A_direct": "-" if len(df) == 0 else round(float(df["ppl_A_direct"].std()), 3),
+        "max_ppl_A_condition": "-" if len(df) == 0 else round(float(df["ppl_A_condition"].max()), 3),
+        "min_ppl_A_condition": "-" if len(df) == 0 else round(float(df["ppl_A_condition"].min()), 3),
+        "mean_ppl_A_condition": "-" if len(df) == 0 else round(float(df["ppl_A_condition"].mean()), 3),
+        "std_ppl_A_condition": "-" if len(df) == 0 else round(float(df["ppl_A_condition"].std()), 3),
+        "max_ifd_ppl": "-" if len(df) == 0 else round(float(df["ifd_ppl"].max()), 3),
+        "min_ifd_ppl": "-" if len(df) == 0 else round(float(df["ifd_ppl"].min()), 3),
+        "mean_ifd_ppl": "-" if len(df) == 0 else round(float(df["ifd_ppl"].mean()), 3),
+        "std_ifd_ppl": "-" if len(df) == 0 else round(float(df["ifd_ppl"].std()), 3),
     }
     
     if "harm_category" not in df.columns:

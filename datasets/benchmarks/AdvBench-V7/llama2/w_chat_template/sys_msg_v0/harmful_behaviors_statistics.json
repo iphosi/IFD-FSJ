@@ -1,0 +1,19 @@
+{
+    "summary": {
+        "num_samples": 520,
+        "num_nans": 0,
+        "num_categories": "-",
+        "max_ppl_A_direct": 271.198,
+        "min_ppl_A_direct": 271.198,
+        "mean_ppl_A_direct": 271.198,
+        "std_ppl_A_direct": 0.0,
+        "max_ppl_A_condition": 1.021,
+        "min_ppl_A_condition": 1.0,
+        "mean_ppl_A_condition": 1.007,
+        "std_ppl_A_condition": 0.003,
+        "max_ifd_ppl": 0.004,
+        "min_ifd_ppl": 0.004,
+        "mean_ifd_ppl": 0.004,
+        "std_ifd_ppl": 0.0
+    }
+}
