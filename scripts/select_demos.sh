@@ -3,10 +3,10 @@ export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
 
-# MODEL_NAME="Llama-2-7b-chat-hf"
-# MODEL_TYPE="llama2"
-MODEL_NAME="Meta-Llama-3-8B-Instruct"
-MODEL_TYPE="llama3"
+MODEL_NAME="Llama-2-7b-chat-hf"
+MODEL_TYPE="llama2"
+# MODEL_NAME="Meta-Llama-3-8B-Instruct"
+# MODEL_TYPE="llama3"
 # MODEL_NAME="Meta-Llama-3.1-8B-Instruct"
 # MODEL_TYPE="llama3.1"
 # MODEL_NAME="OpenChat-3.6-8B"
@@ -18,15 +18,15 @@ MODEL_TYPE="llama3"
 
 MODEL_PATH="IFD-FSJ/models/${MODEL_NAME}"
 
-# BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
-# SUBSET_NAME="harmful_behaviors_subset"
-# BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
+BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
+SUBSET_NAME="harmful_behaviors_subset"
+BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
-BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/HarmBench-V6/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
-SUBSET_NAME="harmbench_behaviors_subset"
-BENCHMARK_NAME="HarmBench-V6/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
+# BENCHMARK_DIR="IFD-FSJ/datasets/benchmarks/HarmBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
+# SUBSET_NAME="harmbench_behaviors_subset"
+# BENCHMARK_NAME="HarmBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
-demo_version_choices=(demo_v6.2.2)
+demo_version_choices=(demo_v5.1.1)
 
 declare -A demo_path_dict
 declare -A demo_embed_path_dict
@@ -62,12 +62,13 @@ demo_embed_path_dict=(
     [demo_v6.2.2]="IFD-FSJ/datasets/demonstrations/AdvBench-V6-Llama3-t50/llama3/w_chat_template/sys_msg_v0/demo_v6.2.2/instruction_embed_arr.npy"
 )
 
-num_shots_choices=(2 4 8)
+num_shots_choices=(8)
 
 declare -A time_cost_dict
+# num_cands_per_attempt=64
 time_cost_dict=(
     [2]=20
-    [4]=55
+    [4]=60
     [8]=180
 )
 
@@ -96,7 +97,7 @@ do
             --lower_value_threshold -1 \
             --upper_value_threshold 1 \
             --relax_ratio 0.2 \
-            --num_cands_per_attempt 64 \
+            --num_cands_per_attempt 128 \
             --max_num_attempts 1 \
             --system_message_version v0 \
             > IFD-FSJ/log/log_0.out 2>&1 &

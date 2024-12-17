@@ -150,7 +150,10 @@ def main():
     df = pd.read_json(args.benchmark_path)
     
     instruction_list = df["instruction"].tolist()
-    adv_prefix_list = df["adv_prefix"].tolist()
+    if "adv_prefix" in df.columns:
+        adv_prefix_list = df["adv_prefix"].tolist()
+    else:
+        adv_prefix_list = [""] * len(df)
     
     print("=" * 100)
     print(f"Number of samples: {len(instruction_list)}")

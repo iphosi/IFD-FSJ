@@ -21,7 +21,7 @@ OUTPUT_DIR="${DATA_DIR}/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
 DATASET_NAME="harmful_behaviors"
 # DATASET_NAME="unfiltered"
 
-python Superfiltering/code_ifd/put_analysis_to_data.py \
+python IFD-FSJ/src/put_analysis_to_data.py \
     --pt_data_path ${OUTPUT_DIR}/${DATASET_NAME}_ppl.jsonl \
     --json_data_path ${DATA_DIR}/${DATASET_NAME}.json \
     --json_save_path ${OUTPUT_DIR}/${DATASET_NAME}.json
