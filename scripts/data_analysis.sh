@@ -16,7 +16,7 @@ MODEL_TYPE="llama2"
 
 # DATA_DIR="IFD-FSJ/datasets/benchmarks/I-FSJ"
 # DATA_DIR="IFD-FSJ/datasets/benchmarks/HarmBench-V5"
-DATA_DIR="IFD-FSJ/datasets/benchmarks/AdvBench-V7"
+DATA_DIR="IFD-FSJ/datasets/benchmarks/AdvBench-V2"
 # DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50"
 # DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama3-t50"
 # DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama3.1-t50"
@@ -26,7 +26,7 @@ DATA_DIR="IFD-FSJ/datasets/benchmarks/AdvBench-V7"
 
 # DATASET_NAME="instruction"
 # DATASET_NAME="harmbench_behaviors"
-DATASET_NAME="harmful_behaviors_subset"
+DATASET_NAME="harmful_behaviors_gcg_s1024_subset"
 # DATASET_NAME="unfiltered"
 
 OUTPUT_DIR="${DATA_DIR}/${MODEL_TYPE}/w_chat_template/sys_msg_v0"

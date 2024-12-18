@@ -4,52 +4,152 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-if __name__ == "__main__":
-    # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca3-8B/wo_chat_template"
-    # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v2/ppl_c_8.0_10.0"
-    # data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-Qwen2.5-t500/qwen2.5/w_chat_template/sys_msg_v0/ppl_c_0.0_2.0/demo_v9"
-    data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ-Llama2-t300/llama2/w_chat_template/sys_msg_v0"
-    # data_dir = "IFD-FSJ/datasets/benchmarks/AdvBench/qwen2.5/w_chat_template/sys_msg_v0"
-    # data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/wo_chat_template"
-    # data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ/llama2_sep/w_chat_template/sys_msg_v0"
-    data_path = f"{data_dir}/unfiltered.json"
-    data_output_path = f"{data_dir}/unfiltered_dropna.json"
-    fig_output_path = f"{data_dir}/unfiltered.png"
-
-    df = pd.read_json(data_path)
+def ablation_0():
+    output_path = "IFD-FSJ/figures/ablation_0.png"
+    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+    data_path_list = [
+        f"{data_dir}/demo_v5.1.1_sim_0.6_cand_16/llm_based_p1_asr_r16.jsonl",
+        f"{data_dir}/demo_v5.1.1_sim_0.6_cand_32/llm_based_p1_asr_r16.jsonl",
+        f"{data_dir}/demo_v5.1.1_sim_0.6_cand_64/llm_based_p1_asr_r16.jsonl",
+        f"{data_dir}/demo_v5.1.1_sim_0.6_cand_128/llm_based_p1_asr_r16.jsonl",
+    ]
     
-    df.dropna(inplace=True)
+    asr_list = []
+    num_shots_list = [2, 4, 8]
+    
+    for data_path in data_path_list:
+        df = pd.read_json(data_path, lines=True)
         
-    df.to_json(
-        data_output_path,
-        mode="w",
-        lines=False,
-        force_ascii=False,
-        orient="records",
-        indent=4
-    )
-
-    bins = [0, 0.2, 0.4, 0.6, 0.8, 1.0, float("inf")]
-    labels = ["0.0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1.0", "1.0+"]
-
-    df["binned"] = pd.cut(df["ifd_ppl"], bins=bins, labels=labels, right=False)
-    freq_counts = df["binned"].value_counts().sort_index()
-
-    plt.figure(figsize=(8, 6))
-    ax = freq_counts.plot(kind="bar", color="skyblue", edgecolor="black", width=1.0)
-
-    for idx, value in enumerate(freq_counts):
-        ax.text(idx, value + 0.1, str(value), ha="center", va="bottom", fontsize=12)
+        asr_list.append((df["asr"] * 100).tolist())
         
-    plt.title("Frequency of Data in Different IFD Ranges")
-    plt.xlabel("IFD Range")
-    plt.ylabel("Count")
-    plt.xticks(rotation=45)
+    labels = ["16", "32", "64", "128"]
 
-    plt.tight_layout()
+    plt.figure(figsize=(12, 10))
+    plt.ylim(0, 20)
 
-    plt.savefig(fig_output_path, format="png")
+    for i, line in enumerate(asr_list):
+        plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
+    plt.title("Llama-2-7b-chat-hf")
+    plt.xlabel("Number of shots")
+    plt.ylabel("ASR (%)")
+
+    plt.legend(title="Number of candidates", loc="lower right")
+
+    plt.grid(True)
     plt.show()
+    
+    plt.savefig(output_path, format="png")
+    
 
-    pass
+def ablation_1():
+    output_path = "IFD-FSJ/figures/ablation_1.png"
+    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+    data_path_list = [
+        f"{data_dir}/demo_v5.1.1_sim_0.6_cand_16/llm_based_p1_asr_r16.jsonl",
+        f"{data_dir}/demo_v5.1.1_sim_0.6_cand_32/llm_based_p1_asr_r16.jsonl",
+        f"{data_dir}/demo_v5.1.1_sim_0.6_cand_64/llm_based_p1_asr_r16.jsonl",
+        f"{data_dir}/demo_v5.1.1_sim_0.6_cand_128/llm_based_p1_asr_r16.jsonl",
+    ]
+    
+    asr_list = []
+    num_shots_list = [2, 4, 8]
+    
+    for data_path in data_path_list:
+        df = pd.read_json(data_path, lines=True)
+        
+        asr_list.append((df["sample_lvl_asr"] * 100).tolist())
+        
+    labels = ["16", "32", "64", "128"]
+
+    plt.figure(figsize=(12, 10))
+
+    for i, line in enumerate(asr_list):
+        plt.plot(num_shots_list, line, marker="o", label=labels[i])
+
+    plt.title("Llama-2-7b-chat-hf")
+    plt.xlabel("Number of shots")
+    plt.ylabel("Sample Level ASR (%)")
+
+    plt.legend(title="Number of candidates", loc="lower right")
+
+    plt.grid(True)
+    plt.show()
+    
+    plt.savefig(output_path, format="png")
+    
+    
+def ablation_2():
+    output_path = "IFD-FSJ/figures/ablation_2.png"
+    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+    data_path_list = [
+        f"{data_dir}/demo_v5.1.1_sim_0.6_cand_64/llm_based_p1_asr_r16.jsonl",
+        f"{data_dir}/demo_v5.1.1_sim_0.8_cand_64/llm_based_p1_asr_r16.jsonl",
+        f"{data_dir}/demo_v5.1.1_sim_1.0_cand_64/llm_based_p1_asr_r16.jsonl",
+    ]
+    
+    asr_list = []
+    num_shots_list = [2, 4, 8]
+    
+    for data_path in data_path_list:
+        df = pd.read_json(data_path, lines=True)
+        
+        asr_list.append((df["asr"] * 100).tolist())
+        
+    labels = ["0.6", "0.8", "1.0"]
+    
+    plt.figure(figsize=(12, 10))
+    
+    for i, line in enumerate(asr_list):
+        plt.plot(num_shots_list, line, marker="o", label=labels[i])
+
+    plt.title("Llama-2-7b-chat-hf")
+    plt.xlabel("Number of shots")
+    plt.ylabel("ASR (%)")
+
+    plt.legend(title="Similarity Threshold", loc="lower right")
+
+    plt.grid(True)
+    plt.show()
+    
+    plt.savefig(output_path, format="png")
+    
+    
+def ablation_3():
+    output_path = "IFD-FSJ/figures/ablation_3.png"
+    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+    data_path_list = [
+        f"{data_dir}/demo_v5.1.1_sim_0.6_cand_64/llm_based_p1_asr_r16.jsonl",
+        f"{data_dir}/demo_v5.1.1_sim_0.8_cand_64/llm_based_p1_asr_r16.jsonl",
+        f"{data_dir}/demo_v5.1.1_sim_1.0_cand_64/llm_based_p1_asr_r16.jsonl",
+    ]
+    
+    asr_list = []
+    num_shots_list = [2, 4, 8]
+    
+    for data_path in data_path_list:
+        df = pd.read_json(data_path, lines=True)
+        
+        asr_list.append((df["sample_lvl_asr"] * 100).tolist())
+        
+    labels = ["0.6", "0.8", "1.0"]
+    
+    plt.figure(figsize=(12, 10))
+    
+    for i, line in enumerate(asr_list):
+        plt.plot(num_shots_list, line, marker="o", label=labels[i])
+
+    plt.title("Llama-2-7b-chat-hf")
+    plt.xlabel("Number of shots")
+    plt.ylabel("Sample Level ASR (%)")
+
+    plt.legend(title="Similarity Threshold", loc="lower right")
+
+    plt.grid(True)
+    plt.show()
+    
+    plt.savefig(output_path, format="png")
+
+
+if __name__ == "__main__":
+    ablation_3()

@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=6,9
+export CUDA_VISIBLE_DEVICES=4,5
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
@@ -100,7 +100,7 @@ do
             --num_cands_per_attempt 128 \
             --max_num_attempts 1 \
             --system_message_version v0 \
-            > IFD-FSJ/log/log_0.out 2>&1 &
+            > IFD-FSJ/log/log_1.out 2>&1 &
 
         sleep ${time_cost_dict[${num_shots}]}m
         # sleep 1m
