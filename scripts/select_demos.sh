@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=4,5
+export CUDA_VISIBLE_DEVICES=6,9
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
@@ -26,7 +26,7 @@ BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NA
 # SUBSET_NAME="harmbench_behaviors_subset"
 # BENCHMARK_NAME="HarmBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
-demo_version_choices=(demo_v5.1.1)
+demo_version_choices=(demo_v5.6.1)
 
 declare -A demo_path_dict
 declare -A demo_embed_path_dict
@@ -43,6 +43,7 @@ demo_path_dict=(
     [demo_v5.4.4]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-OpenChat3.6-t50/openchat3.6/w_chat_template/sys_msg_v0/demo_v5.4.4/filtered.json"
     [demo_v5.5.5]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/qwen2.5/w_chat_template/sys_msg_v0/demo_v5.5.5/filtered.json"
     [demo_v5.6.6]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/starlinglm/w_chat_template/sys_msg_v0/demo_v5.6.6/filtered.json"
+    [demo_v5.6.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.6.1/filtered.json"
     [demo_v6.1.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V6-Llama2-t50/llama2/w_chat_template/sys_msg_v0/demo_v6.1.1/filtered.json"
     [demo_v6.2.2]="IFD-FSJ/datasets/demonstrations/AdvBench-V6-Llama3-t50/llama3/w_chat_template/sys_msg_v0/demo_v6.2.2/filtered.json"
 )
@@ -58,6 +59,7 @@ demo_embed_path_dict=(
     [demo_v5.4.4]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-OpenChat3.6-t50/openchat3.6/w_chat_template/sys_msg_v0/demo_v5.4.4/instruction_embed_arr.npy"
     [demo_v5.5.5]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/qwen2.5/w_chat_template/sys_msg_v0/demo_v5.5.5/instruction_embed_arr.npy"
     [demo_v5.6.6]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/starlinglm/w_chat_template/sys_msg_v0/demo_v5.6.6/instruction_embed_arr.npy"
+    [demo_v5.6.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.6.1/instruction_embed_arr.npy"
     [demo_v6.1.1]="IFD-FSJ/datasets/demonstrations/AdvBench-V6-Llama2-t50/llama2/w_chat_template/sys_msg_v0/demo_v6.1.1/instruction_embed_arr.npy"
     [demo_v6.2.2]="IFD-FSJ/datasets/demonstrations/AdvBench-V6-Llama3-t50/llama3/w_chat_template/sys_msg_v0/demo_v6.2.2/instruction_embed_arr.npy"
 )
@@ -97,10 +99,10 @@ do
             --lower_value_threshold -1 \
             --upper_value_threshold 1 \
             --relax_ratio 0.2 \
-            --num_cands_per_attempt 128 \
+            --num_cands_per_attempt 64 \
             --max_num_attempts 1 \
             --system_message_version v0 \
-            > IFD-FSJ/log/log_1.out 2>&1 &
+            > IFD-FSJ/log/log_0.out 2>&1 &
 
         sleep ${time_cost_dict[${num_shots}]}m
         # sleep 1m

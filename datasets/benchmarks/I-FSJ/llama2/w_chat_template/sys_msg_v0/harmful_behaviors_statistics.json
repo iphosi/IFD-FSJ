@@ -1,0 +1,19 @@
+{
+    "summary": {
+        "num_samples": 50,
+        "num_nans": 50,
+        "num_categories": "-",
+        "max_ppl_A_direct": NaN,
+        "min_ppl_A_direct": NaN,
+        "mean_ppl_A_direct": NaN,
+        "std_ppl_A_direct": NaN,
+        "max_ppl_A_condition": 15543035756544.0,
+        "min_ppl_A_condition": 356610736128.0,
+        "mean_ppl_A_condition": 3365351383367.68,
+        "std_ppl_A_condition": 2525798487660.084,
+        "max_ifd_ppl": NaN,
+        "min_ifd_ppl": NaN,
+        "mean_ifd_ppl": NaN,
+        "std_ifd_ppl": NaN
+    }
+}
