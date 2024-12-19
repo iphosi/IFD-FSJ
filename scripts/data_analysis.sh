@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=6,9
+export CUDA_VISIBLE_DEVICES=4,5
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 
 MODEL_NAME="Llama-2-7b-chat-hf"
@@ -21,8 +21,8 @@ MODEL_TYPE="llama2"
 # DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama3-t50"
 # DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama3.1-t50"
 # DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-OpenChat3.6-t50"
-# DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50"
-DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50"
+DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50"
+# DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50"
 
 # DATASET_NAME="harmbench_behaviors"
 # DATASET_NAME="harmful_behaviors"
@@ -42,4 +42,4 @@ python IFD-FSJ/src/data_analysis.py \
     --model_name_or_path IFD-FSJ/models/${MODEL_NAME} \
     --max_length 1280 \
     --system_message_version ${SYSTEM_MESSAGE_VERSION} \
-    > IFD-FSJ/log/log_0.out 2>&1 &
+    > IFD-FSJ/log/log_1.out 2>&1 &

@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "9"
+os.environ["CUDA_VISIBLE_DEVICES"] = "5"
 
 import numpy as np
 import torch
@@ -11,7 +11,7 @@ import pandas as pd
 
 
 if __name__ == "__main__":
-    data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.6.1"
+    data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.5.1"
     data_path = f"{data_dir}/filtered.json"
     output_path = f"{data_dir}/instruction_embed_arr.npy"
     
