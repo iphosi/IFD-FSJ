@@ -19,9 +19,9 @@ MODEL_PATH="IFD-FSJ/models/${MODEL_NAME}"
 
 ADV_PREFIX_PATH="IFD-FSJ/datasets/benchmarks/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/harmful_behaviors_subset.json"
 
-DEMO_DATA_DIR="IFD-FSJ/evaluation/${MODEL_NAME}/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/demonstrations"
+DEMO_DATA_DIR="IFD-FSJ/evaluation/${MODEL_NAME}/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/harmful_behaviors_subset/random/demonstrations"
 
-demo_version_choices=(demo_v5.5.1)
+demo_version_choices=(demo_v5.1.1)
 
 declare -A demo_path_dict
 

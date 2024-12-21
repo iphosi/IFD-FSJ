@@ -73,7 +73,7 @@ do
             --max_length 4096 \
             --num_shots ${num_shots} \
             --num_return_sequences 16 \
-            --temperature 0.4 \
+            --temperature 1.0 \
             --top_p 1.0 \
             --max_tokens 100 \
             --min_tokens 50 \
