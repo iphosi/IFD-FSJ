@@ -104,10 +104,10 @@ def main():
     num_responses_per_instruction = 16
     
     data_dir_list = [
-        "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+        "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
     ]
 
-    eval_model_path = "IFD-FSJ/models/Llama-Guard-3-8B"
+    eval_model_path = "Self-Instruct-FSJ/models/Llama-Guard-3-8B"
 
     use_llm_based_evaluation = True
 

@@ -5,7 +5,7 @@ import json
 
 
 if __name__ == "__main__":
-    data_dir = "IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_c_8.0_10.0"
+    data_dir = "Self-Instruct-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_c_8.0_10.0"
     output_path = f"{data_dir}/filtered_cat_distr.png"
     data_path_list = [
         f"{data_dir}/demo_v3.0/filtered_ifd_0.4_1.0_statistics.json",

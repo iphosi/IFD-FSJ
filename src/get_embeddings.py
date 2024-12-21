@@ -11,15 +11,15 @@ import pandas as pd
 
 
 if __name__ == "__main__":
-    data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.5.1"
+    data_dir = "Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.5.1"
     data_path = f"{data_dir}/filtered.json"
     output_path = f"{data_dir}/instruction_embed_arr.npy"
     
-    # data_dir = "IFD-FSJ/datasets/benchmarks/AdvBench-V5/llama3/w_chat_template/sys_msg_v0"
+    # data_dir = "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/llama3/w_chat_template/sys_msg_v0"
     # data_path = f"{data_dir}/harmful_behaviors_subset.json"
     # output_path = f"{data_dir}/harmful_behaviors_subset_instruction_embed_arr.npy"
     
-    # data_dir = "IFD-FSJ/datasets/benchmarks/HarmBench-V6/llama3/w_chat_template/sys_msg_v0"
+    # data_dir = "Self-Instruct-FSJ/datasets/benchmarks/HarmBench-V6/llama3/w_chat_template/sys_msg_v0"
     # data_path = f"{data_dir}/harmbench_behaviors_subset.json"
     # output_path = f"{data_dir}/harmbench_behaviors_subset_instruction_embed_arr.npy"
     
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     assert suffix in df["instruction"].iloc[0]
     target_text_list = df["instruction"].apply(lambda i: i.replace(suffix, "")).tolist()
     
-    embed_model_path = "IFD-FSJ/models/all-MiniLM-L6-v2"
+    embed_model_path = "Self-Instruct-FSJ/models/all-MiniLM-L6-v2"
     embed_model_device = "cuda" if torch.cuda.is_available() else "cpu"
     embed_model = SentenceTransformer(embed_model_path).to(embed_model_device)
     

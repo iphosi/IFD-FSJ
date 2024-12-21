@@ -18,10 +18,10 @@ if __name__ == "__main__":
     # model_name="Qwen2.5-7B-Instruct"
     model_name="Starling-LM-7B-beta"
 
-    model_path = f"IFD-FSJ/models/{model_name}"
-    data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/starlinglm/w_chat_template/sys_msg_v0/demo_v5.6.6"
+    model_path = f"Self-Instruct-FSJ/models/{model_name}"
+    data_dir = "Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/starlinglm/w_chat_template/sys_msg_v0/demo_v5.6.6"
     data_path = f"{data_dir}/filtered.json"
-    # data_dir = "IFD-FSJ/datasets/demonstrations/I-FSJ/llama2"
+    # data_dir = "Self-Instruct-FSJ/datasets/demonstrations/I-FSJ/llama2"
     # data_path = f"{data_dir}/mistral_demonstration.json"
     
     output_path = f"{data_dir}/num_tokens_statistics.jsonl"

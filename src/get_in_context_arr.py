@@ -23,16 +23,16 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 def parse_args():
     parser = argparse.ArgumentParser()
     
-    parser.add_argument("--model_path", type=str, default="IFD-FSJ/models/Llama-2-7b-chat-hf")
+    parser.add_argument("--model_path", type=str, default="Self-Instruct-FSJ/models/Llama-2-7b-chat-hf")
     parser.add_argument("--max_length", type=int, default=4096)
     
     parser.add_argument("--demo_version", type=str, default="demo_v0")
     parser.add_argument("--demo_path", type=str, default="")
     
-    parser.add_argument("--demo_data_dir", type=str, default="IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V1/harmful_behaviors_subset_50/random/demonstrations")
+    parser.add_argument("--demo_data_dir", type=str, default="Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V1/harmful_behaviors_subset_50/random/demonstrations")
     parser.add_argument("--num_shots", type=int, default=4)
     
-    parser.add_argument("--adv_prefix_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench-V1/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_50.json")
+    parser.add_argument("--adv_prefix_path", type=str, default="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V1/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_50.json")
     parser.add_argument("--wrt_adv_prefix", action="store_true")
 
     args = parser.parse_args()

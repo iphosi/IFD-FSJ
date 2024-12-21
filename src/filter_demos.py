@@ -1,8 +1,8 @@
 import pandas as pd
 
 
-data_path = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/llama2/w_chat_template/sys_msg_v0/unfiltered.json"
-output_path = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.5.1/filtered.json"
+data_path = "Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/llama2/w_chat_template/sys_msg_v0/unfiltered.json"
+output_path = "Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.5.1/filtered.json"
 
 df = pd.read_json(data_path)
 

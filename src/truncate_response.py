@@ -1,9 +1,9 @@
 import pandas as pd
 
 
-data_path = "IFD-FSJ/evaluation/Starling-LM-7B-beta/AdvBench-V2/starlinglm/w_chat_template/sys_msg_v0/harmful_behaviors/random/generations/sys_msg_v0/w_adv_prefix/demo_v0/generation_s0_r128.json"
-flag_path = "IFD-FSJ/evaluation/Starling-LM-7B-beta/AdvBench-V2/starlinglm/w_chat_template/sys_msg_v0/harmful_behaviors/random/generations/sys_msg_v0/w_adv_prefix/demo_v0/llm_based_p1_asr_r128.jsonl"
-output_path = "IFD-FSJ/datasets/demonstrations/AdvBench-V2-StarlingLM-t50/unfiltered.json"
+data_path = "Self-Instruct-FSJ/evaluation/Starling-LM-7B-beta/AdvBench-V2/starlinglm/w_chat_template/sys_msg_v0/harmful_behaviors/random/generations/sys_msg_v0/w_adv_prefix/demo_v0/generation_s0_r128.json"
+flag_path = "Self-Instruct-FSJ/evaluation/Starling-LM-7B-beta/AdvBench-V2/starlinglm/w_chat_template/sys_msg_v0/harmful_behaviors/random/generations/sys_msg_v0/w_adv_prefix/demo_v0/llm_based_p1_asr_r128.jsonl"
+output_path = "Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V2-StarlingLM-t50/unfiltered.json"
 
 instruction_list = []
 output_list = []

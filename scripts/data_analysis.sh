@@ -14,15 +14,15 @@ MODEL_TYPE="llama2"
 # MODEL_NAME="Starling-LM-7B-beta"
 # MODEL_TYPE="starlinglm"
 
-# DATA_DIR="IFD-FSJ/datasets/benchmarks/I-FSJ"
-# DATA_DIR="IFD-FSJ/datasets/benchmarks/HarmBench-V5"
-# DATA_DIR="IFD-FSJ/datasets/benchmarks/AdvBench-V2"
-# DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50"
-# DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama3-t50"
-# DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Llama3.1-t50"
-# DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-OpenChat3.6-t50"
-DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50"
-# DATA_DIR="IFD-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50"
+# DATA_DIR="Self-Instruct-FSJ/datasets/benchmarks/I-FSJ"
+# DATA_DIR="Self-Instruct-FSJ/datasets/benchmarks/HarmBench-V5"
+# DATA_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V2"
+# DATA_DIR="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50"
+# DATA_DIR="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Llama3-t50"
+# DATA_DIR="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Llama3.1-t50"
+# DATA_DIR="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-OpenChat3.6-t50"
+DATA_DIR="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50"
+# DATA_DIR="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50"
 
 # DATASET_NAME="harmbench_behaviors"
 # DATASET_NAME="harmful_behaviors"
@@ -34,12 +34,12 @@ SYSTEM_MESSAGE_VERSION="v0"
 
 mkdir -p ${OUTPUT_DIR}
 
-python IFD-FSJ/src/data_analysis.py \
+python Self-Instruct-FSJ/src/data_analysis.py \
     --data_path ${OUTPUT_DIR}/${DATASET_NAME}.json \
     --instruction_col_name "instruction" \
     --response_col_name "output" \
     --save_path ${OUTPUT_DIR}/${DATASET_NAME}_ppl.jsonl \
-    --model_name_or_path IFD-FSJ/models/${MODEL_NAME} \
+    --model_name_or_path Self-Instruct-FSJ/models/${MODEL_NAME} \
     --max_length 1280 \
     --system_message_version ${SYSTEM_MESSAGE_VERSION} \
-    > IFD-FSJ/log/log_1.out 2>&1 &
+    > Self-Instruct-FSJ/log/log_1.out 2>&1 &

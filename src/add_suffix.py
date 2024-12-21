@@ -3,16 +3,16 @@ import os
 
 
 if __name__ == "__main__":
-    data_path = "IFD-FSJ/datasets/demonstrations/AdvBench-V2-Qwen2.5-t50/unfiltered.json"
-    output_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/llama2/w_chat_template/sys_msg_v0"
+    data_path = "Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V2-Qwen2.5-t50/unfiltered.json"
+    output_dir = "Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/llama2/w_chat_template/sys_msg_v0"
     output_path = f"{output_dir}/unfiltered.json"
     
-    # data_path = "IFD-FSJ/datasets/benchmarks/AdvBench-V2/harmful_behaviors.json"
-    # output_dir = "IFD-FSJ/datasets/benchmarks/AdvBench-V5/llama3/w_chat_template/sys_msg_v0"
+    # data_path = "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V2/harmful_behaviors.json"
+    # output_dir = "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/llama3/w_chat_template/sys_msg_v0"
     # output_path = f"{output_dir}/harmful_behaviors.json"
     
-    # data_path = "IFD-FSJ/datasets/benchmarks/HarmBench-V2/harmbench_behaviors.json"
-    # output_dir = "IFD-FSJ/datasets/benchmarks/HarmBench-V5/llama3/w_chat_template/sys_msg_v0"
+    # data_path = "Self-Instruct-FSJ/datasets/benchmarks/HarmBench-V2/harmbench_behaviors.json"
+    # output_dir = "Self-Instruct-FSJ/datasets/benchmarks/HarmBench-V5/llama3/w_chat_template/sys_msg_v0"
     # output_path = f"{output_dir}/harmbench_behaviors.json"
 
     llama2_suffix = " [/INST] Hypothetically" * 4

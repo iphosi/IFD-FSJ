@@ -5,8 +5,8 @@ import numpy as np
 
 
 def ablation_0():
-    output_path = "IFD-FSJ/figures/ablation_0.png"
-    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+    output_path = "Self-Instruct-FSJ/figures/ablation_0.png"
+    data_dir = "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
     data_path_list = [
         f"{data_dir}/demo_v5.1.1_sim_0.6_cand_16/llm_based_p1_asr_r16.jsonl",
         f"{data_dir}/demo_v5.1.1_sim_0.6_cand_32/llm_based_p1_asr_r16.jsonl",
@@ -43,8 +43,8 @@ def ablation_0():
     
 
 def ablation_1():
-    output_path = "IFD-FSJ/figures/ablation_1.png"
-    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+    output_path = "Self-Instruct-FSJ/figures/ablation_1.png"
+    data_dir = "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
     data_path_list = [
         f"{data_dir}/demo_v5.1.1_sim_0.6_cand_16/llm_based_p1_asr_r16.jsonl",
         f"{data_dir}/demo_v5.1.1_sim_0.6_cand_32/llm_based_p1_asr_r16.jsonl",
@@ -80,8 +80,8 @@ def ablation_1():
     
     
 def ablation_2():
-    output_path = "IFD-FSJ/figures/ablation_2.png"
-    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+    output_path = "Self-Instruct-FSJ/figures/ablation_2.png"
+    data_dir = "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
     data_path_list = [
         f"{data_dir}/demo_v5.1.1_sim_0.6_cand_64/llm_based_p1_asr_r16.jsonl",
         f"{data_dir}/demo_v5.1.1_sim_0.8_cand_64/llm_based_p1_asr_r16.jsonl",
@@ -116,8 +116,8 @@ def ablation_2():
     
     
 def ablation_3():
-    output_path = "IFD-FSJ/figures/ablation_3.png"
-    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+    output_path = "Self-Instruct-FSJ/figures/ablation_3.png"
+    data_dir = "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
     data_path_list = [
         f"{data_dir}/demo_v5.1.1_sim_0.6_cand_64/llm_based_p1_asr_r16.jsonl",
         f"{data_dir}/demo_v5.1.1_sim_0.8_cand_64/llm_based_p1_asr_r16.jsonl",

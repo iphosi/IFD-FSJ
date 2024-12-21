@@ -6,9 +6,9 @@ import os
 
 
 if __name__ == "__main__":
-    data_dir = "IFD-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.5.1"
-    # data_dir = "IFD-FSJ/datasets/benchmarks/AdvBench-V7/llama2/w_chat_template/sys_msg_v0"
-    # data_dir = "IFD-FSJ/datasets/benchmarks/I-FSJ/starlinglm/w_chat_template/sys_msg_v0"
+    data_dir = "Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.5.1"
+    # data_dir = "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V7/llama2/w_chat_template/sys_msg_v0"
+    # data_dir = "Self-Instruct-FSJ/datasets/benchmarks/I-FSJ/starlinglm/w_chat_template/sys_msg_v0"
 
     # dataset_name = "harmful_behaviors"
     dataset_name = "filtered"

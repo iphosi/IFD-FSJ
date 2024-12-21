@@ -29,15 +29,15 @@ def parse_args():
     parser.add_argument("--use_adv_prefix", action="store_true")
     
     parser.add_argument("--benchmark_name", type=str, default="AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ifd_0.0_0.2")
-    parser.add_argument("--benchmark_path", type=str, default="IFD-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ifd_0.0_0.2.json")
+    parser.add_argument("--benchmark_path", type=str, default="Self-Instruct-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ifd_0.0_0.2.json")
         
     parser.add_argument("--demo_version", type=str, default="demo_v1.0")
-    parser.add_argument("--demo_path", type=str, default="IFD-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_c_4.0_6.0/demo_v1.0/filtered_ifd_0.4_1.0.json")
+    parser.add_argument("--demo_path", type=str, default="Self-Instruct-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_c_4.0_6.0/demo_v1.0/filtered_ifd_0.4_1.0.json")
     
-    parser.add_argument("--output_dir", type=str, default="IFD-FSJ/evaluation")
+    parser.add_argument("--output_dir", type=str, default="Self-Instruct-FSJ/evaluation")
     
     parser.add_argument("--model_name", type=str, default="Llama-2-7b-chat-hf")
-    parser.add_argument("--model_path", type=str, default="IFD-FSJ/models/Llama-2-7b-chat-hf")
+    parser.add_argument("--model_path", type=str, default="Self-Instruct-FSJ/models/Llama-2-7b-chat-hf")
     parser.add_argument("--max_length", type=int, default=4096)
     
     parser.add_argument("--num_shots", type=int, default=2)

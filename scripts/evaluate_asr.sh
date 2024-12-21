@@ -1,2 +1,2 @@
-python IFD-FSJ/src/evaluate_asr.py \
-    > IFD-FSJ/log/log_2.out 2>&1 &
+python Self-Instruct-FSJ/src/evaluate_asr.py \
+    > Self-Instruct-FSJ/log/log_2.out 2>&1 &

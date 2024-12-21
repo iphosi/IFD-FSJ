@@ -2,7 +2,7 @@ import pandas as pd
 
 
 if __name__ == "__main__":
-    data_dir = "IFD-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ifd_0.0_0.2/greedy_adv/demonstrations/demo_v6"
+    data_dir = "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ifd_0.0_0.2/greedy_adv/demonstrations/demo_v6"
     data_path_list = [
         f"{data_dir}/demo_s8.json",
         f"{data_dir}/demo_s6.json",
