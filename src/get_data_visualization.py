@@ -20,7 +20,7 @@ def ablation_0():
     for data_path in data_path_list:
         df = pd.read_json(data_path, lines=True)
         
-        asr_list.append((df["asr"] * 100).tolist())
+        asr_list.append((df["r_lvl_ars"] * 100).tolist())
         
     labels = ["16", "32", "64", "128"]
 
@@ -58,7 +58,7 @@ def ablation_1():
     for data_path in data_path_list:
         df = pd.read_json(data_path, lines=True)
         
-        asr_list.append((df["sample_lvl_asr"] * 100).tolist())
+        asr_list.append((df["s_lvl_ars"] * 100).tolist())
         
     labels = ["16", "32", "64", "128"]
 
@@ -94,7 +94,7 @@ def ablation_2():
     for data_path in data_path_list:
         df = pd.read_json(data_path, lines=True)
         
-        asr_list.append((df["asr"] * 100).tolist())
+        asr_list.append((df["r_lvl_ars"] * 100).tolist())
         
     labels = ["0.6", "0.8", "1.0"]
     
@@ -130,7 +130,7 @@ def ablation_3():
     for data_path in data_path_list:
         df = pd.read_json(data_path, lines=True)
         
-        asr_list.append((df["sample_lvl_asr"] * 100).tolist())
+        asr_list.append((df["s_lvl_ars"] * 100).tolist())
         
     labels = ["0.6", "0.8", "1.0"]
     

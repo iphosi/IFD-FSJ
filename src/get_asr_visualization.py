@@ -23,16 +23,16 @@ for data_path in data_path_list:
     assert os.path.exists(data_path)
     df = pd.read_json(data_path, lines=True)
     
-    data_list.append({"num_shots": df["num_shots"].tolist(), "asr": df["asr"].tolist()})
+    data_list.append({"num_shots": df["num_shots"].tolist(), "r_lvl_ars": df["r_lvl_ars"].tolist()})
 
 plt.figure(figsize=(8, 6))
 
 for label, data in zip(label_list, data_list):
-    plt.plot(data["num_shots"], data["asr"], label=label)
+    plt.plot(data["num_shots"], data["r_lvl_ars"], label=label)
 
 plt.title("ASR Curve")
 plt.xlabel("Num Shots")
-plt.ylabel("ASR")
+plt.ylabel("r_lvl_ars")
 
 plt.legend()
 
