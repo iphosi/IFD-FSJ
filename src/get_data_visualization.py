@@ -31,10 +31,10 @@ def ablation_0():
         plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
     plt.title("Llama-2-7b-chat-hf")
-    plt.xlabel("Number of shots")
-    plt.ylabel("ASR (%)")
+    plt.xlabel("Shots")
+    plt.ylabel("R-LVL ASR (%)")
 
-    plt.legend(title="Number of candidates", loc="lower right")
+    plt.legend(title="Candidates", loc="lower right")
 
     plt.grid(True)
     plt.show()
@@ -68,10 +68,10 @@ def ablation_1():
         plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
     plt.title("Llama-2-7b-chat-hf")
-    plt.xlabel("Number of shots")
-    plt.ylabel("Sample Level ASR (%)")
+    plt.xlabel("Shots")
+    plt.ylabel("S-LVL ASR (%)")
 
-    plt.legend(title="Number of candidates", loc="lower right")
+    plt.legend(title="Candidates", loc="lower right")
 
     plt.grid(True)
     plt.show()
@@ -104,8 +104,8 @@ def ablation_2():
         plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
     plt.title("Llama-2-7b-chat-hf")
-    plt.xlabel("Number of shots")
-    plt.ylabel("ASR (%)")
+    plt.xlabel("Shots")
+    plt.ylabel("R-LVL ASR (%)")
 
     plt.legend(title="Similarity Threshold", loc="lower right")
 
@@ -140,8 +140,8 @@ def ablation_3():
         plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
     plt.title("Llama-2-7b-chat-hf")
-    plt.xlabel("Number of shots")
-    plt.ylabel("Sample Level ASR (%)")
+    plt.xlabel("Shots")
+    plt.ylabel("S-LVL ASR (%)")
 
     plt.legend(title="Similarity Threshold", loc="lower right")
 
