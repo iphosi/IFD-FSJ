@@ -5,3 +5,4 @@ original.jsonl
 *_backup*
 __pycache__
 test*.py
+download.py

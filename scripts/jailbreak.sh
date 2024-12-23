@@ -18,16 +18,16 @@ MODEL_TYPE="llama2"
 
 MODEL_PATH="Self-Instruct-FSJ/models/${MODEL_NAME}"
 
-BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
-SUBSET_NAME="harmful_behaviors_subset"
-BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
+BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
+SUBSET_NAME="harmful_behaviors_gcg_s1024_subset"
+BENCHMARK_NAME="AdvBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
 # BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/HarmBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
 # SUBSET_NAME="harmbench_behaviors_subset"
 # BENCHMARK_NAME="HarmBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
-# demo_version_choices=(demo_v0)
-demo_version_choices=(demo_v5.5.1)
+demo_version_choices=(demo_v0)
+# demo_version_choices=(demo_v5.5.1)
 
 declare -A demo_path_dict
 
@@ -50,8 +50,8 @@ demo_path_dict=(
     [demo_v6.2.2]="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V6-Llama3-t50/llama3/w_chat_template/sys_msg_v0/demo_v6.2.2/filtered.json"
 )
 
-num_shots_choices=(2)
-# num_shots_choices=(0)
+# num_shots_choices=(2)
+num_shots_choices=(0)
 
 for num_shots in "${num_shots_choices[@]}";
 do
@@ -61,7 +61,7 @@ do
         echo "Demo path: ${demo_path_dict[${demo_version}]}"
         echo "Num shots: ${num_shots}"
         python Self-Instruct-FSJ/src/jailbreak.py \
-            --selector_mode "greedy" \
+            --selector_mode "random" \
             --wrt_adv_prefix \
             --benchmark_name ${BENCHMARK_NAME} \
             --benchmark_path "${BENCHMARK_DIR}/${SUBSET_NAME}.json" \
@@ -78,7 +78,7 @@ do
             --max_tokens 100 \
             --min_tokens 50 \
             --system_message_version v0 \
-            > Self-Instruct-FSJ/log/log_3.out 2>&1 &
+            > Self-Instruct-FSJ/log/log_0.out 2>&1 &
 
         sleep 3m
     done

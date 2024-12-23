@@ -96,15 +96,15 @@ def llm_based_evaluation(instructions, responses, model, tokenizer, sampling_par
 
 def main():
     use_default_eval_template = False
-    demo_version_list = ["demo_v5.5.1"]
-    num_shots_list = [2]
-    # demo_version_list = ["demo_v0"]
-    # num_shots_list = [0]
+    # demo_version_list = ["demo_v5.5.1"]
+    # num_shots_list = [2]
+    demo_version_list = ["demo_v0"]
+    num_shots_list = [0]
     
     num_responses_per_instruction = 16
     
     data_dir_list = [
-        "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+        "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V0/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_gcg_s1024_subset/random/generations/sys_msg_v0/wo_adv_prefix"
     ]
 
     eval_model_path = "Self-Instruct-FSJ/models/Llama-Guard-3-8B"
