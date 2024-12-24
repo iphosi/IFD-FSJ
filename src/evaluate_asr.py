@@ -104,7 +104,8 @@ def main():
     num_responses_per_instruction = 16
     
     data_dir_list = [
-        "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V0/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_gcg_s1024_subset/random/generations/sys_msg_v0/wo_adv_prefix"
+        "Self-Instruct-FSJ/evaluation/Meta-Llama-3-8B-Instruct/HarmBench-V0/llama3/w_chat_template/sys_msg_v0/harmbench_behaviors_subset/random/generations/sys_msg_v0/wo_adv_prefix",
+        "Self-Instruct-FSJ/evaluation/Qwen2.5-7B-Instruct/HarmBench-V0/qwen2.5/w_chat_template/sys_msg_v0/harmbench_behaviors_subset/random/generations/sys_msg_v0/wo_adv_prefix"
     ]
 
     eval_model_path = "Self-Instruct-FSJ/models/Llama-Guard-3-8B"
