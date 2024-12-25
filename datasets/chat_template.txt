@@ -1,0 +1,66 @@
+Llama-2-7b-chat-hf:
+
+<s>[INST] i0 [/INST] r0 </s><s>[INST] i1 [/INST] r1 </s>
+
+
+Meta-Llama-3-8B-Instruct:
+
+<|begin_of_text|><|start_header_id|>user<|end_header_id|>
+
+i0<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+r0<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+i1<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+r1<|eot_id|>
+
+
+Meta-Llama-3.1-8B-Instruct:
+
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+i0<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+r0<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+i1<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+r1<|eot_id|>
+
+
+OpenChat-3.6-8B:
+
+<|begin_of_text|><|start_header_id|>GPT4 Correct User<|end_header_id|>
+
+i0<|eot_id|><|start_header_id|>GPT4 Correct Assistant<|end_header_id|>
+
+r0<|eot_id|><|start_header_id|>GPT4 Correct User<|end_header_id|>
+
+i1<|eot_id|><|start_header_id|>GPT4 Correct Assistant<|end_header_id|>
+
+r1<|eot_id|>
+
+
+Qwen2.5-7B-Instruct:
+
+<|im_start|>system
+You are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>
+<|im_start|>user
+i0<|im_end|>
+<|im_start|>assistant
+r0<|im_end|>
+<|im_start|>user
+i1<|im_end|>
+<|im_start|>assistant
+r1<|im_end|>
+
+
+Starling-LM-7B-beta:
+
+<s>GPT4 Correct User: i0<|end_of_turn|>GPT4 Correct Assistant: r0<|end_of_turn|>GPT4 Correct User: i1<|end_of_turn|>GPT4 Correct Assistant: r1<|end_of_turn|>

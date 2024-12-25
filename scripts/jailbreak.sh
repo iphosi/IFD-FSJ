@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=4,5,6,7
+export CUDA_VISIBLE_DEVICES=0
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
@@ -76,7 +76,6 @@ do
             --temperature 1.0 \
             --top_p 1.0 \
             --max_tokens 100 \
-            --min_tokens 50 \
             --system_message_version v0 \
             > Self-Instruct-FSJ/log/log_0.out 2>&1 &
 
