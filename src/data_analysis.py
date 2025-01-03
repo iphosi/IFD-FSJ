@@ -43,6 +43,8 @@ def parse_args():
     parser.add_argument("--prompt", type=str, default="none", help="none")
     parser.add_argument("--system_message_version", type=str, default="v0")
     parser.add_argument("--analyse_instruction", action="store_true")
+    parser.add_argument("--window_size", type=int, default=-1)
+    parser.add_argument("--stride", type=int, default=4)
     
     args = parser.parse_args()
     return args
@@ -141,7 +143,7 @@ def main():
             temp_data_i["ppl"] = [0,ppl_out_alone,0,ppl_out_condition]
             temp_data_i["loss"] = [0,loss_out_alone,0,loss_out_condition]
         else:
-            ppl_out_alone, loss_out_alone = get_perplexity_and_embedding_whole_text(tokenizer, model, instruct_i, instruct_i_len+1)
+            ppl_out_alone, loss_out_alone = get_perplexity_and_embedding_whole_text(tokenizer, model, instruct_i, instruct_i_len+1, args.window_size, args.stride)
             
             temp_data_i = {}
             temp_data_i["ppl"] = [0,ppl_out_alone,0,0]
