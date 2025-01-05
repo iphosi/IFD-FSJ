@@ -77,7 +77,7 @@ Loop version:
 bash Self-Instruct-FSJ/scripts/select_demos.sh
 ```
 
-### Step 4: Do jailbreaking
+### Step 5: Do jailbreaking
 
 ```shell
 python Self-Instruct-FSJ/src/jailbreak.py \
@@ -104,7 +104,7 @@ Loop version:
 bash Self-Instruct-FSJ/scripts/jailbreak.sh
 ```
 
-### Step 5: Evaluate ASR
+### Step 6: Evaluate ASR
 
 ```shell
 python Self-Instruct-FSJ/src/evaluate_asr.py
