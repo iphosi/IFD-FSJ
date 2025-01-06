@@ -1,6 +1,7 @@
 export CUDA_VISIBLE_DEVICES=0
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 
+
 MODEL_NAME="Llama-2-7b-chat-hf"
 MODEL_TYPE="llama2"
 # MODEL_NAME="Meta-Llama-3-8B-Instruct"
