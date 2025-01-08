@@ -4,23 +4,27 @@ import torch
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
-def get_perplexity_and_embedding_whole_text(tokenizer, model, text, max_length, window_size=-1, stride=4):
+def get_perplexity_and_embedding_whole_text(tokenizer, model, text, max_length, window_size=-1, stride=1):
     input_ids = tokenizer.encode(text, return_tensors="pt", truncation=True, add_special_tokens=False, max_length=max_length).to(device)
 
-    loss = torch.tensor([0]).to(device)
+    loss = torch.tensor(0).to(device)
+    substring = ""
 
-    if window_size == -1:
+    if window_size == -1 or window_size >= input_ids.size(-1):
         with torch.no_grad(): 
             outputs = model(input_ids, labels=input_ids.contiguous())
         loss = outputs.loss
+        substring = tokenizer.decode(input_ids[0], skip_special_tokens=False)
     else:
-        for i in range(0, input_ids.size(-1), stride):
-            windowed_input_ids = input_ids[:, i:i+window_size]
+        for i in range(window_size, input_ids.size(-1), stride):
+            windowed_input_ids = input_ids[:, i-window_size:i]
             with torch.no_grad(): 
                 outputs = model(windowed_input_ids, labels=windowed_input_ids.contiguous())
-            if not torch.isnan(outputs.loss):
-                loss = max(outputs.loss, loss)
+            if not torch.isnan(outputs.loss) and outputs.loss > loss:
+                loss = outputs.loss
+                substring = tokenizer.decode(windowed_input_ids[0], skip_special_tokens=False)
     
+    print(substring)
     perplexity = torch.exp(loss).to("cpu").item()
     loss = loss.to("cpu").item()
 
@@ -51,7 +55,7 @@ def get_perplexity_and_embedding_part_text(tokenizer, model, text, target_span, 
         outputs = model(input_ids, labels=labels)
 
     loss = outputs.loss.to("cpu").item()
-    perplexity = torch.exp(loss).to("cpu").item()
+    perplexity = torch.exp(outputs.loss).to("cpu").item()
 
     return perplexity, loss
 

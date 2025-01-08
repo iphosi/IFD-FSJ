@@ -1,8 +1,8 @@
 import pandas as pd
 
 
-data_path = "Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/llama2/w_chat_template/sys_msg_v0/unfiltered.json"
-output_path = "Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Qwen2.5-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.5.1/filtered.json"
+data_path = "Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/llama2/w_chat_template/sys_msg_v0/unfiltered.json"
+output_path = "Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.6.1.3/filtered_ppl_0.0_9.0.json"
 
 df = pd.read_json(data_path)
 
@@ -12,6 +12,9 @@ df["temp_id"] = [i for i in range(len(df))]
 
 print(len(df))
 print(len(df["id"].unique()))
+
+df = df[df["ppl_A_condition"] <= 9.0]
+print(len(df))
 
 sample_df = df.groupby("id").sample(n=1, random_state=42)
 df = df[~df["temp_id"].isin(set(sample_df["temp_id"]))]

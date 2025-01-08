@@ -18,10 +18,10 @@ else:
 
 PROMPT_DICT_NONE = {
     "prompt_input": (
-        "{instruction}\n{input}\n"
+        "{instruction}\n{input}"
     ),
     "prompt_no_input": (
-        "{instruction}\n"
+        "{instruction}"
     ),
 }
 
@@ -101,21 +101,15 @@ def main():
 
         input_i = data_i[args.input_col_name] if args.input_col_name in data_i.keys() else ""
         if input_i == "":
-            temp_dict = {"instruction":instruct_i}
+            temp_dict = {"instruction": instruct_i}
             promt_to_use = prompt_no_input.format_map(temp_dict)
-            whole_text = tokenizer.apply_chat_template(
-                [
-                    {"role": "user", "content": promt_to_use},
-                    {"role": "assistant", "content": output_i},
-                ],
-                tokenize=False,
-                add_generation_prompt=False
-            )
-            instruct_i = promt_to_use
-
         else:
-            temp_dict = {"instruction":instruct_i,"input":input_i}
+            temp_dict = {"instruction": instruct_i, "input": input_i}
             promt_to_use = prompt_input.format_map(temp_dict)
+            
+        if tokenizer.chat_template is None:
+            whole_text = promt_to_use + "\n" + output_i
+        else:
             whole_text = tokenizer.apply_chat_template(
                 [
                     {"role": "user", "content": promt_to_use},
@@ -124,7 +118,7 @@ def main():
                 tokenize=False,
                 add_generation_prompt=False
             )
-            instruct_i = promt_to_use
+        instruct_i = promt_to_use
         
         if i == 0:
             print("=" * 100)

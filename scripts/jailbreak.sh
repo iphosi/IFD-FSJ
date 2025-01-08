@@ -18,16 +18,16 @@ MODEL_TYPE="llama2"
 
 MODEL_PATH="Self-Instruct-FSJ/models/${MODEL_NAME}"
 
-BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
-SUBSET_NAME="harmful_behaviors_autodan_s1024_subset"
-BENCHMARK_NAME="AdvBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
+BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
+SUBSET_NAME="harmful_behaviors_subset"
+BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
 # BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/HarmBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
 # SUBSET_NAME="harmbench_behaviors_subset"
 # BENCHMARK_NAME="HarmBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
-demo_version_choices=(demo_v0)
-# demo_version_choices=(demo_v5.5.1)
+# demo_version_choices=(demo_v0)
+demo_version_choices=(demo_v5.6.1.3)
 
 declare -A demo_path_dict
 
@@ -48,10 +48,14 @@ demo_path_dict=(
     [demo_v5.6.1]="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.6.1/filtered.json"
     [demo_v6.1.1]="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V6-Llama2-t50/llama2/w_chat_template/sys_msg_v0/demo_v6.1.1/filtered.json"
     [demo_v6.2.2]="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V6-Llama3-t50/llama3/w_chat_template/sys_msg_v0/demo_v6.2.2/filtered.json"
+    [demo_v5.1.1.1]="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.1.1.1/filtered_ppl_0.0_3.0.json"
+    [demo_v5.6.1.1]="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.6.1.1/filtered_ppl_0.0_3.0.json"
+    [demo_v5.6.1.2]="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.6.1.2/filtered_ppl_0.0_6.0.json"
+    [demo_v5.6.1.3]="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.6.1.3/filtered_ppl_0.0_9.0.json"
 )
 
-# num_shots_choices=(2)
-num_shots_choices=(0)
+num_shots_choices=(2)
+# num_shots_choices=(0)
 
 for num_shots in "${num_shots_choices[@]}";
 do
@@ -61,7 +65,7 @@ do
         echo "Demo path: ${demo_path_dict[${demo_version}]}"
         echo "Num shots: ${num_shots}"
         python Self-Instruct-FSJ/src/jailbreak.py \
-            --selector_mode "random" \
+            --selector_mode "greedy" \
             --wrt_adv_prefix \
             --benchmark_name ${BENCHMARK_NAME} \
             --benchmark_path "${BENCHMARK_DIR}/${SUBSET_NAME}.json" \

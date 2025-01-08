@@ -1,7 +1,7 @@
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=6,7
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 
-
+# MODEL_NAME="gpt2"
 MODEL_NAME="Llama-2-7b-chat-hf"
 MODEL_TYPE="llama2"
 # MODEL_NAME="Meta-Llama-3-8B-Instruct"
@@ -17,7 +17,7 @@ MODEL_TYPE="llama2"
 
 # DATA_DIR="Self-Instruct-FSJ/datasets/benchmarks/I-FSJ"
 # DATA_DIR="Self-Instruct-FSJ/datasets/benchmarks/HarmBench-V5"
-DATA_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V7"
+DATA_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V2"
 # DATA_DIR="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50"
 # DATA_DIR="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Llama3-t50"
 # DATA_DIR="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Llama3.1-t50"
@@ -39,11 +39,11 @@ python Self-Instruct-FSJ/src/data_analysis.py \
     --data_path ${OUTPUT_DIR}/${DATASET_NAME}.json \
     --instruction_col_name "instruction" \
     --response_col_name "adv_prefix" \
-    --save_path ${OUTPUT_DIR}/${DATASET_NAME}_instruction_ppl_w16_s4.jsonl \
+    --save_path ${OUTPUT_DIR}/${DATASET_NAME}_instruction_ppl_w40_s40.jsonl \
     --model_name_or_path Self-Instruct-FSJ/models/${MODEL_NAME} \
     --max_length 1280 \
     --system_message_version ${SYSTEM_MESSAGE_VERSION} \
     --analyse_instruction \
-    --window_size 16 \
-    --stride 4 \
-    > Self-Instruct-FSJ/log/log_0.out 2>&1 &
+    --window_size 40 \
+    --stride 40 \
+    > Self-Instruct-FSJ/log/log_1.out 2>&1 &
