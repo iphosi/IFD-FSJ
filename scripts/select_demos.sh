@@ -1,14 +1,14 @@
-export CUDA_VISIBLE_DEVICES=0,1
+export CUDA_VISIBLE_DEVICES=4,5
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
 
-MODEL_NAME="Llama-2-7b-chat-hf"
-MODEL_TYPE="llama2"
+# MODEL_NAME="Llama-2-7b-chat-hf"
+# MODEL_TYPE="llama2"
 # MODEL_NAME="Meta-Llama-3-8B-Instruct"
 # MODEL_TYPE="llama3"
-# MODEL_NAME="Meta-Llama-3.1-8B-Instruct"
-# MODEL_TYPE="llama3.1"
+MODEL_NAME="Meta-Llama-3.1-8B-Instruct"
+MODEL_TYPE="llama3.1"
 # MODEL_NAME="OpenChat-3.6-8B"
 # MODEL_TYPE="openchat3.6"
 # MODEL_NAME="Qwen2.5-7B-Instruct"
@@ -26,7 +26,7 @@ BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NA
 # SUBSET_NAME="harmbench_behaviors_subset"
 # BENCHMARK_NAME="HarmBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
-demo_version_choices=(demo_v5.6.1.3)
+demo_version_choices=(demo_v5.3.3)
 
 declare -A demo_path_dict
 declare -A demo_embed_path_dict
@@ -74,7 +74,7 @@ demo_embed_path_dict=(
     [demo_v5.6.1.3]="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.6.1.3/instruction_embed_arr.npy"
 )
 
-num_shots_choices=(2)
+num_shots_choices=(2 4 8)
 
 declare -A time_cost_dict
 # num_cands_per_attempt=64
@@ -111,7 +111,7 @@ do
             --num_cands_per_attempt 64 \
             --max_num_attempts 1 \
             --system_message_version v0 \
-            > Self-Instruct-FSJ/log/log_0.out 2>&1 &
+            > Self-Instruct-FSJ/log/log_2.out 2>&1 &
 
         sleep ${time_cost_dict[${num_shots}]}m
         # sleep 1m

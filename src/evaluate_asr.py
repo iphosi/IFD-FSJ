@@ -94,8 +94,8 @@ def llm_based_evaluation(instructions, responses, model, tokenizer, sampling_par
 
 def main():
     use_default_eval_template = False
-    demo_version_list = ["demo_v5.6.1.3"]
-    num_shots_list = [2]
+    demo_version_list = ["demo_v5.6.1.2"]
+    num_shots_list = [4]
     # demo_version_list = ["demo_v0"]
     # num_shots_list = [0]
     

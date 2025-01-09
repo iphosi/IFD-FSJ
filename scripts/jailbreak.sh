@@ -27,7 +27,7 @@ BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NA
 # BENCHMARK_NAME="HarmBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
 # demo_version_choices=(demo_v0)
-demo_version_choices=(demo_v5.6.1.3)
+demo_version_choices=(demo_v5.6.1.2)
 
 declare -A demo_path_dict
 
@@ -54,7 +54,7 @@ demo_path_dict=(
     [demo_v5.6.1.3]="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.6.1.3/filtered_ppl_0.0_9.0.json"
 )
 
-num_shots_choices=(2)
+num_shots_choices=(4)
 # num_shots_choices=(0)
 
 for num_shots in "${num_shots_choices[@]}";

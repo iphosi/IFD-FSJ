@@ -8,8 +8,8 @@ import os
 
 if __name__ == "__main__":
     wrt_adv_prefix = True
-    data_dir = "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/demonstrations/demo_v5.6.1.3"
-    num_shots_list = [4,8]
+    data_dir = "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/demonstrations/demo_v5.6.1.2"
+    num_shots_list = [2,4,8]
 
     if wrt_adv_prefix:
         output_path = f"{data_dir}/in_context_adv_arr_statistics.jsonl"
