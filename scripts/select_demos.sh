@@ -111,7 +111,7 @@ do
             --num_cands_per_attempt 64 \
             --max_num_attempts 1 \
             --system_message_version v0 \
-            > Self-Instruct-FSJ/log/log_2.out 2>&1 &
+            > Self-Instruct-FSJ/log/log_0.out 2>&1 &
 
         sleep ${time_cost_dict[${num_shots}]}m
         # sleep 1m

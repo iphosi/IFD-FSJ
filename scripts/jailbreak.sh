@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=0,1,2,3
+export CUDA_VISIBLE_DEVICES=6,7,8,9
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
@@ -18,16 +18,16 @@ MODEL_TYPE="llama2"
 
 MODEL_PATH="Self-Instruct-FSJ/models/${MODEL_NAME}"
 
-BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
-SUBSET_NAME="harmful_behaviors_subset"
-BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
+BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V6/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
+SUBSET_NAME="harmful_behaviors_smooth_llm_swap_0.1_subset"
+BENCHMARK_NAME="AdvBench-V6/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
 # BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/HarmBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
 # SUBSET_NAME="harmbench_behaviors_subset"
 # BENCHMARK_NAME="HarmBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
-# demo_version_choices=(demo_v0)
-demo_version_choices=(demo_v5.6.1.2)
+demo_version_choices=(demo_v0)
+# demo_version_choices=(demo_v5.6.1.2)
 
 declare -A demo_path_dict
 
@@ -54,8 +54,8 @@ demo_path_dict=(
     [demo_v5.6.1.3]="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.6.1.3/filtered_ppl_0.0_9.0.json"
 )
 
-num_shots_choices=(4)
-# num_shots_choices=(0)
+# num_shots_choices=(4)
+num_shots_choices=(0)
 
 for num_shots in "${num_shots_choices[@]}";
 do
@@ -65,7 +65,7 @@ do
         echo "Demo path: ${demo_path_dict[${demo_version}]}"
         echo "Num shots: ${num_shots}"
         python Self-Instruct-FSJ/src/jailbreak.py \
-            --selector_mode "greedy" \
+            --selector_mode "random" \
             --wrt_adv_prefix \
             --benchmark_name ${BENCHMARK_NAME} \
             --benchmark_path "${BENCHMARK_DIR}/${SUBSET_NAME}.json" \
@@ -81,7 +81,7 @@ do
             --top_p 1.0 \
             --max_tokens 100 \
             --system_message_version v0 \
-            > Self-Instruct-FSJ/log/log_0.out 2>&1 &
+            > Self-Instruct-FSJ/log/log_3.out 2>&1 &
 
         sleep 3m
     done
