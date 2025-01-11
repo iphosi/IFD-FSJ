@@ -18,12 +18,12 @@ from tqdm import tqdm
 import argparse
 
 from prompts import (
-    SYSTEM_MESSAGE_V0, INSTRUCTION_PREFIX_V0, OUTPUT_PREFIX_V0,
+    SYSTEM_MESSAGE_V0, INSTRUCTION_PREFIX_V0, INSTRUCTION_SUFFIX_V0
 )
 
 
 system_message_dict = {
-    "v0": {"system_message": SYSTEM_MESSAGE_V0, "instruction_prefix": INSTRUCTION_PREFIX_V0, "output_prefix": OUTPUT_PREFIX_V0}
+    "v0": {"system_message": SYSTEM_MESSAGE_V0, "instruction_prefix": INSTRUCTION_PREFIX_V0, "instruction_suffix": INSTRUCTION_SUFFIX_V0}
 }
 
 
@@ -33,13 +33,13 @@ def parse_args():
     parser.add_argument("--selector_mode", type=str, default="greedy", choices=["random", "greedy"])
     parser.add_argument("--wrt_adv_prefix", action="store_true")
     
-    parser.add_argument("--benchmark_name", type=str, default="AdvBench/harmful_behaviors_ifd_0.0_0.2")
-    parser.add_argument("--benchmark_path", type=str, default="Self-Instruct-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ifd_0.0_0.2.json")
-    parser.add_argument("--benchmark_embed_path", type=str, default="Self-Instruct-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ifd_0.0_0.2_instruction_embed_arr.npy")
+    parser.add_argument("--benchmark_name", type=str)
+    parser.add_argument("--benchmark_path", type=str)
+    parser.add_argument("--benchmark_embed_path", type=str)
     
-    parser.add_argument("--demo_version", type=str, default="demo_v1.0")
-    parser.add_argument("--demo_path", type=str, default="Self-Instruct-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_c_4.0_6.0/demo_v1.0/filtered_ifd_0.4_1.0.json")
-    parser.add_argument("--demo_embed_path", type=str, default="Self-Instruct-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_c_4.0_6.0/demo_v1.0/instruction_embed_arr.npy")
+    parser.add_argument("--demo_version", type=str)
+    parser.add_argument("--demo_path", type=str)
+    parser.add_argument("--demo_embed_path", type=str)
     
     parser.add_argument("--output_dir", type=str, default="Self-Instruct-FSJ/evaluation")
     
@@ -129,7 +129,6 @@ def main():
     sample_demo_response = demo_response_list[0]
     
     system_message = system_message_dict[args.system_message_version]["system_message"]
-    output_prefix = system_message_dict[args.system_message_version]["output_prefix"]
     
     print("=" * 100)
     print(f"System message:\n{system_message}")
@@ -148,7 +147,6 @@ def main():
     selector = DemoSelector(
         selector_mode=args.selector_mode,
         system_message=system_message,
-        output_prefix=output_prefix,
         demo_instruction_embed_arr=demo_instruction_embed_arr,
         demo_instruction_list=demo_instruction_list,
         demo_response_list=demo_response_list,

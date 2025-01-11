@@ -15,9 +15,9 @@ MODEL_TYPE="llama2"
 # MODEL_NAME="Starling-LM-7B-beta"
 # MODEL_TYPE="starlinglm"
 
-DATA_DIR="Self-Instruct-FSJ/datasets/benchmarks/I-FSJ"
+# DATA_DIR="Self-Instruct-FSJ/datasets/benchmarks/I-FSJ"
 # DATA_DIR="Self-Instruct-FSJ/datasets/benchmarks/HarmBench-V5"
-# DATA_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V7"
+DATA_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V7"
 # DATA_DIR="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Llama2-t50"
 # DATA_DIR="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Llama3-t50"
 # DATA_DIR="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-Llama3.1-t50"
@@ -39,11 +39,11 @@ python Self-Instruct-FSJ/src/data_analysis.py \
     --data_path ${OUTPUT_DIR}/${DATASET_NAME}.json \
     --instruction_col_name "instruction" \
     --response_col_name "adv_prefix" \
-    --save_path ${OUTPUT_DIR}/${DATASET_NAME}_instruction_gpt2_ppl_w20_s20.jsonl \
+    --save_path ${OUTPUT_DIR}/${DATASET_NAME}_instruction_gpt2_ppl.jsonl \
     --model_name_or_path Self-Instruct-FSJ/models/${MODEL_NAME} \
     --max_length 1280 \
     --system_message_version ${SYSTEM_MESSAGE_VERSION} \
     --analyse_instruction \
-    --window_size 20 \
-    --stride 20 \
+    --window_size -1 \
+    --stride 1 \
     > Self-Instruct-FSJ/log/log_3.out 2>&1 &

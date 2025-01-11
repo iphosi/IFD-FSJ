@@ -155,9 +155,9 @@ def perplexity_0():
     output_path = "Self-Instruct-FSJ/figures/perplexity_0.png"
     data_path_list = [
         "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V2/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_instruction_gpt2_ppl.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V6/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_instruction_gpt2_ppl.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V7/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_instruction_gpt2_ppl.jsonl",
+        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
+        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V6/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
+        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V7/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
         "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/I-FSJ/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
         "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V0/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_gcg_s1024_subset_instruction_gpt2_ppl.jsonl"
     ]
@@ -203,9 +203,9 @@ def perplexity_1():
     output_path = "Self-Instruct-FSJ/figures/perplexity_1.png"
     data_path_list = [
         "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V2/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_instruction_gpt2_ppl_w20_s20.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V6/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_instruction_gpt2_ppl_w20_s20.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V7/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset_instruction_gpt2_ppl_w20_s20.jsonl",
+        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
+        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V6/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
+        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V7/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
         "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/I-FSJ/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
         "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V0/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_gcg_s1024_subset_instruction_gpt2_ppl_w20_s20.jsonl"
     ]
@@ -248,4 +248,4 @@ def perplexity_1():
 
 
 if __name__ == "__main__":
-    perplexity_0()
+    perplexity_1()

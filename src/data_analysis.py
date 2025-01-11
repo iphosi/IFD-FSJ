@@ -8,7 +8,9 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 from utils import get_perplexity_and_embedding_whole_text, get_perplexity_and_embedding_part_text
 
-from prompts import SYSTEM_MESSAGE_V0, INSTRUCTION_PREFIX_V0, OUTPUT_PREFIX_V0
+from prompts import (
+    SYSTEM_MESSAGE_V0, INSTRUCTION_PREFIX_V0, INSTRUCTION_SUFFIX_V0
+)
 
 
 if torch.cuda.is_available():
@@ -26,16 +28,16 @@ PROMPT_DICT_NONE = {
 }
 
 system_message_dict = {
-    "v0": {"system_message": SYSTEM_MESSAGE_V0, "instruction_prefix": INSTRUCTION_PREFIX_V0, "output_prefix": OUTPUT_PREFIX_V0},
+    "v0": {"system_message": SYSTEM_MESSAGE_V0, "instruction_prefix": INSTRUCTION_PREFIX_V0, "instruction_suffix": INSTRUCTION_SUFFIX_V0}
 }
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_path", type=str, default="data/alpaca_data/alpaca_data.json")
+    parser.add_argument("--data_path", type=str)
     parser.add_argument("--instruction_col_name", type=str, default="instruction")
     parser.add_argument("--input_col_name", type=str, default="input")
     parser.add_argument("--response_col_name", type=str, default="output")
-    parser.add_argument("--save_path", type=str, default="debug.jsonl")
+    parser.add_argument("--save_path", type=str)
     parser.add_argument("--model_name_or_path", type=str, default="gpt2")
     parser.add_argument("--max_length", type=int, default=1024)
     parser.add_argument("--start_idx", type=int, default=0)

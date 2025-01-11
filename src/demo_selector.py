@@ -18,7 +18,6 @@ class DemoSelector:
         self,
         selector_mode,
         system_message,
-        output_prefix,
         demo_instruction_embed_arr,
         demo_instruction_list,
         demo_response_list,
@@ -43,7 +42,6 @@ class DemoSelector:
     ):
         self.selector_mode = selector_mode
         self.system_message = system_message
-        self.output_prefix = output_prefix
         
         self.num_shots = num_shots
         self.context_window_size = context_window_size

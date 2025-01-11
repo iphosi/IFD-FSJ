@@ -12,12 +12,12 @@ import pandas as pd
 import argparse
 
 from prompts import (
-    SYSTEM_MESSAGE_V0, INSTRUCTION_PREFIX_V0, OUTPUT_PREFIX_V0,
+    SYSTEM_MESSAGE_V0, INSTRUCTION_PREFIX_V0, INSTRUCTION_SUFFIX_V0
 )
 
 
 system_message_dict = {
-    "v0": {"system_message": SYSTEM_MESSAGE_V0, "instruction_prefix": INSTRUCTION_PREFIX_V0, "output_prefix": OUTPUT_PREFIX_V0}
+    "v0": {"system_message": SYSTEM_MESSAGE_V0, "instruction_prefix": INSTRUCTION_PREFIX_V0, "instruction_suffix": INSTRUCTION_SUFFIX_V0}
 }
 
 
@@ -28,11 +28,11 @@ def parse_args():
     parser.add_argument("--wrt_adv_prefix", action="store_true")
     parser.add_argument("--use_adv_prefix", action="store_true")
     
-    parser.add_argument("--benchmark_name", type=str, default="AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ifd_0.0_0.2")
-    parser.add_argument("--benchmark_path", type=str, default="Self-Instruct-FSJ/datasets/benchmarks/AdvBench/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_ifd_0.0_0.2.json")
+    parser.add_argument("--benchmark_name", type=str)
+    parser.add_argument("--benchmark_path", type=str)
         
-    parser.add_argument("--demo_version", type=str, default="demo_v1.0")
-    parser.add_argument("--demo_path", type=str, default="Self-Instruct-FSJ/datasets/demonstrations/Alpaca2-7B/llama2/w_chat_template/sys_msg_v0/ppl_c_4.0_6.0/demo_v1.0/filtered_ifd_0.4_1.0.json")
+    parser.add_argument("--demo_version", type=str)
+    parser.add_argument("--demo_path", type=str)
     
     parser.add_argument("--output_dir", type=str, default="Self-Instruct-FSJ/evaluation")
     
@@ -59,7 +59,7 @@ def jailbreak(
     tokenizer,
     model,
     sampling_params,
-    system_message,
+    system_message_version,
     instruction_list,
     shot_list,
     demo_instruction_list,
@@ -70,19 +70,34 @@ def jailbreak(
     query_list = []
     num_tokens_list = []
     
+    system_message = system_message_dict[system_message_version]["system_message"]
+    instruction_prefix = system_message_dict[system_message_version]["instruction_prefix"]
+    instruction_suffix = system_message_dict[system_message_version]["instruction_suffix"]
+    
     for i in range(len(instruction_list)):
+        instruction = instruction_list[i]
         conversation_list = []
+        
+        if system_message_version != "v0":
+            conversation_list.append(
+                {"role": "system", "content": system_message}
+            )
+        
+        instruction = instruction_prefix + instruction + instruction_suffix
 
         for demo_idx in shot_list[i]:
+            demo_instruction = demo_instruction_list[demo_idx]
+            demo_response = demo_response_list[demo_idx]
+               
             conversation_list.extend(
                 [
-                    {"role": "user", "content": demo_instruction_list[demo_idx]},
-                    {"role": "assistant", "content": demo_response_list[demo_idx]},
+                    {"role": "user", "content": demo_instruction},
+                    {"role": "assistant", "content": demo_response},
                 ]
             )
             
         conversation_list.append(
-            {"role": "user", "content": instruction_list[i]}
+            {"role": "user", "content": instruction}
         )
         
         if use_adv_prefix and adv_prefix_list:
@@ -205,14 +220,12 @@ def main():
         dtype="auto",
         swap_space=8
     )
-    
-    system_message = system_message_dict[args.system_message_version]["system_message"]
         
     response_list = jailbreak(
         tokenizer=gen_tokenizer,
         model=gen_model,
         sampling_params=sampling_params,
-        system_message=system_message,
+        system_message_version=args.system_message_version,
         instruction_list=instruction_list,
         shot_list=shot_list,
         demo_instruction_list=demo_instruction_list,
