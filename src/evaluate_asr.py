@@ -94,7 +94,7 @@ def llm_based_evaluation(instructions, responses, model, tokenizer, sampling_par
 
 def main():
     use_default_eval_template = False
-    demo_version_list = ["demo_v5.4.4"]
+    demo_version_list = ["demo_v5.6.6"]
     num_shots_list = [2,4,8]
     # demo_version_list = ["demo_v0"]
     # num_shots_list = [0]
@@ -102,7 +102,7 @@ def main():
     num_responses_per_instruction = 16
     
     data_dir_list = [
-        "Self-Instruct-FSJ/evaluation/OpenChat-3.6-8B/AdvBench-V5/openchat3.6/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+        "Self-Instruct-FSJ/evaluation/Starling-LM-7B-beta/AdvBench-V5/starlinglm/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
     ]
 
     eval_model_path = "Self-Instruct-FSJ/models/Llama-Guard-3-8B"

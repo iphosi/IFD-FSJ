@@ -9,10 +9,10 @@ export VLLM_WORKER_MULTIPROC_METHOD=spawn
 # MODEL_TYPE="llama3"
 # MODEL_NAME="Meta-Llama-3.1-8B-Instruct"
 # MODEL_TYPE="llama3.1"
-MODEL_NAME="OpenChat-3.6-8B"
-MODEL_TYPE="openchat3.6"
-# MODEL_NAME="Qwen2.5-7B-Instruct"
-# MODEL_TYPE="qwen2.5"
+# MODEL_NAME="OpenChat-3.6-8B"
+# MODEL_TYPE="openchat3.6"
+MODEL_NAME="Qwen2.5-7B-Instruct"
+MODEL_TYPE="qwen2.5"
 # MODEL_NAME="Starling-LM-7B-beta"
 # MODEL_TYPE="starlinglm"
 
@@ -27,7 +27,7 @@ BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NA
 # BENCHMARK_NAME="HarmBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
 # demo_version_choices=(demo_v0)
-demo_version_choices=(demo_v5.4.4)
+demo_version_choices=(demo_v5.5.5)
 
 declare -A demo_path_dict
 
