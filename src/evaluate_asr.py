@@ -94,17 +94,15 @@ def llm_based_evaluation(instructions, responses, model, tokenizer, sampling_par
 
 def main():
     use_default_eval_template = False
-    demo_version_list = ["demo_v6.1.1"]
-    num_shots_list = [2,4]
+    demo_version_list = ["demo_v5.4.4"]
+    num_shots_list = [2,4,8]
     # demo_version_list = ["demo_v0"]
     # num_shots_list = [0]
     
     num_responses_per_instruction = 16
     
     data_dir_list = [
-        "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V6/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_smooth_llm_insert_0.1_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix",
-        "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V6/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_smooth_llm_patch_0.1_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix",
-        "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V6/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_smooth_llm_swap_0.1_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+        "Self-Instruct-FSJ/evaluation/OpenChat-3.6-8B/AdvBench-V5/openchat3.6/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
     ]
 
     eval_model_path = "Self-Instruct-FSJ/models/Llama-Guard-3-8B"
