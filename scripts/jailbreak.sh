@@ -3,31 +3,31 @@ export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:1024
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
 
-# MODEL_NAME="Llama-2-7b-chat-hf"
-# MODEL_TYPE="llama2"
+MODEL_NAME="Llama-2-7b-chat-hf"
+MODEL_TYPE="llama2"
 # MODEL_NAME="Meta-Llama-3-8B-Instruct"
 # MODEL_TYPE="llama3"
 # MODEL_NAME="Meta-Llama-3.1-8B-Instruct"
 # MODEL_TYPE="llama3.1"
 # MODEL_NAME="OpenChat-3.6-8B"
 # MODEL_TYPE="openchat3.6"
-MODEL_NAME="Qwen2.5-7B-Instruct"
-MODEL_TYPE="qwen2.5"
+# MODEL_NAME="Qwen2.5-7B-Instruct"
+# MODEL_TYPE="qwen2.5"
 # MODEL_NAME="Starling-LM-7B-beta"
 # MODEL_TYPE="starlinglm"
 
 MODEL_PATH="Self-Instruct-FSJ/models/${MODEL_NAME}"
 
-BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
-SUBSET_NAME="harmful_behaviors_subset"
-BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
+BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V6/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
+SUBSET_NAME="harmful_behaviors_smooth_llm_swap_0.1_subset"
+BENCHMARK_NAME="AdvBench-V6/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
 # BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/HarmBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
 # SUBSET_NAME="harmbench_behaviors_subset"
 # BENCHMARK_NAME="HarmBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
 # demo_version_choices=(demo_v0)
-demo_version_choices=(demo_v5.5.5)
+demo_version_choices=(demo_v6.1.1)
 
 declare -A demo_path_dict
 
@@ -54,8 +54,8 @@ demo_path_dict=(
     [demo_v5.6.1.3]="Self-Instruct-FSJ/datasets/demonstrations/AdvBench-V5-StarlingLM-t50/llama2/w_chat_template/sys_msg_v0/demo_v5.6.1.3/filtered_ppl_0.0_9.0.json"
 )
 
-num_shots_choices=(2 4 8)
-# num_shots_choices=(0)
+# num_shots_choices=(2 4 8)
+num_shots_choices=(0)
 
 for num_shots in "${num_shots_choices[@]}";
 do
