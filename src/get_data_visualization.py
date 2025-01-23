@@ -24,17 +24,16 @@ def ablation_0():
         
     labels = ["16", "32", "64", "128"]
 
-    plt.figure(figsize=(12, 10))
-    plt.ylim(0, 20)
+    plt.figure(figsize=(8, 6))
+    plt.ylim(0, 30)
 
     for i, line in enumerate(asr_list):
         plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
-    plt.title("Llama-2-7b-chat-hf")
-    plt.xlabel("Shots")
-    plt.ylabel("R-LVL ASR (%)")
+    plt.xlabel("Shots", fontsize=14)
+    plt.ylabel("R-LVL ASR (%)", fontsize=14)
 
-    plt.legend(title="Candidates", loc="lower right")
+    plt.legend(title="Batch Size", loc="upper right", fontsize=14)
 
     plt.grid(True)
     plt.show()
@@ -62,16 +61,16 @@ def ablation_1():
         
     labels = ["16", "32", "64", "128"]
 
-    plt.figure(figsize=(12, 10))
+    plt.figure(figsize=(8, 6))
+    plt.ylim(0, 100)
 
     for i, line in enumerate(asr_list):
         plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
-    plt.title("Llama-2-7b-chat-hf")
-    plt.xlabel("Shots")
-    plt.ylabel("S-LVL ASR (%)")
+    plt.xlabel("Shots", fontsize=14)
+    plt.ylabel("S-LVL ASR (%)", fontsize=14)
 
-    plt.legend(title="Candidates", loc="lower right")
+    plt.legend(title="Batch Size", loc="upper right", fontsize=14)
 
     plt.grid(True)
     plt.show()
@@ -98,16 +97,16 @@ def ablation_2():
         
     labels = ["0.6", "0.8", "1.0"]
     
-    plt.figure(figsize=(12, 10))
+    plt.figure(figsize=(8, 6))
+    plt.ylim(5, 20)
     
     for i, line in enumerate(asr_list):
         plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
-    plt.title("Llama-2-7b-chat-hf")
-    plt.xlabel("Shots")
-    plt.ylabel("R-LVL ASR (%)")
+    plt.xlabel("Shots", fontsize=14)
+    plt.ylabel("R-LVL ASR (%)", fontsize=14)
 
-    plt.legend(title="Similarity Threshold", loc="lower right")
+    plt.legend(title="Similarity", loc="upper right", fontsize=14)
 
     plt.grid(True)
     plt.show()
@@ -134,16 +133,16 @@ def ablation_3():
         
     labels = ["0.6", "0.8", "1.0"]
     
-    plt.figure(figsize=(12, 10))
+    plt.figure(figsize=(8, 6))
+    plt.ylim(30, 80)
     
     for i, line in enumerate(asr_list):
         plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
-    plt.title("Llama-2-7b-chat-hf")
-    plt.xlabel("Shots")
-    plt.ylabel("S-LVL ASR (%)")
+    plt.xlabel("Shots", fontsize=14)
+    plt.ylabel("S-LVL ASR (%)", fontsize=14)
 
-    plt.legend(title="Similarity Threshold", loc="lower right")
+    plt.legend(title="Similarity", loc="upper right", fontsize=14)
 
     plt.grid(True)
     plt.show()
@@ -154,18 +153,18 @@ def ablation_3():
 def perplexity_0():
     output_path = "Self-Instruct-FSJ/figures/perplexity_0.png"
     data_path_list = [
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V2/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V6/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V7/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/I-FSJ/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V0/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_gcg_s1024_subset_instruction_gpt2_ppl.jsonl"
+        "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V2/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
+        "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
+        "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V6/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
+        "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V7/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
+        "Self-Instruct-FSJ/datasets/benchmarks/I-FSJ/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl.jsonl",
+        "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V0/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_gcg_s1024_subset_instruction_gpt2_ppl.jsonl"
     ]
     label_list = [
-        "Self-Instruct-FSJ (P = 0)",
-        "Self-Instruct-FSJ (P = 4)",
-        "Self-Instruct-FSJ (P = 8)",
-        "Self-Instruct-FSJ (P = 16)",
+        "Self-Instruct-FSJ\n(Patterns = 0)",
+        "Self-Instruct-FSJ\n(Patterns = 4)",
+        "Self-Instruct-FSJ\n(Patterns = 8)",
+        "Self-Instruct-FSJ\n(Patterns = 16)",
         "I-FSJ",
         "GCG"
     ]
@@ -176,7 +175,8 @@ def perplexity_0():
         data = df["ppl"].apply(lambda p: p[1]).tolist()
         data_list.append(data)
     
-    fig, ax = plt.subplots(1, 1, figsize=(16, 6))
+    fig, ax = plt.subplots(1, 1, figsize=(8, 6))
+    plt.subplots_adjust(left=0.25)
 
     ax.boxplot(
         data_list,
@@ -190,9 +190,13 @@ def perplexity_0():
     
     plt.xscale("log")
 
-    ax.set_title("Llama-2-7b-chat-hf")
-    ax.set_yticklabels(label_list)
-    ax.set_xlabel("Perplexity")
+    ax.set_xlabel("Perplexity", fontsize=14)
+    ax.set_yticklabels(label_list, fontsize=14)
+    ax.tick_params(axis="x", labelsize=14)
+    ax.tick_params(axis="y", pad=60)
+    
+    for label in ax.get_yticklabels():
+        label.set_horizontalalignment('center')
 
     plt.show()
     
@@ -202,18 +206,18 @@ def perplexity_0():
 def perplexity_1():
     output_path = "Self-Instruct-FSJ/figures/perplexity_1.png"
     data_path_list = [
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V2/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V6/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V7/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/I-FSJ/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
-        "/home/dq/repos/Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V0/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_gcg_s1024_subset_instruction_gpt2_ppl_w20_s20.jsonl"
+        "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V2/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
+        "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
+        "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V6/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
+        "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V7/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
+        "Self-Instruct-FSJ/datasets/benchmarks/I-FSJ/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_instruction_gpt2_ppl_w20_s20.jsonl",
+        "Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V0/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_gcg_s1024_subset_instruction_gpt2_ppl_w20_s20.jsonl"
     ]
     label_list = [
-        "Self-Instruct-FSJ (P = 0)",
-        "Self-Instruct-FSJ (P = 4)",
-        "Self-Instruct-FSJ (P = 8)",
-        "Self-Instruct-FSJ (P= 16)",
+        "Self-Instruct-FSJ\n(Patterns = 0)",
+        "Self-Instruct-FSJ\n(Patterns = 4)",
+        "Self-Instruct-FSJ\n(Patterns = 8)",
+        "Self-Instruct-FSJ\n(Patterns = 16)",
         "I-FSJ",
         "GCG"
     ]
@@ -224,7 +228,8 @@ def perplexity_1():
         data = df["ppl"].apply(lambda p: p[1]).tolist()
         data_list.append(data)
     
-    fig, ax = plt.subplots(1, 1, figsize=(16, 6))
+    fig, ax = plt.subplots(1, 1, figsize=(8, 6))
+    plt.subplots_adjust(left=0.25)
 
     ax.boxplot(
         data_list,
@@ -238,14 +243,18 @@ def perplexity_1():
     
     plt.xscale("log")
 
-    ax.set_title("Llama-2-7b-chat-hf")
-    ax.set_yticklabels(label_list)
-    ax.set_xlabel("Windowed Perplexity")
-
+    ax.set_xlabel("Windowed Perplexity", fontsize=14)
+    ax.set_yticklabels(label_list, fontsize=14)
+    ax.tick_params(axis="x", labelsize=14)
+    ax.tick_params(axis="y", pad=60)
+    
+    for label in ax.get_yticklabels():
+        label.set_horizontalalignment('center')
+    
     plt.show()
     
     plt.savefig(output_path, format="png")
 
 
 if __name__ == "__main__":
-    perplexity_1()
+    ablation_1()
