@@ -26,14 +26,16 @@ def ablation_0():
 
     plt.figure(figsize=(8, 6))
     plt.ylim(0, 30)
+    plt.subplots_adjust(top=0.95, bottom=0.15)
+    plt.tick_params(axis="both", labelsize=14)
 
     for i, line in enumerate(asr_list):
         plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
-    plt.xlabel("Shots", fontsize=14)
-    plt.ylabel("R-LVL ASR (%)", fontsize=14)
+    plt.xlabel("Shots", fontsize=20, labelpad=10)
+    plt.ylabel("R-LVL ASR (%)", fontsize=20, labelpad=10)
 
-    plt.legend(title="Batch Size", loc="upper right", fontsize=14)
+    plt.legend(title="Batch Size", loc="upper right", fontsize=14, title_fontsize=14)
 
     plt.grid(True)
     plt.show()
@@ -63,14 +65,16 @@ def ablation_1():
 
     plt.figure(figsize=(8, 6))
     plt.ylim(0, 100)
+    plt.subplots_adjust(top=0.95, bottom=0.15)
+    plt.tick_params(axis="both", labelsize=14)
 
     for i, line in enumerate(asr_list):
         plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
-    plt.xlabel("Shots", fontsize=14)
-    plt.ylabel("S-LVL ASR (%)", fontsize=14)
+    plt.xlabel("Shots", fontsize=20, labelpad=10)
+    plt.ylabel("S-LVL ASR (%)", fontsize=20, labelpad=10)
 
-    plt.legend(title="Batch Size", loc="upper right", fontsize=14)
+    plt.legend(title="Batch Size", loc="upper right", fontsize=14, title_fontsize=14)
 
     plt.grid(True)
     plt.show()
@@ -99,14 +103,16 @@ def ablation_2():
     
     plt.figure(figsize=(8, 6))
     plt.ylim(5, 20)
+    plt.subplots_adjust(top=0.95, bottom=0.15)
+    plt.tick_params(axis="both", labelsize=14)
     
     for i, line in enumerate(asr_list):
         plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
-    plt.xlabel("Shots", fontsize=14)
-    plt.ylabel("R-LVL ASR (%)", fontsize=14)
+    plt.xlabel("Shots", fontsize=20, labelpad=10)
+    plt.ylabel("R-LVL ASR (%)", fontsize=20, labelpad=10)
 
-    plt.legend(title="Similarity", loc="upper right", fontsize=14)
+    plt.legend(title="Similarity", loc="upper right", fontsize=14, title_fontsize=14)
 
     plt.grid(True)
     plt.show()
@@ -135,14 +141,16 @@ def ablation_3():
     
     plt.figure(figsize=(8, 6))
     plt.ylim(30, 80)
+    plt.subplots_adjust(top=0.95, bottom=0.15)
+    plt.tick_params(axis="both", labelsize=14)
     
     for i, line in enumerate(asr_list):
         plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
-    plt.xlabel("Shots", fontsize=14)
-    plt.ylabel("S-LVL ASR (%)", fontsize=14)
+    plt.xlabel("Shots", fontsize=20, labelpad=10)
+    plt.ylabel("S-LVL ASR (%)", fontsize=20, labelpad=10)
 
-    plt.legend(title="Similarity", loc="upper right", fontsize=14)
+    plt.legend(title="Similarity", loc="upper right", fontsize=14, title_fontsize=14)
 
     plt.grid(True)
     plt.show()
@@ -176,7 +184,7 @@ def perplexity_0():
         data_list.append(data)
     
     fig, ax = plt.subplots(1, 1, figsize=(8, 6))
-    plt.subplots_adjust(left=0.25)
+    plt.subplots_adjust(left=0.25, top=0.95, bottom=0.15)
 
     ax.boxplot(
         data_list,
@@ -190,13 +198,13 @@ def perplexity_0():
     
     plt.xscale("log")
 
-    ax.set_xlabel("Perplexity", fontsize=14)
+    ax.set_xlabel("Perplexity", fontsize=20, labelpad=10)
     ax.set_yticklabels(label_list, fontsize=14)
     ax.tick_params(axis="x", labelsize=14)
     ax.tick_params(axis="y", pad=60)
     
     for label in ax.get_yticklabels():
-        label.set_horizontalalignment('center')
+        label.set_horizontalalignment("center")
 
     plt.show()
     
@@ -229,7 +237,7 @@ def perplexity_1():
         data_list.append(data)
     
     fig, ax = plt.subplots(1, 1, figsize=(8, 6))
-    plt.subplots_adjust(left=0.25)
+    plt.subplots_adjust(left=0.25, top=0.95, bottom=0.15)
 
     ax.boxplot(
         data_list,
@@ -243,13 +251,13 @@ def perplexity_1():
     
     plt.xscale("log")
 
-    ax.set_xlabel("Windowed Perplexity", fontsize=14)
+    ax.set_xlabel("Windowed Perplexity", fontsize=20, labelpad=10)
     ax.set_yticklabels(label_list, fontsize=14)
     ax.tick_params(axis="x", labelsize=14)
     ax.tick_params(axis="y", pad=60)
     
     for label in ax.get_yticklabels():
-        label.set_horizontalalignment('center')
+        label.set_horizontalalignment("center")
     
     plt.show()
     
@@ -257,4 +265,4 @@ def perplexity_1():
 
 
 if __name__ == "__main__":
-    ablation_1()
+    perplexity_1()
