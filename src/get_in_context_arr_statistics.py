@@ -8,7 +8,7 @@ import os
 
 if __name__ == "__main__":
     wrt_adv_prefix = True
-    data_dir = "Self-Instruct-FSJ/evaluation/Llama-2-7b-chat-hf/AdvBench-V6/llama2/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/demonstrations/demo_v6.1.1"
+    data_dir = "Self-Instruct-FSJ/evaluation/Qwen2.5-7B-Instruct/AdvBench-V5/qwen2.5/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/demonstrations/demo_v5.1.5"
     num_shots_list = [2,4,8]
 
     if wrt_adv_prefix:

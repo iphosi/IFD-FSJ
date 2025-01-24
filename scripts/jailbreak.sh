@@ -18,16 +18,16 @@ MODEL_TYPE="llama2"
 
 MODEL_PATH="Self-Instruct-FSJ/models/${MODEL_NAME}"
 
-BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V6/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
-SUBSET_NAME="harmful_behaviors_smooth_llm_swap_0.1_subset"
-BENCHMARK_NAME="AdvBench-V6/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
+BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
+SUBSET_NAME="harmful_behaviors_subset"
+BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
 # BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/HarmBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
 # SUBSET_NAME="harmbench_behaviors_subset"
 # BENCHMARK_NAME="HarmBench-V0/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
 # demo_version_choices=(demo_v0)
-demo_version_choices=(demo_v6.1.1)
+demo_version_choices=(demo_v5.1.1)
 
 declare -A demo_path_dict
 
@@ -55,7 +55,7 @@ demo_path_dict=(
 )
 
 # num_shots_choices=(2 4 8)
-num_shots_choices=(0)
+num_shots_choices=(8)
 
 for num_shots in "${num_shots_choices[@]}";
 do

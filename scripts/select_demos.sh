@@ -18,15 +18,15 @@ MODEL_TYPE="llama2"
 
 MODEL_PATH="Self-Instruct-FSJ/models/${MODEL_NAME}"
 
-BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V6/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
+BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
 SUBSET_NAME="harmful_behaviors_subset"
-BENCHMARK_NAME="AdvBench-V6/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
+BENCHMARK_NAME="AdvBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
 # BENCHMARK_DIR="Self-Instruct-FSJ/datasets/benchmarks/HarmBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0"
 # SUBSET_NAME="harmbench_behaviors_subset"
 # BENCHMARK_NAME="HarmBench-V5/${MODEL_TYPE}/w_chat_template/sys_msg_v0/${SUBSET_NAME}"
 
-demo_version_choices=(demo_v6.1.1)
+demo_version_choices=(demo_v5.1.1)
 
 declare -A demo_path_dict
 declare -A demo_embed_path_dict
@@ -111,7 +111,7 @@ do
             --num_cands_per_attempt 64 \
             --max_num_attempts 1 \
             --system_message_version v0 \
-            > Self-Instruct-FSJ/log/log_0.out 2>&1 &
+            > Self-Instruct-FSJ/log/log_2.out 2>&1 &
 
         sleep ${time_cost_dict[${num_shots}]}m
         # sleep 1m

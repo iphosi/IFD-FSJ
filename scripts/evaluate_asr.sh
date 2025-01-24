@@ -4,4 +4,4 @@ export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
 
 python Self-Instruct-FSJ/src/evaluate_asr.py \
-    > Self-Instruct-FSJ/log/log_2.out 2>&1 &
+    > Self-Instruct-FSJ/log/log_3.out 2>&1 &
