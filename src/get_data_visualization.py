@@ -72,7 +72,7 @@ def ablation_1():
         plt.plot(num_shots_list, line, marker="o", label=labels[i])
 
     plt.xlabel("Shots", fontsize=20, labelpad=10)
-    plt.ylabel("S-LVL ASR (%)", fontsize=20, labelpad=10)
+    plt.ylabel("S-LVL ASR (%)", fontsize=20)
 
     plt.legend(title="Batch Size", loc="upper right", fontsize=14, title_fontsize=14)
 
@@ -265,4 +265,4 @@ def perplexity_1():
 
 
 if __name__ == "__main__":
-    perplexity_1()
+    ablation_1()
