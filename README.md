@@ -1,5 +1,9 @@
 # Self-Instruct Few-Shot Jailbreaking: Decompose the Attack into Pattern and Behavior Learning
 
+## Introduction
+
+This repo includes a implementation of the algorithm proposed in the paper [Self-Instruct Few-Shot Jailbreaking: Decompose the Attack into Pattern and Behavior Learning](https://arxiv.org/abs/2501.07959).
+
 ## Quickstart
 
 ### Step 1: Clone the repository
