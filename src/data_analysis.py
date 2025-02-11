@@ -129,7 +129,7 @@ def main():
             print(output_i)
 
         instruct_i_input_ids = tokenizer.encode(instruct_i, return_tensors="pt", truncation=True, max_length=args.max_length).to(device)
-        instruct_i_len = instruct_i_input_ids.shape[1] 
+        instruct_i_len = instruct_i_input_ids.shape[1]
 
         if not args.analyse_instruction:
             ppl_out_alone, loss_out_alone = get_perplexity_and_embedding_whole_text(tokenizer, model, output_i, args.max_length-instruct_i_len+1)

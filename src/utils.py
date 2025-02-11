@@ -24,7 +24,6 @@ def get_perplexity_and_embedding_whole_text(tokenizer, model, text, max_length, 
                 loss = outputs.loss
                 substring = tokenizer.decode(windowed_input_ids[0], skip_special_tokens=False)
     
-    print(substring)
     perplexity = torch.exp(loss).to("cpu").item()
     loss = loss.to("cpu").item()
 
@@ -45,7 +44,14 @@ def get_perplexity_and_embedding_part_text(tokenizer, model, text, target_span, 
         
     start_token = end_token - target_ids.shape[1] + 1
     
-    assert tokenizer.decode(input_ids[0, start_token:end_token + 1]) == target_span
+    if tokenizer.decode(input_ids[0, start_token:end_token + 1]) != target_span:
+        print("-" * 100)
+        print(text)
+        print("-" * 100)
+        print(tokenizer.decode(input_ids[0, start_token:end_token + 1]))
+        print("-" * 100)
+        print(target_span)
+        raise ValueError
 
     labels = input_ids.clone()
     labels[0, :start_token] = -100

@@ -94,7 +94,7 @@ def llm_based_evaluation(instructions, responses, model, tokenizer, sampling_par
 
 def main():
     use_default_eval_template = False
-    demo_version_list = ["demo_v5.1.5"]
+    demo_version_list = ["demo_v5.8.8"]
     num_shots_list = [8]
     # demo_version_list = ["demo_v0"]
     # num_shots_list = [0]
@@ -102,7 +102,7 @@ def main():
     num_responses_per_instruction = 16
     
     data_dir_list = [
-        "Self-Instruct-FSJ/evaluation/Qwen2.5-7B-Instruct/AdvBench-V5/qwen2.5/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
+        "Self-Instruct-FSJ/evaluation/DeepSeek-R1-Distill-Qwen-7B/AdvBench-V5/deepseek-distill-qwen/w_chat_template/sys_msg_v0/harmful_behaviors_subset/greedy_adv/generations/sys_msg_v0/wo_adv_prefix"
     ]
 
     eval_model_path = "Self-Instruct-FSJ/models/Llama-Guard-3-8B"
@@ -161,9 +161,17 @@ def main():
 
                 if use_llm_based_evaluation:
                     if "w_adv_prefix" in data_path:
-                        response_list = (df["adv_prefix"] + df["model_response"]).tolist()
-                    else:
-                        response_list = df["model_response"].tolist()
+                        adv_prefix = df.iloc[0]["adv_prefix"]
+                        df["model_response"] = df["model_response"].apply(
+                            lambda r_list: [adv_prefix + r for r in r_list]
+                        )
+                        
+                    response_list = df["model_response"].tolist()
+                        
+                    print("=" * 100)
+                    print(instruction_list[0])
+                    print("=" * 100)
+                    print(response_list[0])
                         
                     r_lvl_asr, s_lvl_asr, response_flag_list = llm_based_evaluation(instruction_list, response_list, eval_model, eval_tokenizer, sampling_params)
                 else:
